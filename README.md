@@ -7,8 +7,7 @@ Android Studio Mobile - A mobile IDE
 
     1. Project Information
    
-   The ASM Team is make the android studio
-                     is the mobile device.
+   The ASM Team is make the android studio in the mobile device.
     
     2. Licenses
 		
