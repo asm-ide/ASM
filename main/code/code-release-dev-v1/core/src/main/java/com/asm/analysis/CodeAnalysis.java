@@ -3,7 +3,7 @@ package com.asm.analysis;
 import java.util.Iterator;
 
 
-public abstract class CodeAnalysis implements Iterator<CodePart>
+public abstract class CodeAnalysis implements Iterator<CodeAnalysis.CodePart>
 {
 	public static class CodePart
 	{
@@ -64,5 +64,5 @@ public abstract class CodeAnalysis implements Iterator<CodePart>
 	
 	public abstract void move(int index);
 	
-	public abstract CodeSuggest[] getSuggests();
+	public abstract CodeSuggest getSuggest();
 }
