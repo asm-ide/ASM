@@ -14,7 +14,7 @@ Android Studio Mobile - A mobile IDE
                         Project ASM
          © ASM Team 2017~2018. All Rights Reserved.
 	
-                        ASM core-ui
+                          ASM code
            © LHW 2017~2018. All Rights Reserved.
                   package com.asm.widget.*
                  /com.asm.widget.codeedit.*
