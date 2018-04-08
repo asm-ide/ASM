@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<code-style>
+	<!--the base theme. You should make this or use tag <import-default/>.-->
+	<!--if you want to include other file, use include.
+		like: <include path="code-style/mystyle.xml"/>.
+		you should write in path, the all path off asset.
+		-->
+	<language lang="base">
+		<preference name="text" type="color">#000000</preference>
+		<color name="foreground">@pref/text</color>
+		<color name="background">#f7f7f7</color>
+	</language>
+</code-style>

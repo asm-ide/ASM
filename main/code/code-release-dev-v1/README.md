@@ -1,5 +1,5 @@
 	
-		    Project ASM / core-ui
+		      Project ASM / code
 	© LHW 2017~2018. All Rights Reserved.
 	
 	
@@ -10,10 +10,11 @@
 		
 		Updates : initial update
 				  added CodeEdit
+				  added CodeAnalysis
 		
 	2. Directory
 		
-		:app  the debug app.
-		:core  includes core UI.
-		:interface interfaces for heavy resources
-				   and incomplate projects.
+		:app  		the debug app.
+		:core  		includes code UI and analysis.
+		:interface 	interfaces for heavy resources
+					and incomplate projects.

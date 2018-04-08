@@ -1,0 +1,14 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+    <ImageView android:id="@+id/filepicker_listitemThumb"
+		android:layout_width="18sp"
+		android:layout_height="18sp"
+		android:scaleType="centerInside" />
+	<TextView android:id="@+id/filepicker_listitemTitle"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textColor="@android:attr/textColorPrimary"
+		android:textSize="18sp" />
+</LinearLayout>

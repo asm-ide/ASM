@@ -1,5 +1,5 @@
 	
-			 Project ASM / core-ui
+			  Project ASM / code
 	© LHW 2017~2018. All Rights Reserved.
 		   package com.asm.widget.*
 		  /com.asm.widget.codeedit.*
@@ -10,14 +10,14 @@
 		Language : Java
 		Platform : Gradle / Android SDK / Java, Xml
 		Require : Android API 3 (or more, need test)
-		The core-ui that provides ASM main app ui
-		to better code edit UI.
+		The code utilities and widgets for analysis code
+		and highlight / display codes.
 		
 		Includes : CodeEdit, CodeStyle, TextData, etc...
 		
 	2. Branches
 		
-		coreui-release / MASTER
+		code-release / MASTER
 			
 			status: failed / developing
 			using custom views: CodeEdit
@@ -26,7 +26,7 @@
 				DEVRLOPING VERSION
 				dev-v1 / 1.0: MASTER / failed / developing
 		
-		coreui-beta-edit (CLOSED)
+		code-beta-edit (CLOSED)
 			
 			status: failed / stop developing
 			using EditText to edit codes
