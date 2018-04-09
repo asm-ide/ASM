@@ -22,6 +22,7 @@ Android Studio Mobile - A mobile IDE
                       core-ui/LICENSE.
 	
                       ASM Compiler unit
+		** Source code is not uploaded yet **
 		: Android Gradle Build Support
 		: APK Building In Android
 		
