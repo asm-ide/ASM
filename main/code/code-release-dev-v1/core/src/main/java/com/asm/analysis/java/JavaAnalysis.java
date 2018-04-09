@@ -2,14 +2,17 @@ package com.asm.analysis.java;
 
 import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
+import com.asm.analysis.CodeIterator;
 
 
 public class JavaAnalysis extends CodeAnalysis
 {
-	private int mIndex = 0;
+	private CodeIterator mIterator;
+	private CharSequence mCode;
 	
 	
 	public JavaAnalysis() {
+		mIterator = new CodeIterator();
 		
 	}
 	
@@ -30,11 +33,12 @@ public class JavaAnalysis extends CodeAnalysis
 
 	@Override
 	public void setCode(CharSequence code) {
-		
+		mCode = code;
+		mIterator.setCode(code);
 	}
 
 	@Override
 	public void move(int index) {
-		mIndex = index;
+		mIterator.move(index);
 	}
 }

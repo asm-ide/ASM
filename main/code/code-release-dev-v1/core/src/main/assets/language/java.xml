@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<language name="java">
-	<words colorName="sentence">
-		
-	</words>
+<language
+	name="java"
+	analysisClass="com.asm.analysis.java.JavaAnalysis">
+	<data name="sentence" type="strings">
+		"abstract", "break", "case", "catch", "class", "continue", "default", "do", "else", "extends", "final", "finally", "for", "if", "import", "implements", "instanceof", 
+		"interface", "native", "new", "package", "public", "protected", "private", "return", "static", "super", "switch", "this", "throw", "throws", "try", "volatile", "while"
+	</data>
+	<data name="type" type="strings">
+		"boolean", "byte", "char", "double", "float", "int", "long", "short"
+	</data>
+	<data name="operator" type="string">;.,{}()[]:</data>
+	<data name="math" type="string">"+-/*?&lt;&gt;&|!="</data>
+	<data name="textSeperator" type="string"> ;.,{}()[]:+-/*?&lt;&gt;&|!=</data>
+	<data name="textQuote" type="string">"'</data>
+	<data name="textEscaper">\</data>
+	<data name="comment" type="pairs:string">
+		"/*" : "*/",
+		"//" : "\n"
+	</data>
+	<args name="base.textQuote" value="@data/textQuote" />
+	<args name="base.textSeperator" value="@data/textSeperator" />
+	<args name="base.textEscaper" value="@data/textEscaper" />
+	<args name="base.comment" value="@data/comment" />
+	<!--<args name="?" type="boolean/string/.." value="true or false or @data/??? etc" />-->
 </language>

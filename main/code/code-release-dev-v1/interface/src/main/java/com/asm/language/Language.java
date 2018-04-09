@@ -1,7 +1,10 @@
 package com.asm.language;
 
+import com.asm.analysis.CodeAnalysis;
+import com.asm.analysis.CodeSuggest;
 import com.asm.widget.codeedit.CodeEditInterface;
 import com.asm.widget.codeedit.Highlightable;
+import com.asm.annotation.Nullable;
 
 
 /**
@@ -37,4 +40,16 @@ public interface Language
 	 * Return the language info.
 	 */
 	public LanguageInfo getInfo();
+	
+	/**
+	 * Return the new CodeAnalysis object.
+	 * Can be null.
+	 */
+	public @Nullable CodeAnalysis newAnalysis();
+	
+	/**
+	 * Return the CodeSuggest object.
+	 * Can be null.
+	 */
+	public @Nullable CodeSuggest getSuggest();
 }

@@ -1,4 +1,4 @@
-package com.asm.language;
+package com.asm.analysis;
 
 import com.asm.language.LanguageInfo;
 import com.lhw.util.Pair;

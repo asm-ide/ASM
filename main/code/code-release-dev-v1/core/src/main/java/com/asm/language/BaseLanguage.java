@@ -1,5 +1,7 @@
 package com.asm.language;
 
+import com.asm.analysis.CodeAnalysis;
+import com.asm.analysis.CodeSuggest;
 import com.asm.language.Language;
 import com.asm.language.LanguageInfo;
 import com.asm.widget.CodeEdit;
@@ -72,7 +74,7 @@ public class BaseLanguage implements Language
 	/**
 	 * default arguments :
 	 * name : String. language name
-	 * textQuote : char[]. like "". all available quotes.
+	 * textQuote : String. like "". all available quotes.
 	 * textEscaper : char. in "", which can put textually like "he said, \"hi this-->\""
 	 * comment : Pair<String>[]. all comments: a to b. a:"/*" b:"* /" or a:"//" b:"\n"
 	 * textSeperator : String. It can seperate text; for instance: in "abc=123", if '=' is not seperator, "abc=123" would senced with a variable name.
@@ -129,5 +131,15 @@ public class BaseLanguage implements Language
 	@Override
 	public LanguageInfo getInfo() {
 		return info;
+	}
+	
+	@Override
+	public CodeAnalysis newAnalysis() {
+		return null;
+	}
+	
+	@Override
+	public CodeSuggest getSuggest() {
+		return null;
 	}
 }

@@ -13,6 +13,7 @@ import com.asm.language.*;
 import com.asm.widget.codeedit.*;
 import java.io.*;
 import java.util.*;
+import com.lhw.util.Pair;
 
 import android.support.v7.widget.Toolbar;
 
@@ -54,7 +55,45 @@ public class CodeEditActivity extends AppCompatActivity
 		final EditText e = new EditText(this);
 		e.setTextColor(0xffcccccc);
 		e.addTextChangedListener(new TextWatcher() {
-				LanguageInfo info = new JavaLanguage.JavaInfo();
+				LanguageInfo info = new LanguageInfo() {
+					@Override
+					public String languageName() {
+							return "java";
+					}
+					
+					@Override
+					public String textQuotes() {
+						return "\"\'";
+					}
+					
+					@Override
+					public char textEscaper() {
+						return '\\';
+					}
+					
+					@Override
+					public Pair<String>[] comments() {
+						return new Pair[] {
+							//new Pair<String>("//", "\n"),
+							//new Pair<String>("/*", "*/"),
+						};
+					}
+					
+					@Override
+					public String textSeperators() {
+						return ";.,{}()[]:+-/*?<>&|!=^~";
+					}
+					
+					@Override
+					public boolean getArg(String name, boolean defaultValue) {
+						return defaultValue;
+					}
+					
+					@Override
+					public String getArg(String name, String defaultValue) {
+						return defaultValue;
+					}
+				};
 			
 			
 				@Override

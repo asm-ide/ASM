@@ -1,6 +1,7 @@
 package com.asm.widget.codeedit;
 
 import android.text.Editable;
+import com.asm.language.Language;
 import com.asm.language.LanguageInfo;
 
 
@@ -11,6 +12,8 @@ public interface CodeEditInterface
 {
 	public Editable getText();
 	public LanguageInfo getLanguageInfo();
+	public CodeStyleInterface getStyle();
+	public Language getLanguage();
 	// TODO
 	//public Highlightable getHighlightCache();
 }
