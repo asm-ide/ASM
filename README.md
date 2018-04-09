@@ -22,6 +22,9 @@ Android Studio Mobile - A mobile IDE
                       core-ui/LICENSE.
 	
                       ASM Compiler unit
+		: Android Gradle Build Support
+		: APK Building In Android
+		
                © GongBj. All Rights Reserved.
 	
                      ASM android app UI
