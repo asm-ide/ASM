@@ -1,5 +1,8 @@
 package com.asm.widget.codeedit;
 
+import com.asm.Settings;
+import com.asm.text.TextData;
+import com.asm.text.TextDraw;
 import com.asm.annotation.NonNull;
 import com.asm.annotation.Nullable;
 
@@ -95,6 +98,7 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 		
 		init();
 		
+		Settings.loadSettingIfNotLoaded(context);
 		mDraw = TextDraw.create(this);
 		mData = mFactory.newEditable("package com.lhw;\na\nb\npublic class Test\n{\n\tpublic int a = 0; \n}\n\n\n\n\n\n\nho"); //TODO: TEMP
 		mData.setDraw(mDraw);

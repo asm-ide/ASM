@@ -6,10 +6,6 @@ import com.asm.analysis.CodeSuggest;
 
 public class JavaAnalysis extends CodeAnalysis
 {
-	private static final CodeSuggest SUGGEST
-		= new JavaSuggest();
-	
-	
 	private int mIndex = 0;
 	
 	
@@ -41,10 +37,4 @@ public class JavaAnalysis extends CodeAnalysis
 	public void move(int index) {
 		mIndex = index;
 	}
-
-	@Override
-	public CodeSuggest getSuggest() {
-		return SUGGEST;
-	}
-	
 }

@@ -1,11 +1,12 @@
 package com.asm.widget.codeedit;
 
-import com.asm.widget.*;
+import com.asm.widget.R;
+import com.asm.text.TextData;
 
 import android.view.View;
 import android.view.MotionEvent;
-import android.view.inputmethod.*;
-import android.widget.*;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Scroller;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;

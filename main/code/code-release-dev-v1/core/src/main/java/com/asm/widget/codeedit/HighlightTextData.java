@@ -1,5 +1,9 @@
 package com.asm.widget.codeedit;
 
+import com.asm.util.NonReferenceArrayList;
+import com.asm.text.TextData;
+import com.asm.text.TextDraw;
+
 import android.os.Parcel;
 
 import java.io.Serializable;

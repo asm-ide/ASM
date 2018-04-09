@@ -1,10 +1,10 @@
 package com.asm.widget;
 
-import com.asm.widget.codeedit.Language;
+import com.asm.language.Language;
 import com.asm.widget.codeedit.CodeStyle;
 import com.asm.widget.codeedit.ScrollingEditText;
-import com.asm.widget.codeedit.LanguageInfo;
-import com.asm.yoon2.codeedit.CodeEditInterface;
+import com.asm.language.LanguageInfo;
+import com.asm.widget.codeedit.CodeEditInterface;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -13,7 +13,8 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.util.DisplayMetrics;
-import android.text.*;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 
 /**

@@ -25,7 +25,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 
-import static com.asm.widget.codeedit.Settings.codestyle.*;
+import static com.asm.Settings.codestyle.*;
 
 
 /**

@@ -1,30 +1,20 @@
 package com.asm.coreui.activity;
 
-import com.asm.coreui.*;
-import com.asm.widget.*;
-import com.asm.coreui.R;
 import android.content.*;
 import android.os.*;
+import android.support.design.widget.*;
 import android.support.v7.app.*;
 import android.support.v7.widget.*;
-import android.support.v7.widget.Toolbar;
-import android.widget.*;
-import android.util.*;
-import java.io.*;
-import com.asm.widget.codeedit.*;
-import android.support.design.widget.*;
-import android.view.*;
-import android.support.v4.widget.*;
-import android.support.v4.view.*;
 import android.text.*;
-import com.asm.widget.codeedit.languages.*;
 import android.text.style.*;
+import android.util.*;
+import android.widget.*;
+import com.asm.language.*;
+import com.asm.widget.codeedit.*;
+import java.io.*;
 import java.util.*;
-import com.lhw.util.*;
-import com.lhw.util.TextUtils;
-import android.content.res.*;
-import java.nio.charset.*;
-import java.nio.*;
+
+import android.support.v7.widget.Toolbar;
 
 
 public class CodeEditActivity extends AppCompatActivity

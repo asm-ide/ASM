@@ -63,6 +63,4 @@ public abstract class CodeAnalysis implements Iterator<CodeAnalysis.CodePart>
 	public abstract void setCode(CharSequence code);
 	
 	public abstract void move(int index);
-	
-	public abstract CodeSuggest getSuggest();
 }
