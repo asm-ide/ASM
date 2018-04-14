@@ -306,4 +306,6 @@ public class TextUtils
 		buf.get(chars);
 		return new CharCharSequence(chars);
 	}
+	
+	
 }

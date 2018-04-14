@@ -9,11 +9,11 @@ import android.text.*;
 import android.text.style.*;
 import android.util.*;
 import android.widget.*;
+import com.asm.analysis.*;
 import com.asm.language.*;
 import com.asm.widget.codeedit.*;
 import java.io.*;
 import java.util.*;
-import com.lhw.util.Pair;
 
 import android.support.v7.widget.Toolbar;
 
@@ -40,6 +40,7 @@ public class CodeEditActivity extends AppCompatActivity
 						th = th.getCause();
 					}
 					String obj = stringWriter.toString();
+					Log.d("err", obj);
 					i.putExtra("error", obj);
 					startActivity(i);
 					//try {
@@ -72,10 +73,10 @@ public class CodeEditActivity extends AppCompatActivity
 					}
 					
 					@Override
-					public Pair<String>[] comments() {
-						return new Pair[] {
-							//new Pair<String>("//", "\n"),
-							//new Pair<String>("/*", "*/"),
+					public String[] comments() {
+						return new String[] {
+							"//", "\n",
+							"/*", "*/",
 						};
 					}
 					
@@ -105,8 +106,8 @@ public class CodeEditActivity extends AppCompatActivity
 				@Override
 				public void onTextChanged(CharSequence p1, int p2, int p3, int p4)
 				{
-					info.comments();
-					
+					//info.comments();
+					Log.d("ce", "onTextChanged");
 					e.getText().clearSpans();
 					Random r = new Random();
 					CodeIterator i = new CodeIterator();
@@ -114,6 +115,10 @@ public class CodeEditActivity extends AppCompatActivity
 					i.setCode(e.getText());
 					i.setInfo(info);
 					Log.d("ce", "start " + e.getText());
+					
+					//try {
+					//	Thread.sleep(100L);
+					//} catch(InterruptedException e) {}
 					
 					while(i.hasNext()) {
 						CodeIterator.CodePart p = i.next();

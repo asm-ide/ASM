@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<language
-	name="java"
+<language name="java"
 	analysisClass="com.asm.analysis.java.JavaAnalysis">
 	<data name="sentence" type="strings">
 		"abstract", "break", "case", "catch", "class", "continue", "default", "do", "else", "extends", "final", "finally", "for", "if", "import", "implements", "instanceof", 
@@ -12,15 +11,15 @@
 	<data name="operator" type="string">;.,{}()[]:</data>
 	<data name="math" type="string">"+-/*?&lt;&gt;&|!="</data>
 	<data name="textSeperator" type="string"> ;.,{}()[]:+-/*?&lt;&gt;&|!=</data>
-	<data name="textQuote" type="string">"'</data>
+	<data name="textQuotes" type="string">"'</data>
 	<data name="textEscaper">\</data>
-	<data name="comment" type="pairs:string">
-		"/*" : "*/",
-		"//" : "\n"
+	<data name="comments" type="strings">
+		"/*", "*/",
+		"//", "\n"
 	</data>
-	<args name="base.textQuote" value="@data/textQuote" />
-	<args name="base.textSeperator" value="@data/textSeperator" />
-	<args name="base.textEscaper" value="@data/textEscaper" />
-	<args name="base.comment" value="@data/comment" />
-	<!--<args name="?" type="boolean/string/.." value="true or false or @data/??? etc" />-->
+	<args name="info.textQuotes" value="@data/textQuotes" />
+	<args name="info.textSeperators" value="@data/textSeperators" />
+	<args name="info.textEscaper" value="@data/textEscaper" />
+	<args name="info.comments" value="@data/comments" />
+	<args name="info.isNewlineBreakText" type="boolean" value="true" />
 </language>

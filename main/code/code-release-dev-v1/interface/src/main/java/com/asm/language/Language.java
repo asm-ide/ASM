@@ -34,7 +34,7 @@ public interface Language
 	 * The call priority is beforeTextChanged -> afterTextChanged -> highlight. (when text changed)
 	 * text changed event is run on UI thread, but highlight might be called
 	 */
-	public void highlight(Highlightable data, int start, int end);
+	public void highlight(int start, int end);
 	
 	/**
 	 * Return the language info.

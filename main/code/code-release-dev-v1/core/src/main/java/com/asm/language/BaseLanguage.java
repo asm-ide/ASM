@@ -7,7 +7,6 @@ import com.asm.language.LanguageInfo;
 import com.asm.widget.CodeEdit;
 import com.asm.widget.codeedit.Highlightable;
 import com.asm.widget.codeedit.CodeEditInterface;
-import com.lhw.util.Pair;
 
 import java.util.HashMap;
 
@@ -34,7 +33,7 @@ public class BaseLanguage implements Language
 		}
 		
 		@Override
-		public Pair<String>[] comments() {
+		public String[] comments() {
 			return comment;
 		}
 		
@@ -67,7 +66,7 @@ public class BaseLanguage implements Language
 	private String langName = "base";
 	private String textQuote = null;
 	private char textEscaper = '\\';
-	private Pair<String>[] comment;
+	private String[] comment;
 	private String textSeperator = ";.,{}()[]:+-/*?<>&|!=^~";
 	
 	
@@ -114,7 +113,7 @@ public class BaseLanguage implements Language
 	}
 	
 	@Override
-	public void highlight(Highlightable data, int start, int end) {
+	public void highlight(int start, int end) {
 		
 	}
 	

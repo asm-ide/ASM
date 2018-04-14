@@ -1,7 +1,6 @@
 package com.asm.analysis;
 
 import com.asm.language.LanguageInfo;
-import com.lhw.util.Pair;
 
 import com.lhw.util.TextUtils;
 
@@ -128,15 +127,17 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 		} else {
 			int i1 = TextUtils.equalsIndex(cur, info.textQuotes());
 			if(i1 == -1) { //not var,num,text
-				int i2 = TextUtils.equalsIn(new Object() {
-					@Override
-					public boolean equals(Object obj) {
-						String target = (String) ((Pair) obj).b;
-						int targetLen = target.length();
-						if(mCode.length() > mIndex + targetLen) return false;
-						return TextUtils.lightSubSequence(text, mIndex, mIndex + targetLen).equals(target);
+				int i2 = -1;
+				String[] comments = info.comments();
+				{
+					for(int i = 0; i < comments.length; i += 2) {
+						int end = startIndex + comments[i].length();
+						if(end > text.length()) continue;
+						CharSequence c = text.subSequence(startIndex, end);
+						if(comments[i].contentEquals(c)) i2 = i;
 					}
-				}, info.comments());
+				}
+				
 				if(i2 == -1) {
 					//not var,num,text,note
 					if(TextUtils.includes(cur, info.textSeperators())) {
@@ -147,8 +148,7 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 					}
 				} else {
 					//note //text\n or /*lines*/ (java)
-					Pair<String> pair = info.comments()[i2];
-					String ends = pair.b;
+					String ends = comments[i2 + 1];
 					
 					while(hasNext()) {
 						if(TextUtils.startsWithAt(mIndex, mCode, ends))
@@ -163,12 +163,21 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 				final char textEscaper = info.textEscaper();
 				final char quote = info.textQuotes().charAt(i1);
 				boolean lastEscaper = false;
+				boolean isNewlineBreakText = info.getArg("isNewlineBreakText", false);
 				
 				while(hasNext()) {
 					if(lastEscaper) {
-						if(text.charAt(mIndex) == textEscaper) lastEscaper = false;
+						
 					} else {
-						if(text.charAt(mIndex) == quote) break;
+						char c = text.charAt(mIndex);
+						if(lastEscaper) {
+							lastEscaper = false;
+							continue;
+						} else if(c == textEscaper) {
+							lastEscaper = true;
+							continue;
+						} else if(c == quote) break;
+						else if(c == '\n') break;
 					}
 					mIndex++;
 				}

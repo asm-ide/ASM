@@ -1,7 +1,5 @@
 package com.asm.language;
 
-import com.lhw.util.Pair;
-
 
 public class JavaInfo implements LanguageInfo
 {
@@ -21,10 +19,10 @@ public class JavaInfo implements LanguageInfo
 	}
 
 	@Override
-	public Pair<String>[] comments() {
-		return new Pair[] {
-			//new Pair<String>("//", "\n"),
-			//new Pair<String>("/*", "*/"),
+	public String[] comments() {
+		return new String[] {
+			"//", "\n", // //comments
+			"/*", "*/", // /* comments */
 		};
 	}
 

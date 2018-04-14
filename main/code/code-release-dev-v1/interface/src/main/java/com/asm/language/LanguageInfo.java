@@ -1,7 +1,5 @@
 package com.asm.language;
 
-import com.lhw.util.Pair;
-
 
 public interface LanguageInfo
 {
@@ -11,7 +9,7 @@ public interface LanguageInfo
 	
 	public char textEscaper();
 	
-	public Pair<String>[] comments();
+	public String[] comments();
 	
 	public String textSeperators();
 	
