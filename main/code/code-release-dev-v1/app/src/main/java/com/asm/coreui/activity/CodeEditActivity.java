@@ -52,6 +52,7 @@ public class CodeEditActivity extends AppCompatActivity
 			});
 		
 		super.onCreate(savedInstanceState);
+		Toast.makeText(this, new JniUnitTest().testFunc(), Toast.LENGTH_LONG).show();
 		Log.d(".", "before set view");
 		final EditText e = new EditText(this);
 		e.setTextColor(0xffcccccc);

@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.asm.yoon2"
-        minSdkVersion 14
+        minSdkVersion 3
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"

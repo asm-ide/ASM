@@ -22,4 +22,10 @@
 	<args name="info.textEscaper" value="@data/textEscaper" />
 	<args name="info.comments" value="@data/comments" />
 	<args name="info.isNewlineBreakText" type="boolean" value="true" />
+	<!--
+		more:
+			string
+				varNamesMore		default a-z, A-Z, 0-9, _ are available in varname.
+				
+	-->
 </language>
