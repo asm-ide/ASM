@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.asm.yoon2"
-        minSdkVersion 3
+        minSdkVersion 9
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -22,4 +22,4 @@ android {
 dependencies {
 	compile 'com.android.support:design:+'
 	compile ':interface'
-    compile fileTree(dir: 'libs', 
+    compile fileTree(dir: 'libs', include: ["*.jar"])

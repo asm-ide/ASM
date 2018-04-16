@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <language name="java"
-	analysisClass="com.asm.analysis.java.JavaAnalysis">
+	analysisClass="com.asm.analysis.java.JavaAnalysis"
+	suggestClass="com.asm.analysis.java.JavaSuggest">
 	<data name="sentence" type="strings">
 		"abstract", "break", "case", "catch", "class", "continue", "default", "do", "else", "extends", "final", "finally", "for", "if", "import", "implements", "instanceof", 
 		"interface", "native", "new", "package", "public", "protected", "private", "return", "static", "super", "switch", "this", "throw", "throws", "try", "volatile", "while"

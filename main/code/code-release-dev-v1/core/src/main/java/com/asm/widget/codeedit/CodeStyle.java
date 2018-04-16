@@ -115,6 +115,9 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 		/**
 		 * Return the id.
 		 */
+		public byte getId() {
+			return parent.getId(name);
+		}
 		
 		
 		/**
@@ -253,12 +256,14 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 		return getColorValue(name).getColor();
 	}
 	
-	public int getColor(int id) {
+	@Override
+	public int getColor(byte id) {
 		return getColorValue(id).getColor();
 	}
 	
-	public int getId(String name) {
-		return containsKeyIndex(name);
+	@Override
+	public byte getId(String name) {
+		return (byte) containsKeyIndex(name);
 	}
 	
 	/**
@@ -290,11 +295,11 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 	 * Set the color.
 	 */
 	@Override
-	public int setColor(String key, int value) {
-		return put(key, new ColorValue(this, value));
+	public byte setColor(String key, int value) {
+		return setColor(key, new ColorValue(this, value));
 	}
 	
-	public int setColor(String key, ColorValue value) {
+	public byte setColor(String key, ColorValue value) {
 		return put(key, value);
 	}
 	
@@ -373,15 +378,16 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 		throw new IllegalArgumentException("key " + name + " is not exist");
 	}
 	
-	private int put(String name, ColorValue value) {
+	private byte put(String name, ColorValue value) {
+		if(colors.size() > (2 ^ 7) - 1) throw new OutOfMemoryError();
 		value.name = name;
 		int index = containsKeyIndex(name);
 		if(index == -1) {
 			colors.add(value);
-			return colors.size() - 1;
+			return (byte) (colors.size() - 1);
 		} else {
 			colors.set(index, value);
-			return index;
+			return (byte) index;
 		}
 	}
 	

@@ -1,6 +1,10 @@
 package com.asm.analysis;
 
 import java.util.Iterator;
+import com.asm.language.HighlightArgs;
+import com.asm.language.LanguageInfo;
+import com.asm.widget.codeedit.*;
+import com.asm.language.*;
 
 
 public abstract class CodeAnalysis implements Iterator<CodeAnalysis.CodePart>
@@ -59,6 +63,26 @@ public abstract class CodeAnalysis implements Iterator<CodeAnalysis.CodePart>
 		}
 	}
 	
+	private HighlightArgs mArgs;
+	
+	
+	public void initialize(HighlightArgs args) {
+		mArgs = args;
+	}
+	
+	public Language getLanguage() {
+		return mArgs.getLanguage();
+	}
+	
+	public LanguageInfo getInfo() {
+		return mArgs.getInfo();
+	}
+	
+	public CodeStyleInterface getStyle() {
+		return mArgs.getStyle();
+	}
+	
+	//TODO clean imports
 	
 	public abstract void setCode(CharSequence code);
 	

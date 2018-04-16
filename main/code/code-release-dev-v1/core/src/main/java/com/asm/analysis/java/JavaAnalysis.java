@@ -3,12 +3,16 @@ package com.asm.analysis.java;
 import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
 import com.asm.analysis.CodeIterator;
+import com.lhw.util.TextUtils;
 
 
 public class JavaAnalysis extends CodeAnalysis
 {
+	private static final boolean ISRELETIVEHIGHLIGHT = true;
+	
 	private CodeIterator mIterator;
 	private CharSequence mCode;
+	private boolean mAnalysisDeeply = false;
 	
 	
 	public JavaAnalysis() {
@@ -23,7 +27,25 @@ public class JavaAnalysis extends CodeAnalysis
 
 	@Override
 	public CodePart next() {
-		return null;
+		CodeIterator.CodePart part = mIterator.next();
+		CodePart newPart = new CodePart();
+		CharSequence text = part.text;
+		String col = "base.foreground";
+		int type = part.type;
+		
+		if(mAnalysisDeeply) {
+			// TODO : not support yet
+		} else {
+			switch(type) {
+				case CodeIterator.TYPE_NORMAL:
+					if(TextUtils.isUpper(text.charAt(0))) {
+						col = "java.class";
+					}
+					break;
+			}
+		}
+		
+		return newPart.setText(text).setIndex(part.index).setColor(getStyle().getId(col));
 	}
 
 	@Override
@@ -40,5 +62,9 @@ public class JavaAnalysis extends CodeAnalysis
 	@Override
 	public void move(int index) {
 		mIterator.move(index);
+	}
+	
+	public void setIsAnalysisDeeply(boolean isDeeply) {
+		mAnalysisDeeply = isDeeply;
 	}
 }

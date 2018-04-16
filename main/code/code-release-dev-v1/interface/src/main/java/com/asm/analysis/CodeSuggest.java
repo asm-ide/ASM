@@ -1,8 +1,10 @@
 package com.asm.analysis;
 
-import android.graphics.Bitmap;
-import android.text.Editable;
-import com.asm.annotation.Nullable;
+import android.graphics.*;
+import android.text.*;
+import com.asm.annotation.*;
+import com.asm.language.*;
+import com.asm.widget.codeedit.*;
 
 
 public abstract class CodeSuggest
@@ -21,6 +23,27 @@ public abstract class CodeSuggest
 		public OnItemSelectedListener listener;
 	}
 	
+	
+	private HighlightArgs mArgs;
+
+
+	public void initialize(HighlightArgs args) {
+		mArgs = args;
+	}
+
+	public Language getLanguage() {
+		return mArgs.getLanguage();
+	}
+
+	public LanguageInfo getInfo() {
+		return mArgs.getInfo();
+	}
+
+	public CodeStyleInterface getStyle() {
+		return mArgs.getStyle();
+	}
+
+	//TODO clean imports
 	
 	/**
 	 * You can override this method to auto insert texts like:
