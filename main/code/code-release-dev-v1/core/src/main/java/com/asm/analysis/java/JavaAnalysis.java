@@ -4,6 +4,7 @@ import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
 import com.asm.analysis.CodeIterator;
 import com.lhw.util.TextUtils;
+import com.asm.language.Language;
 
 
 public class JavaAnalysis extends CodeAnalysis
@@ -24,13 +25,14 @@ public class JavaAnalysis extends CodeAnalysis
 	public boolean hasNext() {
 		return false;
 	}
-
+	
 	@Override
 	public CodePart next() {
 		CodeIterator.CodePart part = mIterator.next();
 		CodePart newPart = new CodePart();
 		CharSequence text = part.text;
 		String col = "base.foreground";
+		Language lang = getLanguage();
 		int type = part.type;
 		
 		if(mAnalysisDeeply) {
@@ -38,9 +40,33 @@ public class JavaAnalysis extends CodeAnalysis
 		} else {
 			switch(type) {
 				case CodeIterator.TYPE_NORMAL:
-					if(TextUtils.isUpper(text.charAt(0))) {
+					if(TextUtils.isUpper(text.charAt(0)) && TextUtils.containsLower(text))
 						col = "java.class";
-					}
+					else if(TextUtils.equalsIn(text, lang.getData("keywords", new CharSequence[] {})) != -1)
+						col = "base.keyword";
+					else if(TextUtils.equalsIn(text, lang.getData("types", new CharSequence[] {})) != -1)
+						col = "base.type";
+					else if(TextUtils.equalsIn(text, lang.getData("otherDatas", new CharSequence[] {})) != -1)
+						col = "base.otherData";
+					break;
+					
+				case CodeIterator.TYPE_NUMBER:
+					col = "base.number";
+					break;
+					
+				case CodeIterator.TYPE_SEPERATOR:
+					if(TextUtils.equalsIn(text, lang.getData("operators", new CharSequence[] {})) != -1)
+						col = "base.operator";
+					else
+						col = "base.math";
+					break;
+					
+				case CodeIterator.TYPE_TEXT:
+					col = "base.textQuote";
+					break;
+					
+				case CodeIterator.TYPE_COMMENT:
+					col = "base.comment";
 					break;
 			}
 		}

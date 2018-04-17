@@ -1,23 +1,17 @@
 package com.asm.language;
 
-import com.asm.widget.codeedit.CodeStyle;
-
-import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
+import com.asm.analysis.*;
+import java.io.*;
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
+import com.lhw.util.TypeUtils;
 
 
 public final class LanguageLoader
 {
 	@SuppressWarnings("raw-types")
 	public static Language fromXml(InputStream is) {
-		BaseLanguage lang;
+		BaseLanguage lang = new BaseLanguage();
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -29,12 +23,21 @@ public final class LanguageLoader
 			if(document.getChildNodes().getLength() != 1)
 				throw new IllegalStateException("rootnode length is wrong");
 			
+			NamedNodeMap attrs = document.getAttributes();
+			
 			if(document.getAttributes().getNamedItem("baseClass") == null) {
 				lang = new BaseLanguage();
-			} else {
-				String className = document.getAttributes().getNamedItem("baseClass").getNodeValue();
-				Class baseClass = Class.forName(className);
-				lang = (BaseLanguage) baseClass.getConstructor().newInstance();
+			} else if(attrs != null) {
+				Node analysis = attrs.getNamedItem("analysisClass");
+				if(analysis != null) {
+					lang.setAnalysisClass((Class<CodeAnalysis>) Class.forName(analysis.getNodeValue()));
+				}
+				Node suggest = attrs.getNamedItem("suggestClass");
+				if(suggest != null) {
+					String suggestName = suggest.getNodeValue();
+					Class suggestClass = Class.forName(suggestName);
+					lang.setSuggest((CodeSuggest) suggestClass.newInstance());
+				}
 			}
 			String langName = document.getAttributes().getNamedItem("name").getNodeValue();
 			lang.setLanguageName(langName);
@@ -43,23 +46,24 @@ public final class LanguageLoader
 			for(int i = 0; i < rootList.getLength(); i++) {
 				Node node = rootList.item(i);
 				switch(node.getNodeName()) {
-					case "item": {
-						NamedNodeMap attrs = node.getAttributes();
-						String name = attrs.getNamedItem("name").getNodeValue();
-						
+					case "data": {
+						NamedNodeMap attrs2 = node.getAttributes();
+						String name = attrs2.getNamedItem("name").getNodeValue();
+						String type = attrs2.getNamedItem("type").getNodeValue();
+						lang.setData(name, TypeUtils.getObjectFromString(node.getTextContent(), type));
 						break;
 					}
-//					case "color": {
-//						NodeList list = node.getChildNodes();
-//						CodeStyle.ColorValue color = CodeStyle.ColorValue.fromString(node.getAttributes().getNamedItem("colorName").getNodeValue());
-//						for(int ii = 0; ii < list.getLength(); i++) {
-//							Node node2 = list.item(ii);
-//							
-//						}
-//						break;
-//					}
 					
-					
+					case "arg": {
+						NamedNodeMap attrs2 = node.getAttributes();
+						String name = attrs2.getNamedItem("name").getNodeValue();
+						String value = attrs2.getNamedItem("value").getNodeValue();
+						String type = null;
+						if(attrs2.getNamedItem("type") != null)
+							type = attrs2.getNamedItem("type").getNodeValue();
+						lang.setArg(name, type, value);
+						break;
+					}
 				}
 			}
 		} catch(Exception e) {

@@ -9,6 +9,9 @@ import com.asm.widget.codeedit.Highlightable;
 import com.asm.widget.codeedit.CodeEditInterface;
 
 import java.util.HashMap;
+import java.lang.reflect.Constructor;
+import com.asm.annotation.Nullable;
+import com.lhw.util.TypeUtils;
 
 
 /**
@@ -49,17 +52,13 @@ public class BaseLanguage implements Language
 		}
 
 		@Override
-		public String getArg(String name, String defaultValue)
-		{
+		public String getArg(String name, String defaultValue) {
 			if(args.containsKey(name)) return (String) args.get(name);
 			return defaultValue;
 		}
 	};
 	
-	private static final String SPACES = " \t\n";
-	
-	
-	//private boolean inited = false;
+	//private static final String SPACES = " \t\n";
 	
 	private CodeEdit edit;
 	
@@ -68,6 +67,8 @@ public class BaseLanguage implements Language
 	private char textEscaper = '\\';
 	private String[] comment;
 	private String textSeperator = ";.,{}()[]:+-/*?<>&|!=^~";
+	private Class<CodeAnalysis> analysisClass;
+	private CodeSuggest suggest;
 	
 	
 	/**
@@ -82,6 +83,8 @@ public class BaseLanguage implements Language
 	 */
 	
 	private HashMap<String, Object> args = new HashMap<String, Object>();
+	
+	private HashMap<String, Object> datas = new HashMap<String, Object>();
 	
 	
 	public void setLanguageName(String langName) {
@@ -107,9 +110,8 @@ public class BaseLanguage implements Language
 	}
 	
 	@Override
-	public void initLanguage(CodeEditInterface edit) {
-		if(!(edit instanceof CodeEdit)) throw new IllegalArgumentException("edit instanceof CodeEdit returns false");
-		this.edit = (CodeEdit) edit;
+	public void initLanguage(HighlightArgs edit) {
+		
 	}
 	
 	@Override
@@ -132,13 +134,50 @@ public class BaseLanguage implements Language
 		return info;
 	}
 	
+	public void setAnalysisClass(Class<CodeAnalysis> clazz) {
+		analysisClass = clazz;
+	}
+	
+	public void setSuggest(CodeSuggest suggest) {
+		this.suggest = suggest;
+	}
+	
 	@Override
 	public CodeAnalysis newAnalysis() {
-		return null;
+		try {
+			return analysisClass.newInstance();
+		} catch(Exception e) {
+			throw new IllegalStateException("wrong class state", e);
+		}
 	}
 	
 	@Override
 	public CodeSuggest getSuggest() {
-		return null;
+		return suggest;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getData(String name, T defaultValue) {
+		if(datas.containsKey(name)) return (T) datas.get(name);
+		return defaultValue;
+	}
+	
+	public void setData(String name, Object value) {
+		datas.put(name, value);
+	}
+	
+	public void setArg(String name, @Nullable String type, String value) {
+		if(type == null) {
+			switch(name) {
+				case "info.textQuotes": textQuote = value; break;
+				case "info.textSeperator": textSeperator = value; break;
+				case "info.textEscaper": textEscaper = value.charAt(0); break;
+				case "info.comments": comment = (String[]) TypeUtils.parseList(value); break;
+				default: throw new IllegalArgumentException("unknown name : " + name);
+			}
+		} else {
+			args.put(name, TypeUtils.getObjectFromString(value, type));
+		}
 	}
 }

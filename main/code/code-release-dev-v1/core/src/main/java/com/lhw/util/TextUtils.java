@@ -298,14 +298,11 @@ public class TextUtils
 		return isAlphabet(c) || c == '_'; //|| c == '$'; //only java
 	}
 	
-	public static CharSequence randText(Random random, int len) {
-		byte[] bytes = new byte[len];
-		random.nextBytes(bytes);
-		CharBuffer buf = Charset.defaultCharset().decode(ByteBuffer.wrap(bytes));
-		char[] chars = new char[buf.length()];
-		buf.get(chars);
-		return new CharCharSequence(chars);
+	public static boolean containsLower(CharSequence text) {
+		for(int i = 0; i < text.length(); i++)
+			if(!isUpper(text.charAt(i))) return true;
+		return false;
 	}
 	
-	
+	// TODO : else
 }

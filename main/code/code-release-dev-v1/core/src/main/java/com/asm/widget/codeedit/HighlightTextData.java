@@ -34,10 +34,10 @@ public class HighlightTextData extends TextData implements Serializable
 	}
 	
 	private void init() {
-		initHighlightCache(new byte[0]);
+		initHighlightCache(new short[0]);
 	}
 	
-	private void initHighlightCache(byte[] cache) {
+	private void initHighlightCache(short[] cache) {
 		mHighlightCache = new NonReferenceArrayList(cache, 0);
 	}
 	
@@ -46,8 +46,8 @@ public class HighlightTextData extends TextData implements Serializable
 		super.onInsert(where, text, start, end);
 		
 		int len = end - start;
-		byte[] arr = new byte[len];
-		Arrays.fill(arr, (byte) -1);
+		short[] arr = new short[len];
+		Arrays.fill(arr, (short) -1);
 		mHighlightCache.insert(where, arr, 0, len);
 	}
 	
@@ -57,8 +57,9 @@ public class HighlightTextData extends TextData implements Serializable
 	
 	public static HighlightTextData fromParcel(TextData d, Parcel p, TextDraw parent) {
 		HighlightTextData data = (HighlightTextData) TextData.fromParcel(d, p, parent);
-		byte[] arr = null;
-		p.readByteArray(arr);
+		short[] arr = null;
+		char[] tmpArr = null;
+		p.readCharArray(tmpArr);
 		data.initHighlightCache(arr);
 		return data;
 	}

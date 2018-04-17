@@ -1,14 +1,21 @@
 # ASM
 **Android Studio Mobile - A mobile IDE**
 
+
 **CURRENTLY HAVE BUG AND DEVELOPING**
 
 The ASM Team makes the android studio in the mobile device.
 
 
 ## Features
+### Project Compiler-Unit
+by @GongBj / not uploaded<br>
+Apk build on Android and gradle support<br>
+TODO : more information
+
 ### Project code
-[tree main/code](https://github.com/lhwdev/ASM/tree/master/main/code)<br>
+by @lhwdev / [tree main/code](https://github.com/lhwdev/ASM/tree/master/main/code)<br>
+Highlight / Analysis codes and suggest code.<br>
 Real-time code highlighter - `CodeEdit (com.asm.widget.codeedit)`<br>
 Code analysis - `CodeAnalysis (com.asm.analysis)`
 

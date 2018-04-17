@@ -13,24 +13,23 @@ public abstract class CodeAnalysis implements Iterator<CodeAnalysis.CodePart>
 	{
 		private CharSequence mText;
 		private int mIndex;
-		private int mType;
-		private byte mColor;
+		private short mColor;
 		
 		
 		public CodePart() {}
 		
-		public CodePart(CharSequence text, int index, int type) {
+		public CodePart(CharSequence text, int index, byte color) {
 			mText = text;
 			mIndex = index;
-			mType = type;
+			mColor = color;
 		}
 		
-		public CodePart setColor(byte color){
+		public CodePart setColor(short color){
 			mColor = color;
 			return this;
 		}
-
-		public byte getColor() {
+		
+		public short getColor() {
 			return mColor;
 		}
 		
@@ -51,15 +50,6 @@ public abstract class CodeAnalysis implements Iterator<CodeAnalysis.CodePart>
 		
 		public int getIndex() {
 			return mIndex;
-		}
-		
-		public CodePart setType(int type) {
-			mType = type;
-			return this;
-		}
-
-		public int getType() {
-			return mType;
 		}
 	}
 	
