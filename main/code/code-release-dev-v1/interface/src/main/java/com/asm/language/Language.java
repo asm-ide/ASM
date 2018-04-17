@@ -52,4 +52,10 @@ public interface Language
 	 * Can be null.
 	 */
 	public @Nullable CodeSuggest getSuggest();
+	
+	/**
+	 * Return the some parameters and arguments.
+	 * May be many values, like keywords
+	 */
+	public <T> T getData(String name, T defaultValue);
 }

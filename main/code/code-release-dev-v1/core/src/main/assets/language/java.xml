@@ -2,27 +2,30 @@
 <language name="java"
 	analysisClass="com.asm.analysis.java.JavaAnalysis"
 	suggestClass="com.asm.analysis.java.JavaSuggest">
-	<data name="sentence" type="strings">
+	<data name="keywords" type="strings">
 		"abstract", "break", "case", "catch", "class", "continue", "default", "do", "else", "extends", "final", "finally", "for", "if", "import", "implements", "instanceof", 
 		"interface", "native", "new", "package", "public", "protected", "private", "return", "static", "super", "switch", "this", "throw", "throws", "try", "volatile", "while"
 	</data>
-	<data name="type" type="strings">
+	<data name="otherDatas" type="strings">
+		"true", "false", "null"
+	</data>
+	<data name="types" type="strings">
 		"boolean", "byte", "char", "double", "float", "int", "long", "short"
 	</data>
-	<data name="operator" type="string">;.,{}()[]:</data>
-	<data name="math" type="string">"+-/*?&lt;&gt;&|!="</data>
-	<data name="textSeperator" type="string"> ;.,{}()[]:+-/*?&lt;&gt;&|!=</data>
+	<data name="operators" type="string">;.,{}()[]:</data>
+	<data name="maths" type="string">"+-/*?&lt;&gt;&|!="</data>
+	<data name="textSeperators" type="string"> ;.,{}()[]:+-/*?&lt;&gt;&|!=</data>
 	<data name="textQuotes" type="string">"'</data>
 	<data name="textEscaper">\</data>
 	<data name="comments" type="strings">
 		"/*", "*/",
 		"//", "\n"
 	</data>
-	<args name="info.textQuotes" value="@data/textQuotes" />
-	<args name="info.textSeperators" value="@data/textSeperators" />
-	<args name="info.textEscaper" value="@data/textEscaper" />
-	<args name="info.comments" value="@data/comments" />
-	<args name="info.isNewlineBreakText" type="boolean" value="true" />
+	<arg name="info.textQuotes" value="@data/textQuotes" />
+	<arg name="info.textSeperators" value="@data/textSeperators" />
+	<arg name="info.textEscaper" value="@data/textEscaper" />
+	<arg name="info.comments" value="@data/comments" />
+	<arg name="info.isNewlineBreakText" type="boolean" value="true" />
 	<!--
 		more:
 			string

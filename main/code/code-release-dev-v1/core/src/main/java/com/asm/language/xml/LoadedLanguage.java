@@ -53,5 +53,14 @@ public class LoadedLanguage implements Language
 		// TODO: Implement this method
 		return null;
 	}
+
+	@Override
+	public <T extends Object> T getData(String name, T defaultValue)
+	{
+		// TODO: Implement this method
+		return null;
+	}
+
+	
 	
 }

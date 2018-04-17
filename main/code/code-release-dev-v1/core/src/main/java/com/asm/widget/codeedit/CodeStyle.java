@@ -55,9 +55,16 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 		
 		private String name;
 		
+		private String lang;
+		
+		private int colCache;
+		
+		private boolean isColCached = false;
+		
 		
 		public ColorValue(CodeStyle parent) {
 			this.parent = parent;
+			lang = parent.currentLanguage;
 		}
 		
 		/** Construct ColorValue with color. */
@@ -84,10 +91,16 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 		 * May throws a error when color value is wrong.
 		 */
 		public int getColor() {
+			if(isColCached) return colCache;
+			else return getColorRefresh();
+		}
+		
+		private int getColorRefresh() {
+			isColCached = true;
+			
 			if(type == null) return value;
 			else if(type.startsWith("@pref/")) {
-				String name = type.substring(6);
-				if(parent.isFromXml && !parent.prefNames.contains(name)) throw new IllegalStateException("preference " + name + " is not defined on xml");
+				String name = "style_" + lang + nameSeperator + type.substring(6);
 				Log.d("ColorValue", "getColor pref " + name); //TODO: DEBUG
 				if(parent.pref.contains(name)) return parent.pref.getInt(name, -1);
 				else throw new IllegalStateException("preference " + name + " is defined, but not exist on preferences");
@@ -115,7 +128,7 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 		/**
 		 * Return the id.
 		 */
-		public byte getId() {
+		public short getId() {
 			return parent.getId(name);
 		}
 		
@@ -163,7 +176,6 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 			return super.equals(obj);
 		}
 		
-		
 		public Object nameContrast() {
 			return new NameContrast(name);
 		}
@@ -198,12 +210,6 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 	
 	/** preferences to load color values. */
 	private transient SharedPreferences pref;
-	
-	/**
-	 * Defined preference names in xml.
-	 * For avoid another preferences, because security.
-	 */
-	private ArrayList<String> prefNames = new ArrayList<String>();
 	
 	/**
 	 * current language name for load color values.
@@ -257,13 +263,13 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 	}
 	
 	@Override
-	public int getColor(byte id) {
+	public int getColor(short id) {
 		return getColorValue(id).getColor();
 	}
 	
 	@Override
-	public byte getId(String name) {
-		return (byte) containsKeyIndex(name);
+	public short getId(String name) {
+		return (short) containsKeyIndex(name);
 	}
 	
 	/**
@@ -295,11 +301,11 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 	 * Set the color.
 	 */
 	@Override
-	public byte setColor(String key, int value) {
+	public short setColor(String key, int value) {
 		return setColor(key, new ColorValue(this, value));
 	}
 	
-	public byte setColor(String key, ColorValue value) {
+	public short setColor(String key, ColorValue value) {
 		return put(key, value);
 	}
 	
@@ -331,11 +337,6 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 			for(ColorValue value : other.colors) {
 				if(force || !containsKey(value.name)) {
 					put(value.name, value.clone()); // TODO : is value.name should be cloned?
-					
-					if(isFromXml) {
-						if(!prefNames.contains(value.name))
-							prefNames.add(value.name);
-					}
 				}
 			}
 		}
@@ -378,16 +379,16 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 		throw new IllegalArgumentException("key " + name + " is not exist");
 	}
 	
-	private byte put(String name, ColorValue value) {
-		if(colors.size() > (2 ^ 7) - 1) throw new OutOfMemoryError();
+	private short put(String name, ColorValue value) {
+		if(colors.size() > (2 ^ 15) - 1) throw new OutOfMemoryError();
 		value.name = name;
 		int index = containsKeyIndex(name);
 		if(index == -1) {
 			colors.add(value);
-			return (byte) (colors.size() - 1);
+			return (short) (colors.size() - 1);
 		} else {
 			colors.set(index, value);
-			return (byte) index;
+			return (short) index;
 		}
 	}
 	
@@ -454,14 +455,14 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 									String name = item.getAttributes().getNamedItem("name").getNodeValue();
 									String strColor = item.getTextContent(); //?
 									//if(style.colors.containsKey(name)) Log.w("CodeStyle", "override color value:" + name);
-									style.put(lang + "." + name, ColorValue.fromString(style, strColor));
+									ColorValue value = ColorValue.fromString(style, strColor);
+									value.lang = lang;
+									style.put(lang + "." + name, value);
 									Log.d("CodeStyle", "colors " + name + "=" + strColor);
 									break;
 								}
 								case "preference": {
-									String name = item.getAttributes().getNamedItem("name").getNodeValue();
-									if(style.prefNames.contains(name)) throw new Exception("preference " + name + "was already defined, but overrided");
-									style.prefNames.add(name);
+									String name = "style_" + languages + nameSeperator + item.getAttributes().getNamedItem("name").getNodeValue();
 									if(item.getTextContent() != null){// && !style.pref.contains(name)) {
 										String content = item.getTextContent();
 										Log.d("CodeStyle", "pref " + name + "=" + content);
