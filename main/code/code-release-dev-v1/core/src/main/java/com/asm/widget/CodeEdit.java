@@ -1,9 +1,10 @@
 package com.asm.widget;
 
 import com.asm.language.Language;
+import com.asm.language.LanguageInfo;
+import com.asm.language.HighlightArgs;
 import com.asm.widget.codeedit.CodeStyle;
 import com.asm.widget.codeedit.ScrollingEditText;
-import com.asm.language.LanguageInfo;
 import com.asm.widget.codeedit.CodeEditInterface;
 
 import android.content.Context;
@@ -110,7 +111,7 @@ public class CodeEdit extends ScrollingEditText implements CodeEditInterface
 	
 	public void setLanguage(Language lang) {
 		language = lang;
-		lang.initLanguage(this);
+		lang.initLanguage(new HighlightArgs(this));
 	}
 	
 	public Language getLanguage() {

@@ -2,7 +2,6 @@ package com.asm.language;
 
 import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
-import com.asm.widget.codeedit.CodeEditInterface;
 import com.asm.widget.codeedit.Highlightable;
 import com.asm.annotation.Nullable;
 
@@ -18,7 +17,7 @@ public interface Language
 	 * Called when language initialize.
 	 * Might called several times, when <code>CodeEdit.setLanguage()</code> several called.
 	 */
-	public void initLanguage(CodeEditInterface edit);
+	public void initLanguage(HighlightArgs edit);
 	
 	/**
 	 * Edit event that called before text changed.

@@ -171,13 +171,23 @@ public class BaseLanguage implements Language
 		if(type == null) {
 			switch(name) {
 				case "info.textQuotes": textQuote = value; break;
-				case "info.textSeperator": textSeperator = value; break;
+				case "info.textSeperators": textSeperator = value; break;
 				case "info.textEscaper": textEscaper = value.charAt(0); break;
 				case "info.comments": comment = (String[]) TypeUtils.parseList(value); break;
 				default: throw new IllegalArgumentException("unknown name : " + name);
 			}
 		} else {
 			args.put(name, TypeUtils.getObjectFromString(value, type));
+		}
+	}
+	
+	public void setArgByValue(String name, Object value) {
+		switch(name) {
+			case "info.textQuotes": textQuote = (String) value; break;
+			case "info.textSeperators": textSeperator = (String) value; break;
+			case "info.textEscaper": textEscaper = value; break;
+			case "info.comments": Object[] arr = (Object[]) value; comment = TypeUtils.castArrays(arr, new String[arr.length]); break;
+			default: args.put(name, value);
 		}
 	}
 }

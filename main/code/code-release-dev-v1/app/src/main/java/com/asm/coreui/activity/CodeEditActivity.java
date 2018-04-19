@@ -16,6 +16,7 @@ import java.io.*;
 import java.util.*;
 
 import android.support.v7.widget.Toolbar;
+import com.asm.coreui.*;
 
 
 public class CodeEditActivity extends AppCompatActivity
@@ -57,45 +58,7 @@ public class CodeEditActivity extends AppCompatActivity
 		final EditText e = new EditText(this);
 		e.setTextColor(0xffcccccc);
 		e.addTextChangedListener(new TextWatcher() {
-				LanguageInfo info = new LanguageInfo() {
-					@Override
-					public String languageName() {
-							return "java";
-					}
-					
-					@Override
-					public String textQuotes() {
-						return "\"\'";
-					}
-					
-					@Override
-					public char textEscaper() {
-						return '\\';
-					}
-					
-					@Override
-					public String[] comments() {
-						return new String[] {
-							"//", "\n",
-							"/*", "*/",
-						};
-					}
-					
-					@Override
-					public String textSeperators() {
-						return ";.,{}()[]:+-/*?<>&|!=^~";
-					}
-					
-					@Override
-					public boolean getArg(String name, boolean defaultValue) {
-						return defaultValue;
-					}
-					
-					@Override
-					public String getArg(String name, String defaultValue) {
-						return defaultValue;
-					}
-				};
+				LanguageInfo info = LanguageLoader.fromXml(getAssets().open("language/java.xml")).getInfo();
 			
 			
 				@Override
@@ -137,16 +100,18 @@ public class CodeEditActivity extends AppCompatActivity
 				}
 			});
 		setContentView(e);
+//		setContentView(R.layout.default_layout);
 //		setContentView(R.layout.codeedit);
-		Log.d(".", "after set view");
-		
+//		Log.d(".", "after set view");
+//		
+//		
 //		toolbar = (Toolbar) findViewById(R.id.toolbar);
 //		edit = (ScrollingTextView) findViewById(R.id.codeedit);
 //		dbg = (EditText) findViewById(R.id.edit);
 //		fab = (FloatingActionButton) findViewById(R.id.fab);
-//		Toast.makeText(this, "index" + TextUtils.indexOf("abcdefg", "e", 0, 7), Toast.LENGTH_SHORT).show();
-//		dbg = (TextView) findViewById(R.id.dbg);
-//		edit.setDbg(dbg);
+////		Toast.makeText(this, "index" + TextUtils.indexOf("abcdefg", "e", 0, 7), Toast.LENGTH_SHORT).show();
+////		dbg = (TextView) findViewById(R.id.dbg);
+////		edit.setDbg(dbg);
 //		setSupportActionBar(toolbar);
 		
 //		dbg.addTextChangedListener(new TextWatcher() {

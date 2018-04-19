@@ -15,7 +15,7 @@ public class TypeUtils
 			}
 			return arr;
 		} catch(JSONException e) {
-			throw new IllegalArgumentException("wrong data: " + e.getMessage());
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -52,5 +52,13 @@ public class TypeUtils
 				throw new IllegalArgumentException("unknown type: " + type);
 		}
 		return value;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T[] castArrays(Object[] arr, T[] newArr) {
+		for(int i = 0; i < newArr.length; i++) {
+			newArr[i] = (T) arr[i];
+		}
+		return newArr;
 	}
 }

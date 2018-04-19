@@ -2,6 +2,7 @@ package com.asm.language.xml;
 
 import com.asm.language.Language;
 import com.asm.language.LanguageInfo;
+import com.asm.language.HighlightArgs;
 import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
 import com.asm.widget.codeedit.CodeEditInterface;
@@ -10,7 +11,7 @@ import com.asm.widget.codeedit.CodeEditInterface;
 public class LoadedLanguage implements Language
 {
 	@Override
-	public void initLanguage(CodeEditInterface edit)
+	public void initLanguage(HighlightArgs edit)
 	{
 		// TODO: Implement this method
 	}

@@ -13,10 +13,10 @@
 		"boolean", "byte", "char", "double", "float", "int", "long", "short"
 	</data>
 	<data name="operators" type="string">;.,{}()[]:</data>
-	<data name="maths" type="string">"+-/*?&lt;&gt;&|!="</data>
-	<data name="textSeperators" type="string"> ;.,{}()[]:+-/*?&lt;&gt;&|!=</data>
+	<data name="maths" type="string">"+-/*?&lt;&gt;&amp;|!="</data>
+	<data name="textSeperators" type="string"> ;.,{}()[]:+-/*?&lt;&gt;&amp;|!=</data>
 	<data name="textQuotes" type="string">"'</data>
-	<data name="textEscaper">\</data>
+	<data name="textEscaper" type="char">\</data>
 	<data name="comments" type="strings">
 		"/*", "*/",
 		"//", "\n"
