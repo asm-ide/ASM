@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-	compile 'com.android.support:design:+'
+	compile 'com.android.support:design:23+'
 	compile project(':core')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

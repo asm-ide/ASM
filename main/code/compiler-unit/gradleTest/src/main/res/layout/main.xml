@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:gravity="center"
+	android:orientation="vertical">
+
+	<EditText
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:ems="10"
+		android:layout_weight="1.0"
+		android:id="@+id/log"/>
+
+	<ScrollView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_weight="1.0">
+
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:orientation="vertical">
+
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:orientation="horizontal">
+
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="CAP"
+					android:id="@+id/createAndroidProject"
+					android:onClick="cap"/>
+
+				<LinearLayout
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:orientation="vertical">
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path1_1"/>
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path1_2"/>
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path1_3"/>
+
+				</LinearLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:orientation="horizontal">
+
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="CLP"
+					android:id="@+id/createLibraryProject"
+					android:onClick="alp"/>
+
+				<LinearLayout
+					android:layout_height="wrap_content"
+					android:layout_width="match_parent"
+					android:orientation="vertical">
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path2_1"/>
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path2_2"/>
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path2_3"/>
+
+				</LinearLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:orientation="horizontal">
+
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="GGI"
+					android:id="@+id/getGradleInfo"
+					android:onClick="ggi"/>
+
+				<LinearLayout
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:orientation="vertical">
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path3_1"/>
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path3_2"/>
+
+				</LinearLayout>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</ScrollView>
+
+</LinearLayout>
+
