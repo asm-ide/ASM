@@ -1,4 +1,4 @@
-package com.asm.gongbj.gradle;
+package com.asm.gongbj.gradle.info;
 /**
 *This class can contain all informations of build.gradle
 */

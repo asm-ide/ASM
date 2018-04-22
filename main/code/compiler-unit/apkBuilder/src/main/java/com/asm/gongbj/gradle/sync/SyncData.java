@@ -1,7 +1,7 @@
 package com.asm.gongbj.gradle.sync;
 import com.asm.gongbj.gradle.*;
 import java.util.*;
-
+import com.asm.gongbj.gradle.info.*;
 public class SyncData
 {
 	
@@ -26,6 +26,11 @@ public class SyncData
 			data[i] = projectName.get(i);
 		}
 		return data;
+	}
+	public GradleInfo getGradleInfo(String projectName){
+		if(!this.projectName.contains(projectName))return null;
+		int index = this.projectName.indexOf(projectName);
+		return this.gradleInfo.get(index);
 	}
 	public void addScanedJar(String path){
 		scaned.add(path);

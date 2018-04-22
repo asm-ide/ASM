@@ -9,7 +9,7 @@ The ASM Team makes the android studio in the mobile device.
 
 ## Features
 ### Project Compiler-Unit
-by @GongBj / not uploaded<br>
+by @GongBj <br>
 Apk build on Android and gradle support<br>
 TODO : more information here
 

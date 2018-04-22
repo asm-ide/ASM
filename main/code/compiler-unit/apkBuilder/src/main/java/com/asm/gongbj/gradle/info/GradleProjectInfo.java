@@ -1,4 +1,4 @@
-package com.asm.gongbj.gradle;
+package com.asm.gongbj.gradle.info;
 
 public class GradleProjectInfo
 {

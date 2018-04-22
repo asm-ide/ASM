@@ -2,6 +2,7 @@ package com.asm.gongbj.gradle;
 import com.asm.gongbj.*;
 import java.io.*;
 import com.asm.gongbj.gradle.sync.*;
+import com.asm.gongbj.gradle.info.*;
 import android.app.*;
 import android.widget.*;
 /**
@@ -91,8 +92,12 @@ public class Syncer
 				}
 			}
 		}
+		
+		
 		//############
 		//Sync R
+		
+		
 	}
 	private void syncFileTree(CompileInfo ci){
 		String path = ci.value1;

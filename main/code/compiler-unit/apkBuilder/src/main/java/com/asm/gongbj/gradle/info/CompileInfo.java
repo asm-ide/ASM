@@ -1,9 +1,10 @@
-package com.asm.gongbj.gradle;
+package com.asm.gongbj.gradle.info;
 /**
  *This class can contain dependencies's compile info.
  *GradleInfo.dependencies.compile is it.
 */
 public class CompileInfo{
+	
 	public CompileInfo(){
 
 	}
