@@ -40,11 +40,14 @@ public final class R {
         public static final int path2_3=0x7f09000e;
         public static final int path3_1=0x7f090010;
         public static final int path3_2=0x7f090011;
-        public static final int progressBar=0x7f090012;
+        public static final int path4_1=0x7f090013;
+        public static final int path4_2=0x7f090014;
+        public static final int progressBar=0x7f090015;
+        public static final int sync=0x7f090012;
         public static final int textView=0x7f090000;
         public static final int textView2=0x7f090004;
         public static final int textView3=0x7f090003;
-        public static final int textView4=0x7f090013;
+        public static final int textView4=0x7f090016;
     }
     public static final class layout {
         public static final int cmain=0x7f030000;

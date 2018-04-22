@@ -7,6 +7,8 @@ import android.widget.*;
 import com.asm.gongbj.*;
 import com.asm.gongbj.gradle.ProjectManager;
 import com.asm.gongbj.gradle.*;
+import com.asm.gongbj.gradle.info.*;
+
 public class MainActivity extends Activity 
 {
     @Override
@@ -83,5 +85,41 @@ public class MainActivity extends Activity
 		}
 
 
+	}
+	
+	public void syncb(View v){
+		EditText i1 = (EditText)findViewById(R.id.path4_1);
+		EditText i2 = (EditText)findViewById(R.id.path4_2);
+		Syncer s = new Syncer(this);
+		s.setProgressListener(new Syncer.ProgressListener(){
+			@Override
+			public void onProgressStart(){
+				
+			}
+			@Override
+			public void onProgressChange(String progressName){
+				
+			}
+			@Override
+			public void onprogressFinish(){
+				
+			}
+		});
+		s.setErrorListener(new Syncer.ErrorListener(){
+			@Override
+			public boolean onError(ProgressFail progressFail){
+				Toast.makeText(getApplicationContext(),progressFail.getExplane().toString(),Toast.LENGTH_LONG).show();
+				
+				return true;
+			}
+		});
+		try{
+			s.sync(i1.getText().toString(),i2.getText().toString());
+		}catch(Exception e){
+			Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
+		}
+		
+		
+		
 	}
 }

@@ -5,6 +5,8 @@ import com.asm.gongbj.gradle.sync.*;
 import com.asm.gongbj.gradle.info.*;
 import android.app.*;
 import android.widget.*;
+import com.asm.gongbj.tools.*;
+import com.asm.ASMT.*;
 /**
  @author GongBJ
  */
@@ -33,6 +35,7 @@ public class Syncer
 	 */
 	private String androidProjectPath, mainGradlePath;
 	public SyncData sync(String androidProjectPath, String mainGradlePath){
+		G.fnInit(ac);
 		this.androidProjectPath = androidProjectPath;
 		this.mainGradlePath = mainGradlePath;
 		File androidProject = new File(androidProjectPath);
@@ -96,7 +99,27 @@ public class Syncer
 		
 		//############
 		//Sync R
+		File build = new File(path+"/build");
+		if(!build.exists())build.mkdirs();
+		if(build.isFile())build.delete(); build.mkdirs();
+		File gen = new File(build.getAbsolutePath()+"/gen");
+		if(!gen.exists())gen.mkdirs();
+		if(gen.isFile())gen.delete(); gen.mkdirs();
+		Aapt aapt = new Aapt("");
+		try
+		{
+			aapt = new Aapt(Aapt.requestAndroidJar(ac));
+			
+		}
+		catch (Exception e)
+		{
+			errorListener.onError(new ProgressFail("cannot run Aapt\n" + e.toString(),null,"sync"));
+		}
+		String manifest = path + "/src/main/AndroidManifest.xml";
+		String res = path + "/src/main/res";
 		
+		String result = aapt.generateR(gen.getAbsolutePath(),manifest,new String[]{res});
+		Toast.makeText(ac,result,Toast.LENGTH_LONG).show();
 		
 	}
 	private void syncFileTree(CompileInfo ci){

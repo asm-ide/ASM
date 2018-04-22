@@ -1,6 +1,10 @@
 package com.asm.gongbj.tools;
 
-import com.asm.gongbj.apkBuilder;
+import android.content.res.*;
+import android.os.*;
+import com.asm.gongbj.*;
+import java.io.*;
+import android.content.*;
 
 public class Aapt
 {
@@ -8,9 +12,21 @@ public class Aapt
 	public Aapt(String android_jar_path){
 		jarPath = android_jar_path;
 	}
+	public static String requestAndroidJar(Context activity) throws Exception{
+		File destFile = new File(Environment.getExternalStorageDirectory()+"/.ASM/android.jar");
+		if (!destFile.getParentFile().exists()) destFile.getParentFile().mkdirs();
+		if (!destFile.exists()) {
+			destFile.createNewFile();
+			AssetManager assetMgr = activity.getAssets();
+			InputStream in = assetMgr.open("android.jar");
+			OutputStream out = new FileOutputStream(destFile);
+			copyFile(in,out);
+		}
+		return destFile.getAbsolutePath();
+	}
 	public String generateR(String rPath,String androidManifetPath, String resPath[]){
 		String cmd = "";
-		cmd += "aapt package ";
+		cmd += "package ";
 		cmd += "-m ";
 		cmd += "-J " + rPath + " ";
 		cmd += "-M " + androidManifetPath + " ";
@@ -23,7 +39,7 @@ public class Aapt
 	}
 
 	public String generateApk(String apkPath, String androidManifestPath, String resPath[], String jarPath[]){
-		String cmd = "aapt package -f -M ";
+		String cmd = "package -f -M ";
 		cmd += androidManifestPath;
 		for(String tmp : resPath){
 			cmd = cmd + " -S " + tmp;
@@ -38,7 +54,7 @@ public class Aapt
 	}
 
 	public String addFileInApk(String apkPath, String targetFilePath){
-		String cmd = "aapt add -f -k ";
+		String cmd = "add -f -k ";
 		cmd += apkPath;
 		cmd += targetFilePath;
 
@@ -46,10 +62,12 @@ public class Aapt
 	}
 
 	public String removeFileInApk(String apkPath, String targetFilePath){
-		String cmd = "aapt remove -f ";
+		String cmd = "remove -f ";
 		cmd += apkPath;
 		cmd += targetFilePath;
 
 		return apkBuilder.runAapt(cmd);
 	}
+	private static void copyFile(InputStream in, OutputStream out) throws IOException { byte[] buffer = new byte[1024]; int read; while ((read = in.read(buffer)) != -1) { out.write(buffer, 0, read); } }
+	
 }

@@ -293,7 +293,7 @@ public class ProjectManager{
 			}else if(".dependencies".equals(tree)){
 				CompileInfo c = new CompileInfo();
 				String line = str[count];
-				Toast.makeText(activity,line,Toast.LENGTH_SHORT).show();
+				//Toast.makeText(activity,line,Toast.LENGTH_SHORT).show();
 				
 				if(line.contains("compile")){
 					line = line.replace("compile","").trim();
@@ -311,7 +311,7 @@ public class ProjectManager{
 					}else if(line.startsWith("project(")&&line.endsWith(")")){
 						//Project
 						c.type=CompileInfo.TYPE_PROJECT;
-						c.value1=line.replace("project(","").replace(")","").replace("'","").trim();
+						c.value1=line.replace("project(","").replace(")","").replace("'","").replace(":","").trim();
 						ci.add(c);
 					}else if(line.startsWith("fileTree(")&&line.endsWith(")")){
 						//FileTreee
