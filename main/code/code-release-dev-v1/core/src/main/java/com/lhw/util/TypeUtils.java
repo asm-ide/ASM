@@ -45,12 +45,47 @@ public class TypeUtils
 			case "boolean":
 				value = Boolean.parseBoolean(content);
 				break;
+			case "byte":
+				value = Byte.parseByte(content);
+				break;
+			case "short":
+				value = Short.parseShort(content);
+				break;
 			case "strings":
 				value = parseList(content);
 				break;
 			default:
 				throw new IllegalArgumentException("unknown type: " + type);
 		}
+		return value;
+	}
+	
+	public static <T> T getObjectByClass(String data, Class<T> type) {
+		T value;
+		if(type == Integer.TYPE)
+			value = Integer.parseInt(data);
+		else if(type == Charactor.TYPE) {
+			if(data.length() != 1)
+				throw new IllegalArgumentException("type is char but several texts");
+			value = data.charAt(0);
+		}
+		else if(type == String.class)
+			value = data;
+		else if(type == Float.TYPE)
+			value = Float.parseFloat(data);
+		else if(type == Double.TYPE)
+			value = Double.parseDouble(data);
+		else if(type == Long.TYPE)
+			value = Long.parseLong(data);
+		else if(type == Boolean.TYPE)
+			value = Boolean.parseBoolean(data);
+		else if(type == Byte.TYPE)
+			value = Byte.parseByte(data);
+		else if(type == Short.TYPE)
+			value = Short.parseShort(data);
+		else if(type == String[].class)
+			value = parseList(data);
+		else throw new IllegalArgumentException("unknown type: " + type.getSimpleName());
 		return value;
 	}
 	
