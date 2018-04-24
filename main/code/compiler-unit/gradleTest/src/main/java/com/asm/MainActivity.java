@@ -86,11 +86,12 @@ public class MainActivity extends Activity
 
 
 	}
-	
+	String re = "";
 	public void syncb(View v){
 		EditText i1 = (EditText)findViewById(R.id.path4_1);
 		EditText i2 = (EditText)findViewById(R.id.path4_2);
 		Syncer s = new Syncer(this);
+		re="";
 		s.setProgressListener(new Syncer.ProgressListener(){
 			@Override
 			public void onProgressStart(){
@@ -108,7 +109,10 @@ public class MainActivity extends Activity
 		s.setErrorListener(new Syncer.ErrorListener(){
 			@Override
 			public boolean onError(ProgressFail progressFail){
-				Toast.makeText(getApplicationContext(),progressFail.getExplane().toString(),Toast.LENGTH_LONG).show();
+				//Toast.makeText(getApplicationContext(),progressFail.getExplane().toString(),Toast.LENGTH_LONG).show();
+				re = re + "\n" + progressFail.getExplane();
+				if(progressFail.getAnalysisData()!=null)re = re + "\n" + progressFail.getAnalysisData().toString();
+				
 				
 				return true;
 			}
@@ -117,6 +121,9 @@ public class MainActivity extends Activity
 			s.sync(i1.getText().toString(),i2.getText().toString());
 		}catch(Exception e){
 			Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
+		}finally{
+			EditText o = (EditText)findViewById(R.id.log);
+			o.setText(re);
 		}
 		
 		

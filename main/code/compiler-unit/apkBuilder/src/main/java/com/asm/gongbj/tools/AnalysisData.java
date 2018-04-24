@@ -18,4 +18,15 @@ public class AnalysisData
 		public int lineNumber;
 		public String comment;
 	}
+	public String toString(){
+		String str = "exitValue : ";
+		str += String.valueOf(exitValue);
+		str += "\n time : ";
+		str += String.valueOf(time);
+		str += "";
+		for(errData e : this.errData){
+			str = str + "\n\ncomment : " + e.comment.toString() + "\nfilePath : " + e.filePath.toString() + "\nlineNumber : "+ String.valueOf(e.lineNumber);
+		}
+		return str;
+	}
 }

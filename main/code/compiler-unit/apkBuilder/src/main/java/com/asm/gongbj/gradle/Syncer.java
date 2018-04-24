@@ -69,7 +69,7 @@ public class Syncer
 		//Sync jar info
 		for(CompileInfo ci : gi.dependencies.compile){
 			if(ci.type == CompileInfo.TYPE_FILETREE){
-				syncFileTree(ci);
+				syncFileTree(ci,path);
 			}else if(ci.type == CompileInfo.TYPE_LIB){
 				String pathh = ci.value1;
 				String namee = ci.value2;
@@ -119,13 +119,20 @@ public class Syncer
 		String res = path + "/src/main/res";
 		
 		String result = aapt.generateR(gen.getAbsolutePath(),manifest,new String[]{res});
-		Toast.makeText(ac,result,Toast.LENGTH_LONG).show();
+		AnalysisData ad = AaptResultAnalyze.analysis(result);
+		if(!(ad.exitValue==0)){
+			ProgressFail f = new ProgressFail("cannot generate R.java",null,"sync");
+			f.setAnalysisData(ad);
+			errorListener.onError(f);
+			//Toast.makeText(ac,ad.toString(),Toast.LENGTH_LONG).show();
+		}
+		
 		
 	}
-	private void syncFileTree(CompileInfo ci){
+	private void syncFileTree(CompileInfo ci,String mpath){
 		String path = ci.value1;
 		String name = ci.value2;
-		String fullPath = androidProjectPath + "/" + path;
+		String fullPath = mpath + "/" + path;
 		if(!"*.jar".equals(name)) errorListener.onError(new ProgressFail("Only \".jar\" is available",fullPath,"sync"));
 		File f = new File(fullPath);
 		if(!(f.exists())){
