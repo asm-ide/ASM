@@ -35,7 +35,6 @@ Code analysis - `CodeAnalysis (com.asm.analysis)`
 	
                       ASM Compiler unit
                © GongBj. All Rights Reserved.
-	   ** Source code is not uploaded yet **
               : Android Gradle Build Support
 		  : APK Building In Android
 	
