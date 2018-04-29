@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
+// TODO : add support about RandomAcrossFile
 
 /** currently temporary */
 public class FileManager implements SaveManager

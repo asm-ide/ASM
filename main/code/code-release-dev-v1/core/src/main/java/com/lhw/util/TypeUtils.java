@@ -18,7 +18,7 @@ public class TypeUtils
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
+
 	public static Object getObjectFromString(String content, String type) {
 		Object value;
 		switch(type) {
@@ -54,17 +54,56 @@ public class TypeUtils
 			case "strings":
 				value = parseList(content);
 				break;
+
 			default:
 				throw new IllegalArgumentException("unknown type: " + type);
 		}
 		return value;
 	}
-	
+
+	public static String objectToString(Object data) {
+		String value;
+		if(data instanceof Integer)
+			value = Integer.toString(data);
+		else if(data instanceof Character)
+			value = String.valueOf(new char[] {data});
+		else if(data instanceof Float)
+			value = Float.toString(data);
+		else if(data instanceof Double)
+			value = Double.toString(data);
+		else if(data instanceof Long)
+			value = Long.toString(data);
+		else if(data instanceof Byte)
+			value = Byte.toString(data);
+		else if(data instanceof Short)
+			value = Short.toString(data);
+		else if(data instanceof Boolean)
+			value = Boolean.toString(data);
+		else if(data instanceof String)
+			value = (String) data;
+		else if(data instanceof String[])
+			value = TypeUtils.stringArrayToString((Object[]) data);
+		else throw new IllegalArgumentException("unknown type " + data.getClass().getSimpleName());
+
+		return value;
+	}
+
+	public static String stringArrayToString(Object[] datas) {
+		try {
+			JSONArray arr = new JSONArray(datas);
+			String text = arr.toString();
+			return text.substring(1, text.length());
+		} catch(JSONException e) {
+			throw new IllegalStateException();
+		}
+	}
+
+	@SuppressWarnings("unsafe")
 	public static <T> T getObjectByClass(String data, Class<T> type) {
-		T value;
+		Object value;
 		if(type == Integer.TYPE)
 			value = Integer.parseInt(data);
-		else if(type == Charactor.TYPE) {
+		else if(type == Character.TYPE) {
 			if(data.length() != 1)
 				throw new IllegalArgumentException("type is char but several texts");
 			value = data.charAt(0);
@@ -86,10 +125,10 @@ public class TypeUtils
 		else if(type == String[].class)
 			value = parseList(data);
 		else throw new IllegalArgumentException("unknown type: " + type.getSimpleName());
-		return value;
+		return (T) value;
 	}
-	
-	@SuppressWarnings("unchecked")
+
+	@SuppressWarnings("unsafe")
 	public static <T> T[] castArrays(Object[] arr, T[] newArr) {
 		for(int i = 0; i < newArr.length; i++) {
 			newArr[i] = (T) arr[i];
