@@ -118,7 +118,7 @@ public class Syncer
 		String manifest = path + "/src/main/AndroidManifest.xml";
 		String res = path + "/src/main/res";
 		
-		String result = aapt.generateR(gen.getAbsolutePath(),manifest,new String[]{res});
+		String result = aapt.generateR(gen.getAbsolutePath(),manifest,new String[]{res},null);
 		AnalysisData ad = AaptResultAnalyze.analysis(result);
 		if(!(ad.exitValue==0)){
 			ProgressFail f = new ProgressFail("cannot generate R.java",null,"sync");

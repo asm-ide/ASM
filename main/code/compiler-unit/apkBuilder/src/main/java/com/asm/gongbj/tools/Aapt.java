@@ -24,7 +24,7 @@ public class Aapt
 		}
 		return destFile.getAbsolutePath();
 	}
-	public String generateR(String rPath,String androidManifetPath, String resPath[]){
+	public String generateR(String rPath,String androidManifetPath, String resPath[], String jarPath[]){
 		String cmd = "";
 		cmd += "package ";
 		cmd += "-m ";
@@ -33,8 +33,13 @@ public class Aapt
 		for(String res : resPath){
 			cmd += "-S " + res + " ";
 		}
-		cmd += "-I " + jarPath;
-
+		cmd = cmd + "-I " + jarPath + " ";
+		if(jarPath!=null){
+			for(String jar : jarPath){
+				cmd += "-I " + jar + " ";
+			}
+		}
+		
 		return apkBuilder.runAapt(cmd);
 	}
 
