@@ -7,6 +7,7 @@ import com.lhw.util.TextUtils;
 import java.util.HashMap;
 import java.util.Iterator;
 
+// ISSUE #1
 
 public class CodeIterator implements Iterator<CodeIterator.CodePart>
 {
