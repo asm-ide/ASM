@@ -20,6 +20,8 @@ android {
 }
 
 dependencies {
+	// https://mvnrepository.com/artifact/org.eclipse.jdt.core.compiler/ecj
+	//compile 'org.eclipse.jdt.core.compiler:ecj:+'
 	compile 'com.android.support:support-v4:23+'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 	

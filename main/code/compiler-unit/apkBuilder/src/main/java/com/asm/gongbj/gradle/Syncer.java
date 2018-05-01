@@ -7,6 +7,7 @@ import android.app.*;
 import android.widget.*;
 import com.asm.gongbj.tools.*;
 import com.asm.ASMT.*;
+import android.content.*;
 /**
  @author GongBJ
  */
