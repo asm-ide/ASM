@@ -22,19 +22,18 @@ import java.util.regex.Pattern;
 
 /**
  * Storage text and highlight data for ScrollingEditText.
- * Supports feature that text storage.
- * Also features for editing.
+ * Supports editing, drawing utilities, undo/redo, and cache.
  * I REALLY worked hard for this...
  * @author LHW
  * @version 1.0
  */
-public class TextData implements Editable, Serializable
+public class TextData implements Editable, Parcelable, Serializable
 {
 	/**
 	 * @hide
 	 * A cache class for less legging.
 	 */
-	public static class Cache implements Serializable
+	public static class Cache implements Parcelable, Serializable
 	{
 		/** log tag */
 		private static final String TAG = "TextData.Cache";
@@ -65,7 +64,23 @@ public class TextData implements Editable, Serializable
 			this.data = data;
 		}
 		
-		/** called before insert text to update cache */
+		public Cache(Parcel p) {
+			cursorPosition = p.readInt();
+		}
+		
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+
+		
+		public void writeToParcel(Parcel p, int flags) {
+			p.writeInt(cursorPosition);
+		}
+		
+		/**
+		 * called before insert text to update cache
+		 */
 		public void onInsert(int where, CharSequence text, int start, int end) {
 			if(isLineCountOlds) updateIfNeeded();
 			int newLineCount = TextUtils.countOf(String.valueOf(text.subSequence(start, end)), "\n", 0);
@@ -77,7 +92,9 @@ public class TextData implements Editable, Serializable
 			isWidthOlds = true;
 		}
 		
-		/** called before delete text to update cache */
+		/**
+		 * called before delete text to update cache
+		 */
 		public void onDelete(int start, int end) {
 			if(isLineCountOlds) updateIfNeeded();
 			int subtractLineCount = TextUtils.countOf(data.substring(start, end), "\n", 0);
@@ -91,7 +108,9 @@ public class TextData implements Editable, Serializable
 			isWidthOlds = true;
 		}
 		
-		/** move cursor position */
+		/**
+		 * move cursor position
+		 */
 		public void addCursorPosition(int add) {
 			int newPosition = Math.max(0, Math.min(add + cursorPosition, data.length()));
 			int newLineCount = TextUtils.countOf(data.substring(newPosition, cursorPosition), "\n", 0);
@@ -103,23 +122,31 @@ public class TextData implements Editable, Serializable
 			cursorPosition += add;
 		}
 		
-		/** set cursof position */
+		/**
+		 * set cursof position
+		 */
 		public void setCursorPosition(int pos) {
 			addCursorPosition(pos - cursorPosition);
 		}
 		
-		/** update width / height if needed. */
+		/**
+		 * update width / height if needed.
+		 */
 		public void updateIfNeeded() {
 			if(isWidthOlds) updateScrollableSize();
 			else if(isHeightOlds) lines();
 		}
 		
-		/** update width AND height if needed. */
+		/**
+		 * update width AND height if needed.
+		 */
 		public void updateBothIfNeeded() {
 			if(isWidthOlds || isHeightOlds) updateScrollableSize();
 		}
 		
-		/** update width and height. */
+		/**
+		 * update width and height.
+		 */
 		public void updateScrollableSize() {
 			if(data.mDraw == null) return;
 			
@@ -143,19 +170,25 @@ public class TextData implements Editable, Serializable
 			this.isLineCountOlds = false;
 		}
 		
-		/** update if needed and return scrollable width */
+		/**
+		 * update if needed and return scrollable width
+		 */
 		public int getScrollableWidth() {
 			if(isWidthOlds) updateScrollableSize();
 			return scrollableWidth;
 		}
 		
-		/** update if needed and return scrollable height. */
+		/**
+		 * update if needed and return scrollable height.
+		 */
 		public int getScrollableHeight() {
 			if(isHeightOlds) lines();
 			return scrollableHeight;
 		}
 		
-		/** update if needed and return line count. */
+		/**
+		 * update if needed and return line count.
+		 */
 		public int lines() {
 			if(isLineCountOlds) {
 				lines = data.countOf("\n");
@@ -169,10 +202,10 @@ public class TextData implements Editable, Serializable
 		}
 		
 		/**
-		* return the first text forward position of line.
-		* You can type startLine and startPos with start
-		* position to calculate it.
-		*/
+		 * return the first text forward position of line.
+		 * You can type startLine and startPos with start
+		 * position to calculate it.
+		 */
 		public int getLinePosition(int lines, int startPos, int startLine) {
 			if(startPos < 0 || startPos >= data.length())
 				throw new IllegalArgumentException("startPos overed index " + startPos);
@@ -201,6 +234,18 @@ public class TextData implements Editable, Serializable
 			cache.scrollableWidth = scrollableWidth;
 			return cache;
 		}
+		
+		public static final Creator<Cache> CREATOR = new Creator<Cache>() {
+			@Override
+			public Cache createFromParcel(Parcel p) {
+				return new Cache(p);
+			}
+			
+			@Override
+			public Cache[] newArray(int len) {
+				return new Cache[len];
+			}
+		};
 	}
 	
 	public static class Factory extends Editable.Factory
@@ -233,10 +278,10 @@ public class TextData implements Editable, Serializable
 	}
 	
 	
-	/** tag for Log. */
+	/** tag for Log */
 	private static final String TAG = "TextData";
 	
-	/** max array size. */
+	/** max array size */
 	private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 	
 	/**
@@ -277,14 +322,14 @@ public class TextData implements Editable, Serializable
 	/** default capacity. */
 	public static int DEFAULTCAPACITY = 16;
 	
-	/** current capacity. */
+	/** current capacity */
 	//public int mCapacity = DEFAULTCAPACITY;
 	
-	/** the main string storage. */
+	/** the main string storage */
 	//StringBuilder str;
 	char[] mText;
 	
-	/** the length of text. */
+	/** the length of text */
 	int mCount = 0;
 	
 	/**
@@ -313,6 +358,14 @@ public class TextData implements Editable, Serializable
 	transient //because this is parent so not need to save
 	TextDraw mDraw;
 	
+	/**
+	 * For wrap object from stream and decide it.
+	 * 0 : none
+	 * 1 : from parcel
+	 * 2 : from serializable
+	 */
+	private int mStreamFrom = 0;
+	
 	
 	protected TextData() {
 		mText = new char[DEFAULTCAPACITY];
@@ -330,6 +383,15 @@ public class TextData implements Editable, Serializable
 		
 		init();
 	}
+	
+	protected TextData(Parcel p) {
+		p.readCharArray(mText);
+		mUndoManager = (UndoManager) p.readSerializable();
+		mEncoding = p.readString();
+		mCache = (Cache) p.readSerializable();
+		mCache.updateScrollableSize();
+	}
+	
 	
 	private void init() {
 		mCache = new Cache(this);
@@ -352,7 +414,7 @@ public class TextData implements Editable, Serializable
 		initSecondary();
 	}
 	
-	//draw calculate methods
+	// Draw calculate methods
 	
 	/**
 	 * Return the scrollable width.
@@ -427,7 +489,7 @@ public class TextData implements Editable, Serializable
 		return mCache;
 	}
 	
-	//action methods.
+	// Action methods.
 	
 	/**
 	 * Add the {@code TextWatcher} listener.
@@ -453,7 +515,7 @@ public class TextData implements Editable, Serializable
 			watcher.beforeTextChanged(this, start, count, after);
 		}
 		
-		//add to library
+		// add to library
 		TextWatcher undoWatcher = mUndoManager.getAutoMarkWatcher();
 		switch(mUndoMode) {
 			case UNDO_MODE_OFF:
@@ -475,7 +537,7 @@ public class TextData implements Editable, Serializable
 			watcher.onTextChanged(this, start, before, count);
 		}
 		
-		//add to history
+		// add to history
 		switch(mUndoMode) {
 			case UNDO_MODE_OFF:
 			case UNDO_MODE_DISENABLED:
@@ -500,7 +562,7 @@ public class TextData implements Editable, Serializable
 			watcher.afterTextChanged(this);
 		}
 		
-		//add to history
+		// add to history
 		switch(mUndoMode) {
 			case UNDO_MODE_OFF:
 			case UNDO_MODE_DISENABLED:
@@ -517,7 +579,7 @@ public class TextData implements Editable, Serializable
 	}
 	
 	
-	//undo / redo methods.
+	// Undo / redo methods.
 	
 	/**
 	 * Set the undo / redo stack mode.
@@ -555,12 +617,22 @@ public class TextData implements Editable, Serializable
 		return mLastUndoMode;
 	}
 	
+	/**
+	 * Open the undo actions.
+	 * Used when undo mode is {@link UNDO_MODE_OPENED} and if there is any
+	 * opened {@link Actions}, close it and open new {@link Actions}.
+	 */
 	public void openUndoActions() {
 		mUndoMode = UNDO_MODE_OPENED;
 		mUndoManager.close();
 		mUndoManager.openActions();
 	}
 	
+	/**
+	 * Close the undo actions.
+	 * Used when undo mode is {@link UNDO_MODE_OPENED} and closes the same
+	 * all {@link Actions} and doesn't open new {@link Actions}.
+	 */
 	public void closeUndoActions() {
 		mUndoManager.close();
 	}
@@ -589,8 +661,13 @@ public class TextData implements Editable, Serializable
 	}
 	
 	
-	//text methods.
+	// Text methods.
 	
+	/**
+	 * Set the encoding.
+	 * This does not convert the text encoding; just set the code encoding.
+	 * If you want to convert the text encoding, use {@link convertEncoding()}.
+	 */
 	public void setEncoding(String encoding) {
 		mEncoding = encoding;
 	}
@@ -706,14 +783,14 @@ public class TextData implements Editable, Serializable
 	}
 	
 	/**
-	* insert the text at <code>where</code>.
-	*/
+	 * insert the text at <code>where</code>.
+	 */
 	public TextData insert(int where, char text) {
 		return insert(where, String.valueOf(new char[]{text}), 0, 1); 
 	}
 	
 	/**
-	* insert the text at <code>where</code>.
+	 * insert the text at <code>where</code>.
 	*/
 	@Override public TextData insert(int where, CharSequence text) {
 		return insert(where, text, 0, text.length());
@@ -1085,38 +1162,94 @@ public class TextData implements Editable, Serializable
 	 * </code> 
 	 */
 	
-	/** not support yet */
-	@Override public void setFilters(InputFilter[] p1) { throw new UnsupportedOperationException("너무 귀찮아요ㅠㅠ"); }
+	/**
+	 * Not support yet
+	 * @throws UnsupportedOperationException always
+	 */
+	@Override
+	public void setFilters(InputFilter[] p1) {
+		throw new UnsupportedOperationException("너무 귀찮아요ㅠㅠ");
+	}
 	
-	/** not support yet */
-	@Override public InputFilter[] getFilters() { throw new UnsupportedOperationException("너무 귀찮아요ㅠㅠ"); }
+	/**
+	 * Not support yet
+	 * @throws UnsupportedOperationException always
+	 */
+	@Override
+	public InputFilter[] getFilters() {
+		throw new UnsupportedOperationException("너무 귀찮아요ㅠㅠ");
+	}
 	
 	
-	//not support: CodeEdit automatically highlight
+	//not support: TextData only supports text editing, not span
 	
-	/** not support: {@code CodeEdit} automatically highlight */
-	@Deprecated public void clearSpans() { throw new UnsupportedOperationException(); }
+	/**
+	 * Not support: TextData only supports text editing, not span
+	 * @throws UnsupportedOperationException always
+	 */
+	@Deprecated
+	public void clearSpans() {
+		throw new UnsupportedOperationException();
+	}
 	
-	/** not support: {@code CodeEdit} automatically highlight */
-	@Deprecated public void setSpan(Object p1, int p2, int p3, int p4) { throw new UnsupportedOperationException(); }
+	/**
+	 * Not support: TextData only supports text editing, not span
+	 * @throws UnsupportedOperationException always
+	 */
+	@Deprecated
+	public void setSpan(Object what, int start, int end, int flags) {
+		throw new UnsupportedOperationException();
+	}
 	
-	/** not support: {@code CodeEdit} automatically highlight */
-	@Deprecated public void removeSpan(Object p1) { throw new UnsupportedOperationException(); }
+	/**
+	 * Not support: TextData only supports text editing, not span
+	 * @throws UnsupportedOperationException always
+	 */
+	@Deprecated public void removeSpan(Object tag) {
+		throw new UnsupportedOperationException();
+	}
 	
-	/** not support: {@code CodeEdit} automatically highlight */
-	@Deprecated public <T extends Object> T[] getSpans(int p1, int p2, Class<T> p3) { throw new UnsupportedOperationException(); }
+	/**
+	 * Not support: TextData only supports text editing, not span
+	 * @throws UnsupportedOperationException always
+	 */
+	@Deprecated public <T> T[] getSpans(int start, int ens, Class<T> type) {
+		throw new UnsupportedOperationException();
+	}
 	
-	/** not support: {@code CodeEdit} automatically highlight */
-	@Deprecated public int getSpanStart(Object p1) { throw new UnsupportedOperationException(); }
+	/**
+	 * Not support: TextData only supports text editing, not span
+	 * @throws UnsupportedOperationException always
+	 */
+	@Deprecated public int getSpanStart(Object tag) {
+		throw new UnsupportedOperationException();
+	}
 	
-	/** not support: {@code CodeEdit} automatically highlight */
-	@Deprecated public int getSpanEnd(Object p1) { throw new UnsupportedOperationException(); }
+	/**
+	 * Not support: TextData only supports text editing, not span
+	 * @throws UnsupportedOperationException always
+	 */
+	@Deprecated public int getSpanEnd(Object tag) {
+		throw new UnsupportedOperationException();
+	}
 	
-	/** not support: {@code CodeEdit} automatically highlight */
-	@Deprecated public int getSpanFlags(Object p1) { throw new UnsupportedOperationException(); }
+	/**
+	 * Not support: TextData only supports text editing, not span
+	 * @throws UnsupportedOperationException always
+	 */
+	@Deprecated 
+	public int getSpanFlags(Object tag) {
+		throw new UnsupportedOperationException();
+	}
 	
-	/** not support: {@code CodeEdit} automatically highlight */
-	@Deprecated public int nextSpanTransition(int p1, int p2, Class p3) { throw new UnsupportedOperationException(); }
+	/**
+	 * Not support: TextData only supports text editing, not span
+	 * @throws UnsupportedOperationException always
+	 */
+	@Deprecated
+	public int nextSpanTransition(int start, int limit, Class type) {
+		throw new UnsupportedOperationException();
+	}
 	
 	
 	//static methods
@@ -1149,6 +1282,24 @@ public class TextData implements Editable, Serializable
 		return new TextData(builder);
 	}
 	
+	
+	// Utilities for marshelling TextData and support aidl
+	
+	/** {@hide} */
+	public static final Creator<TextData> CREATOR
+			= new Creator<TextData>() {
+		@Override
+		public TextData createFromParcel(Parcel p) {
+			return new TextData(p);
+		}
+
+		@Override
+		public TextData[] newArray(int len) {
+			return new TextData[len];
+		}
+	};
+	
+	
 	/**
 	 * Initialize {@code TextData} from a seriazed-object.
 	 * When you got the {@code TextData} object from
@@ -1156,17 +1307,18 @@ public class TextData implements Editable, Serializable
 	 * initialize that object by this object.
 	 * @params TextData what you want to convert
 	 */
-	public static TextData wrapSerializable(Object data, TextDraw parent) {
+	public static TextData wrapFromDataStream(Object data, TextDraw parent) {
 		if(!(data instanceof TextData)) throw new IllegalArgumentException("argument is not a TextData");
 		
 		TextData data2 = (TextData) data;
 		if(data2 == null) throw new IllegalArgumentException("argument is null");
 		data2.mDraw = parent;
-		data2.wrapSerializable();
+		data2.wrapFromDataStream();
 		return data2;
 	}
 	
-	protected void wrapSerializable() {
+	protected void wrapFromDataStream() {
+		mCache.data = this;
 		mCache.updateScrollableSize();
 	}
 	
@@ -1174,44 +1326,22 @@ public class TextData implements Editable, Serializable
 	 * create the TextData from parcel.
 	 */
 	public static TextData fromParcel(Parcel p, TextDraw parent) {
-		return fromParcel(new TextData(), p, parent);
-	}
-	protected static TextData fromParcel(TextData d, Parcel p, TextDraw parent) {
-		p.readCharArray(d.mText);
-		d.mUndoManager = (UndoManager) p.readSerializable();
-		d.mEncoding = p.readString();
-		d.mDraw = parent;
-		d.mCache = (Cache) p.readSerializable();
-		d.mCache.updateScrollableSize();
-		return d;
+		return new TextData(p);
 	}
 	
-	/**
-	 * get the parcelable object.
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	
+	/** 
+	 * save all data to parcel.
 	 */
-	public Parcelable parcel() {
-		return new TextDataParcel();
-	}
-	
-	/**
-	* parcelable object for parcel.
-	*/
-	protected class TextDataParcel implements Parcelable
-	{
-		@Override
-		public int describeContents() {
-			return 0;
-		}
-		
-		/** 
-		 * save all data to parcel.
-		 */
-		@Override
-		public void writeToParcel(Parcel p, int flags) {
-			p.writeCharArray(mText);
-			p.writeSerializable(mUndoManager);
-			p.writeString(mEncoding);
-			p.writeSerializable(mCache);
-		}
+	@Override
+	public void writeToParcel(Parcel p, int flags) {
+		p.writeCharArray(mText);
+		p.writeSerializable(mUndoManager);
+		p.writeString(mEncoding);
+		p.writeSerializable(mCache);
 	}
 }

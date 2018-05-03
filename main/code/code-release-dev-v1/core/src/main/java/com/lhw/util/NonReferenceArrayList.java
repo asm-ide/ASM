@@ -1,4 +1,4 @@
-package com.asm.util;
+package com.lhw.util;
 
 import java.io.Serializable;
 
@@ -11,7 +11,10 @@ public class NonReferenceArrayList implements Serializable
 	}
 	
 	
+	private static final int CAPACITY = 16;
+	
 	private int len;
+	private int capacity;
 	private Object arr;
 	transient private Listener l;
 	
@@ -24,20 +27,30 @@ public class NonReferenceArrayList implements Serializable
 	public NonReferenceArrayList(Object arr, int len, Listener l) {
 		this.arr = arr;
 		this.len = len;
+		this.capacity = len;
 		this.l = l;
+	}
+	
+	public void newCapacity(int newLen) {
+		int lastCap = capacity;
+		len = newLen;
+		capacity = (int) Math.ceil((float) newLen / CAPACITY) * CAPACITY;
+		if(capacity != lastCap) {
+			arr = l.copyOf(arr, capacity);
+		}
 	}
 	
 	public void insert(int where, Object data, int start, int end) {
 		int dataLen = end - start;
-		arr = l.copyOf(arr, len + dataLen);
-		System.arraycopy(arr, where, arr, where + dataLen, len - where + dataLen);
-		System.arraycopy(data, start, arr, where, len);
-		len += dataLen;
+		int lastLen = len;
+		newCapacity(lastLen + dataLen);
+		System.arraycopy(arr, where, arr, where + dataLen, lastLen - where + dataLen);
+		System.arraycopy(data, start, arr, where, lastLen);
 	}
 	
 	public void append(Object data, int start, int end) {
 		int dataLen = end - start;
-		arr = l.copyOf(arr, len + dataLen);
+		newCapacity(len + dataLen);
 		System.arraycopy(data, start, arr, len, dataLen);
 		len += dataLen;
 	}
@@ -50,7 +63,8 @@ public class NonReferenceArrayList implements Serializable
 	}
 	
 	public Object get() {
-		return arr;
+		capacity = len;
+		return arr = l.copyOf(arr, len);
 	}
 	
 	public int length() {

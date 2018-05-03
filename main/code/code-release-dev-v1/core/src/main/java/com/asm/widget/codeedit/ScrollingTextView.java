@@ -511,7 +511,7 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 		@Override
 		public void writeToParcel(Parcel p, int flags) {
 			super.writeToParcel(p, flags);
-			p.writeParcelable(data.parcel(), 0);
+			p.writeParcelable(data, 0);
 			p.writeParcelable(draw, 0);
 			p.writeInt(scrollX);
 			p.writeInt(scrollY);
