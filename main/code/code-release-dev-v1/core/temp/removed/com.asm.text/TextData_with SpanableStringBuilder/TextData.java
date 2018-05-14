@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextPaint;
 import android.text.TextWatcher;
 import android.text.InputFilter;
+import android.text.SpannableStringBuilder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -28,7 +29,7 @@ import java.util.regex.Matcher;
  * @author LHW
  * @version 1.0
  */
-public class TextData implements Editable, Parcelable, Serializable
+public class TextData extends SpannableStringBuilder implements Editable, Parcelable, Serializable
 {
 	/**
 	 * @hide
@@ -324,16 +325,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	/** default capacity. */
 	public static int DEFAULTCAPACITY = 16;
 	
-	/** current capacity */
-	//public int mCapacity = DEFAULTCAPACITY;
-	
-	/** the main string storage */
-	//StringBuilder str;
-	char[] mText;
-	
-	/** the length of text */
-	int mCount = 0;
-	
 	/**
 	 * Undo manager for undo/redo.
 	 * May be null, because if undo mode is UNDO_MODE_OFD,
@@ -346,9 +337,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/** last undo mode. used when return to last mode. */
 	private int mLastUndoMode;
-	
-	/** the {@code TextWather} listeners */
-	transient @NonNull ArrayList<TextWatcher> mListeners = new ArrayList<TextWatcher>();
 	
 	/** for more faster calculate. */
 	private @NonNull Cache mCache;
@@ -370,24 +358,20 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	
 	protected TextData() {
-		mText = new char[DEFAULTCAPACITY];
-		init();
+		this("");
 	}
 	
 	protected TextData(CharSequence initValue) {
-		this();
-		append(initValue);
-	}
-	
-	protected TextData(char[] text) {
-		mText = text;
-		mCount = text.length;
-		
+		super(initValue);
 		init();
 	}
 	
+	protected TextData(char[] text) {
+		this(String.valueOf(text));
+	}
+	
 	protected TextData(Parcel p) {
-		mText = p.createCharArray();
+		super(String.valueOf(p.createCharArray()));
 		mUndoManager = (UndoManager) p.readSerializable();
 		mUndoMode = p.readInt();
 		mLastUndoMode = p.readInt();
@@ -414,7 +398,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 */
 	public void set(TextData other) {
 		mCache = other.mCache;
-		mText = other.mText;
+		setText(other);
 		mEncoding = other.mEncoding;
 		initSecondary();
 	}
@@ -512,29 +496,9 @@ public class TextData implements Editable, Parcelable, Serializable
 	// Action methods.
 	
 	/**
-	 * Add the {@code TextWatcher} listener.
-	 * @see TextWatcher
-	 */
-	public void addOnTextChangedListener(TextWatcher l) {
-		mListeners.add(l);
-	}
-
-	/**
-	 * Remove the {@code TextWatcher} listener.
-	 * @see TextWatcher
-	 */
-	public boolean removeOnTextChangedListener(TextWatcher l) {
-		return mListeners.remove(l);
-	}
-	
-	/**
 	 * Called before insert / delete texts.
 	 */
 	protected void beforeTextChanged(int start, int count, int after) {
-		for(TextWatcher watcher : mListeners) {
-			watcher.beforeTextChanged(this, start, count, after);
-		}
-		
 		// add to library
 		TextWatcher undoWatcher = mUndoManager.getAutoMarkWatcher();
 		switch(mUndoMode) {
@@ -553,10 +517,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * Called when insert / delete texts.
 	 */
 	protected void onTextChanged(int start, int before, int count) {
-		for(TextWatcher watcher : mListeners) {
-			watcher.onTextChanged(this, start, before, count);
-		}
-		
 		// add to history
 		switch(mUndoMode) {
 			case UNDO_MODE_OFF:
@@ -578,10 +538,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * Called after insert / delete texts.
 	 */
 	protected void afterTextChanged() {
-		for(TextWatcher watcher : mListeners) {
-			watcher.afterTextChanged(this);
-		}
-		
 		// add to history
 		switch(mUndoMode) {
 			case UNDO_MODE_OFF:
@@ -728,16 +684,13 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	public void setText(TextData data) {
-		mText = data.mText;
-		mCount = data.mCount;
+		setText((CharSequence) data);
 		if(data.mDraw != null) mDraw = data.mDraw;
 		mCache.updateScrollableSize();
 	}
 	
 	public void setText(CharSequence data) {
-		mCount = data.length();
-		mText = TextUtils.getChars(data, 0, mCount);
-		mCache.updateScrollableSize();
+		replace(0, length(), data);
 	}
 	
 	/**
@@ -781,20 +734,20 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * @return <code>int[] { lines, cols, x, y }</code>.
 	 */
 	public PositionData getPositionData(int position, int startLine, int startPos) {
-		if(position > mCount) throw new IllegalArgumentException("position is bigger than length");
-		if(startPos > mCount) throw new IllegalArgumentException("startPos is bigger than length");
+		if(position > length()) throw new IllegalArgumentException("position is bigger than length");
+		if(startPos > length()) throw new IllegalArgumentException("startPos is bigger than length");
 		
 		int lines = startLine;
 		int lastLinePos = 0;
 		int curPos = startPos;
 		float x = 0;
 		while(curPos <= position) {
-			if(mText[curPos] == '\n') {
+			if(charAt(curPos) == '\n') {
 				lines++;
 				lastLinePos = curPos;
 				x = 0;
 			} else
-				x += mDraw.getPaint().measureText(new char[] {mText[curPos]}, 0, 1);
+				x += mDraw.getPaint().measureText(new char[] {charAt(curPos)}, 0, 1);
 			curPos++;
 		}
 		
@@ -804,71 +757,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	//text data methods
 	
-	/**
-	 * Ensure the capacity for this text.
-	 */
-	public void ensureCapacity(int minimumCapacity) {
-		if(minimumCapacity - mText.length > 0) {
-			mText = Arrays.copyOf(mText, newCapacity(minimumCapacity));
-		}
-	}
-	
-	private int newCapacity(int minCapacity) {
-		int newCapacity = (mText.length << 1) + 2;
-		if(newCapacity - minCapacity < 0) {
-			newCapacity = minCapacity;
-		}
-		return (newCapacity <= 0 || MAX_ARRAY_SIZE - newCapacity < 0)
-			? hugeCapacity(minCapacity) 
-			: newCapacity;
-	}
-	
-	private int hugeCapacity(int minCapacity) {
-		if(Integer.MAX_VALUE - minCapacity < 0) {
-			// overflow
-			throw new OutOfMemoryError();
-		}
-		return (minCapacity > MAX_ARRAY_SIZE)
-			? minCapacity 
-			: MAX_ARRAY_SIZE; 
-	}
-	
-	/**
-	 * insert the text at <code>where</code>.
-	 */
-	public TextData insert(int where, char text) {
-		return insert(where, String.valueOf(new char[]{text}), 0, 1); 
-	}
-	
-	/**
-	 * insert the text at <code>where</code>.
-	*/
-	@Override public TextData insert(int where, CharSequence text) {
-		return insert(where, text, 0, text.length());
-	}
-	
-	/**
-	 * insert the text at <code>where</code>, from <code>start</code> to <code>end</code>. 
-	 */
-	public TextData insert(int where, CharSequence text, int start, int end) {
-		if(where < 0)
-			throw new StringIndexOutOfBoundsException(where);
-		if(start < 0)
-			throw new StringIndexOutOfBoundsException(start);
-		if(start > end)
-			throw new StringIndexOutOfBoundsException("start > end");
-		
-		//before text changed
-		beforeTextChanged(where, 0, end - start);
-		mCache.onInsert(where, text, start, end);
-		
-		boolean changed = onInsert(where, text, start, end);
-		
-		//after text changed
-		if(changed) afterTextChanged();
-		
-		return this;
-	}
 	
 	/**
 	 * Overrideable function for insert().
@@ -884,15 +772,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * @returns whether actually text was changed
 	 */
 	protected boolean onInsert(int where, CharSequence text, int start, int end) {
-		char[] t = new char[text.length()];
-		text.toString().getChars(start, end, t, 0);
-		
-		int len = end - start;
-		
-		//insert text
-		ensureCapacity(mCount + len);
-		System.arraycopy(mText, where, mText, where + len, mCount - where);
-		System.arraycopy(t, 0, mText, where, len);
+		super.insert(where, text, start, end);
 		
 		//on text changed
 		onTextChanged(where, 0, end - start);
@@ -911,14 +791,14 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * index of <code>text</code> in this text. 
 	 */
 	public int indexOf(CharSequence text) { 
-		return indexOf(text, 0, mCount); 
+		return indexOf(text, 0, length()); 
 	}
 	
 	/**
 	 * index of <code>text</code> in this text, start from <code>fromIndex</code>. 
 	 */
 	public int indexOf(CharSequence text, int fromIndex) { 
-		return indexOf(text, fromIndex, mCount); 
+		return indexOf(text, fromIndex, length()); 
 	}
 	
 	/** 
@@ -933,7 +813,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * last index of <code>text</code>. 
 	 */
 	public int lastIndexOf(CharSequence text) {
-		return lastIndexOf(text, mCount, 0);
+		return lastIndexOf(text, length(), 0);
 	}
 	
 	/** 
@@ -980,38 +860,6 @@ public class TextData implements Editable, Parcelable, Serializable
 		return TextUtils.countOf(this, target, fromindex, endIndex); 
 	}
 	
-	/**
-	 * convert {@code TextData} object to {@code String}.
-	 */
-	@Override
-	public String toString() {
-		return String.valueOf(mText, 0, mCount);
-	}
-	
-	/**
-	 * length of all texts.
-	 */
-	@Override
-	public int length() {
-		return mCount;
-	}
-	
-	/**
-	 * return character at position.
-	 */
-	@Override
-	public char charAt(int position) {
-		return mText[position];
-	}
-	
-	/**
-	 * @see CharSequence.subString()
-	 */
-	@Override
-	public CharSequence subSequence(int start, int end) {
-		return TextUtils.subSequence(this, start, end);
-	}
-	
 	/** 
 	 * Lightly return the charsequence.
 	 * Different to subSequence(), this task is very fast and not use
@@ -1055,15 +903,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * same as <code>str.delete(st, en); str.insert(st, source, start, end);</code>
-	 */
-	@Override
-	public TextData replace(int start, int end, CharSequence text) {
-		replace(start, end, text, 0, text.length());
-		return this;
-	}
-	
-	/**
 	 * Find things which matches to param {@code from} in plain text and replace.
 	 * @returns if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
 	 */
@@ -1076,7 +915,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * @returns if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
 	 */
 	public int[] replaceRegex(String regex, CharSequence to) {
-		return replaceRegex(Pattern.compile(regex), to, 0, mCount);
+		return replaceRegex(Pattern.compile(regex), to, 0, length());
 	}
 	
 	/**
@@ -1105,7 +944,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * @returns all replaced count. if replaced nothing, returns 0.
 	 */
 	public int replaceAllRegex(String regex, CharSequence to) {
-		return replaceAllRegex(Pattern.compile(regex), to, 0, mCount);
+		return replaceAllRegex(Pattern.compile(regex), to, 0, length());
 	}
 	
 	/**
@@ -1116,7 +955,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	public int replaceAllRegex(Pattern regex, CharSequence to, int start, int end) {
 		if(start > end)
 			throw new StringIndexOutOfBoundsException("start > end");
-		else if(end > mCount)
+		else if(end > length())
 			throw new StringIndexOutOfBoundsException("end > length");
 		else if(start < 0 || end < 0)
 			throw new StringIndexOutOfBoundsException("minus " + start + "~" + end);
@@ -1135,41 +974,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * same as <code>str.delete(st, en); str.insert(st, source, start, end);</code>
-	 */
-	@Override
-	public TextData replace(int st, int en, CharSequence str, int start, int end) {
-		if(st < 0)
-			throw new StringIndexOutOfBoundsException(st);
-		if(st > mCount)
-			throw new StringIndexOutOfBoundsException("st > length");
-		if(st > en)
-			throw new StringIndexOutOfBoundsException("st > en");
-		if(start < 0)
-			throw new StringIndexOutOfBoundsException(start);
-		if(start > end)
-			throw new StringIndexOutOfBoundsException("start > end");
-		
-		if (en > mCount) en = mCount;
-		int len = end - start;
-		int lastLen = en - st;
-		
-		//before text changed
-		beforeTextChanged(st, lastLen, len);
-		
-		//replace text
-		mCache.onDelete(st, en);
-		mCache.onInsert(st, str, start, end);
-		
-		boolean changed = onReplace(st, en, str, start, end);
-		
-		//after text changed
-		if(changed) afterTextChanged();
-		
-		return this;
-	}
-	
-	/**
 	 * Overrideable function for replace().
 	 * 
 	 * When you override this method, calling super.onReplace() will
@@ -1182,46 +986,12 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * because all the event on the replace will be called.
 	 */
 	protected boolean onReplace(int st, int en, CharSequence text, int start, int end) {
-		int len = end - start;
-		int lastLen = en - st;
-		int newCount = mCount + len - lastLen;
-		
-		//replace the text
-		ensureCapacity(newCount);
-		System.arraycopy(mText, en, mText, st + len, mCount - en);
-		text.toString().getChars(start, end, mText, st);
-		mCount = newCount;
+		super.replace(st, en, text.subSequence(start, end));
 		
 		//on text changed
-		onTextChanged(st, lastLen, len);
+		onTextChanged(st, en - st, end - start);
 		
 		return true;
-	}
-	
-	/**
-	 * delete the text, from start to end 
-	 */
-	@Override
-	public TextData delete(int start, int end) {
-		if(start < 0)
-			throw new StringIndexOutOfBoundsException(start);
-		if(start > end)
-			throw new StringIndexOutOfBoundsException();
-		
-		if(end > mCount) end = mCount;
-		int len = end - start;
-		
-		if(len > 0) {
-			//before text changed
-			beforeTextChanged(start, len, 0);
-
-			boolean changed = onDelete(start, end);
-			
-			//after text changed
-			if(changed) afterTextChanged();
-		}
-		
-		return this;
 	}
 	
 	/**
@@ -1237,185 +1007,24 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * because all the event on the delete will be called.
 	 */
 	protected boolean onDelete(int start, int end) {
-		int len = end - start;
-		
-		//delete text
-		mCache.onDelete(start, end);
-		System.arraycopy(mText, start + len, mText, start, mCount - end);
-		mCount -= len;
-		
+		super.delete(start, end);
 		//on text changed
-		onTextChanged(start, len, 0);
+		onTextChanged(start, end - start, 0);
 		
 		return true;
 	}
 	
-	/**
-	 * Append text end of the text.
-	 */
-	@Override
-	public TextData append(CharSequence text) {
-		return append(text, 0, text.length() -1);
-	}
+	 // TODO : temp
+//	public TextData clone() {
+//		TextData data = new TextData();
+//		data.ensureCapacity(mText.length);
+//		System.arraycopy(mText, 0, data.mText, 0, mText.length);
+//		data.mCache = mCache.clone(data);
+//		data.mCount = mCount;
+//		return data;
+//	}
 	
-	/**
-	 * Append text cutted from start to end, end of the text.
-	 */
-	@Override
-	public TextData append(CharSequence text, int start, int end){
-		return insert(mCount, text, start, end);
-	}
-	
-	/**
-	 * Append one charactor end of text.
-	 * This not inserts number id of char; just one character.
-	 */
-	@Override
-	public TextData append(char character) {
-		return append(String.valueOf(new char[]{character}));
-	}
-	
-	/**
-	 * @see GetChars
-	 */
-	@Override
-	public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin) {
-		if(srcBegin < 0)
-			throw new StringIndexOutOfBoundsException(srcBegin);
-		if((srcEnd < 0) || (srcEnd > mCount))
-			throw new StringIndexOutOfBoundsException(srcEnd);
-		if(srcBegin > srcEnd)
-			throw new StringIndexOutOfBoundsException("srcBegin > srcEnd");
-		
-		System.arraycopy(mText, srcBegin, dst, dstBegin, srcEnd - srcBegin);
-	}
-	
-	/**
-	 * clear all texts.
-	 */
-	@Override
-	public void clear() {
-		mCount = 0;
-		mText = new char[DEFAULTCAPACITY];
-	}
-	
-	public TextData clone() {
-		TextData data = new TextData();
-		data.ensureCapacity(mText.length);
-		System.arraycopy(mText, 0, data.mText, 0, mText.length);
-		data.mCache = mCache.clone(data);
-		data.mCount = mCount;
-		return data;
-	}
-	
-	
-	
-	/**
-	 * unsupported: I'm lazy;;
-	 * developer of this is saying that donno how to use it
-	 * and supporting this will be complicated so not support.
-	 * NOT SUPPORT..!
-	 *     ...
-	 * <code>
-	 * ■	   ■	■■■■■	■	
-	 * ■	   ■	   ■		■	
-	 * ■	   ■	   ■		■	
-	 * ■■■■■■	   ■		■	
-	 * ■	   ■	   ■		■	
-	 * ■	   ■	   ■			
-	 * ■	   ■	■■■■■	■	
-	 * </code> 
-	 */
-	
-	/**
-	 * Not support yet
-	 * @throws UnsupportedOperationException always
-	 */
-	@Override
-	public void setFilters(InputFilter[] p1) {
-		throw new UnsupportedOperationException("너무 귀찮아요ㅠㅠ");
-	}
-	
-	/**
-	 * Not support yet
-	 * @throws UnsupportedOperationException always
-	 */
-	@Override
-	public InputFilter[] getFilters() {
-		throw new UnsupportedOperationException("너무 귀찮아요ㅠㅠ");
-	}
-	
-	
-	//not support: TextData only supports text editing, not span
-	
-	/**
-	 * Not support: TextData only supports text editing, not span
-	 * //@throws UnsupportedOperationException always
-	 */
-	@Deprecated
-	public void clearSpans() {
-		//throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * Not support: TextData only supports text editing, not span
-	 * @throws UnsupportedOperationException always
-	 */
-	@Deprecated
-	public void setSpan(Object what, int start, int end, int flags) {
-		throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * Not support: TextData only supports text editing, not span
-	 * //@throws UnsupportedOperationException always
-	 */
-	@Deprecated public void removeSpan(Object tag) {
-		//throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * Not support: TextData only supports text editing, not span
-	 * @throws UnsupportedOperationException always
-	 */
-	@Deprecated public <T> T[] getSpans(int start, int ens, Class<T> type) {
-		throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * Not support: TextData only supports text editing, not span
-	 * @throws UnsupportedOperationException always
-	 */
-	@Deprecated public int getSpanStart(Object tag) {
-		throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * Not support: TextData only supports text editing, not span
-	 * @throws UnsupportedOperationException always
-	 */
-	@Deprecated public int getSpanEnd(Object tag) {
-		throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * Not support: TextData only supports text editing, not span
-	 * @throws UnsupportedOperationException always
-	 */
-	@Deprecated 
-	public int getSpanFlags(Object tag) {
-		throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * Not support: TextData only supports text editing, not span
-	 * @throws UnsupportedOperationException always
-	 */
-	@Deprecated
-	public int nextSpanTransition(int start, int limit, Class type) {
-		throw new UnsupportedOperationException();
-	}
-	
+	 
 	
 	//static methods
 	
@@ -1507,7 +1116,9 @@ public class TextData implements Editable, Parcelable, Serializable
 	 */
 	@Override
 	public void writeToParcel(Parcel p, int flags) {
-		p.writeCharArray(mText);
+		char[] text = new char[length()];
+		getChars(0, length(), text, 0);
+		p.writeCharArray(text);
 		p.writeSerializable(mUndoManager);
 		p.writeInt(mUndoMode);
 		p.writeInt(mLastUndoMode);

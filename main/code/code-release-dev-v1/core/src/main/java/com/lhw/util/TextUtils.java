@@ -1,6 +1,10 @@
 package com.lhw.util;
 
 import java.io.Serializable;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.UTFDataFormatException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -127,7 +131,7 @@ public class TextUtils
 		}
 	}
 	
-	public static int indexOf(CharSequence str, String text, int fromindex, int endIndex) {
+	public static int indexOf(CharSequence str, CharSequence text, int fromindex, int endIndex) {
 		int len = text.length();
 		for(int i = fromindex; i < endIndex - len; i++)
 			if(equals(text, TextUtils.lightSubSequence(str, i, i + len))) return i;
@@ -135,7 +139,7 @@ public class TextUtils
 		return -1;
 	}
 	
-	public static int lastIndexOf(CharSequence str, String text, int fromIndex, int limit) {
+	public static int lastIndexOf(CharSequence str, CharSequence text, int fromIndex, int limit) {
 		int len = text.length();
 		for(int i = fromIndex; i > limit + len; i--)
 			if(equals(text, TextUtils.lightSubSequence(str, i - len, i))) return i;
@@ -145,14 +149,14 @@ public class TextUtils
 	/** 
 	 * return the count in this text witch equals target.
 	 */
-	public static int countOf(CharSequence str, String target, int fromIndex) {
+	public static int countOf(CharSequence str, CharSequence target, int fromIndex) {
 		return countOf(str, target, fromIndex, str.length());
 	}
 
 	/** 
 	 * return the count in this text witch equals target.
 	 */
-	public static int countOf(CharSequence str, String target, int fromindex, int endIndex) {
+	public static int countOf(CharSequence str, CharSequence target, int fromindex, int endIndex) {
 		int i = fromindex, count = 0;
 		while(i <= endIndex) {
 			if((i = indexOf(str, target, i + 1, endIndex)) == -1) return count;
@@ -225,7 +229,7 @@ public class TextUtils
 		return -1;
 	}
 	
-	public static int equalsIndex(char c, String text) {
+	public static int equalsIndex(char c, CharSequence text) {
 		for(int i = 0; i < text.length(); i++)
 			if(text.charAt(i) == c) return i;
 		return -1;
@@ -302,6 +306,54 @@ public class TextUtils
 		for(int i = 0; i < text.length(); i++)
 			if(!isUpper(text.charAt(i))) return true;
 		return false;
+	}
+	
+	public static int writeUTF(String str, DataOutput out) throws IOException {
+		int strlen = str.length();
+		int utflen = 0;
+		int c, count = 0;
+		
+		for(int i = 0; i < strlen; i++) {
+			c = str.charAt(i);
+			if((c >= 0x0001) && (c <= 0x007F)) {
+				utflen++;
+			} else if(c > 0x07FF) {
+				utflen += 3;
+			} else {
+				utflen += 2;
+			}
+		}
+		
+		if(utflen > 65535)
+			throw new UTFDataFormatException("encoded string too long: " + utflen + " bytes");
+		
+		byte[] bytearr = null;
+		bytearr = new byte[utflen+2];
+		bytearr[count++] = (byte) ((utflen >>> 8) & 0xFF);
+		bytearr[count++] = (byte) ((utflen >>> 0) & 0xFF);
+		
+		int i = 0;
+		for(i = 0; i < strlen; i++) {
+			c = str.charAt(i);
+			if(!((c >= 0x0001) && (c <= 0x007F)))
+				break;
+			bytearr[count++] = (byte) c;
+		}
+		for(;i < strlen; i++) {
+			c = str.charAt(i);
+			if((c >= 0x0001) && (c <= 0x007F)) {
+				bytearr[count++] = (byte) c;
+			} else if (c > 0x07FF) {
+				bytearr[count++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
+				bytearr[count++] = (byte) (0x80 | ((c >> 6) & 0x3F));
+				bytearr[count++] = (byte) (0x80 | ((c >> 0) & 0x3F));
+			} else {
+				bytearr[count++] = (byte) (0xC0 | ((c >> 6) & 0x1F));
+				bytearr[count++] = (byte) (0x80 | ((c >> 0) & 0x3F));
+			}
+		} out.write(bytearr, 0, utflen + 2);
+		
+		return utflen + 2;
 	}
 	
 	// TODO : else

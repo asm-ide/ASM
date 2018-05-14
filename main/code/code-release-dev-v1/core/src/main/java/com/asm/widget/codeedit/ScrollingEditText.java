@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.inputmethod.*;
 
 
 /**
@@ -239,6 +240,11 @@ public class ScrollingEditText extends ScrollingTextView
 			}
 			return handled;
 		}
+	}
+	
+	@Override
+	public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+		return new ScrollingEditTextInputConnection(this, true);
 	}
 	
 	@Override
