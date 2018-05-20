@@ -1,8 +1,8 @@
-```
-                     Project ASM / code
+
+                    __ Project ASM / code
             © LHW 2017~2018. All Rights Reserved.
 		   package com.asm.widget.*
-		  /com.asm.widget.codeedit.*
+		  /com.asm.widget.codeedit.*__
 	
 	
 	1. Project Descriptions
@@ -34,6 +34,3 @@
 			versions
 				v1: failed / ended
 				ended update
-		
-```
-		
