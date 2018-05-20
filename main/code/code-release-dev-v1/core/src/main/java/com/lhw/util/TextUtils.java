@@ -308,6 +308,34 @@ public class TextUtils
 		return false;
 	}
 	
+	/**
+	 * Runs in all strings .indexOf(str) and if matches
+	 * return {position, index in array} or return null
+	 */
+	public static int[] indexOfIn(String str, String[] in) {
+		for(int i = 0; i < in.length; i++) {
+			int index = str.indexOf(in[i]);
+			if(index != -1) {
+				return new int[] {index, i};
+			}
+		}
+		return null;
+	}
+	
+	public static int includesIn(CharSequence text, CharSequence in) {
+		for(int i = 0; i < text.length(); i++) {
+			if(includes(text.charAt(i), in)) return i;
+		}
+		return -1;
+	}
+	
+	public static boolean allEquals(char c, CharSequence text) {
+		for(int i = 0; i < text.length(); i++)
+			if(text.charAt(i) != c) return false;
+		
+		return true;
+	}
+	
 	public static int writeUTF(String str, DataOutput out) throws IOException {
 		int strlen = str.length();
 		int utflen = 0;

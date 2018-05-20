@@ -5,6 +5,7 @@ import com.asm.annotation.NonNull;
 
 import com.lhw.util.TextUtils;
 
+import android.graphics.Rect;
 import android.graphics.Canvas;
 import android.text.Editable;
 import android.text.TextPaint;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
+import static com.asm.text.UndoManager.*;
 
 
 
@@ -279,6 +282,12 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 	}
 	
+	/** hide */
+	public static interface OnInvaildateListener
+	{
+		public boolean onInvaildate(TextData data);
+	}
+	
 	
 	/** tag for Log */
 	private static final String TAG = "TextData";
@@ -286,43 +295,10 @@ public class TextData implements Editable, Parcelable, Serializable
 	/** max array size */
 	private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 	
-	/**
-	 * Undo mode and marks that do not use undo.
-	 * If this mode was setted, all undo history will be destoryed and
-	 * set to null.
-	 */
-	public static final int UNDO_MODE_OFF = 0;
-	
-	/**
-	 * Undo mode and marks that undo was disenabled for a while.
-	 * 
-	 * UNDO_MODE_OFF does mean no not use undo manager forever and
-	 * destory all undo history but this does mean not mark on undo
-	 * stack while this mode was set.
-	 * 
-	 * This can be used during edit text without history.
-	 */
-	public static final int UNDO_MODE_DISABLED = 1;
-	
-	/**
-	 * Default undo mode.
-	 * 
-	 * This mode automaticly sence that insert, replace,
-	 * or delete texts and add to history.
-	 */
-	public static final int UNDO_MODE_AUTOMARK = 2;
-	
-	/** 
-	 * Undo mode and marks that do not use undo.
-	 * 
-	 * This is the mode that put all actions while this mode was set
-	 * in one action. So, if undo() or redo() called, all actions
-	 * with this mode will be edited.
-	 */
-	public static final int UNDO_MODE_OPENED = 3;
 	
 	/** default capacity. */
 	public static int DEFAULTCAPACITY = 16;
+	
 	
 	/** current capacity */
 	//public int mCapacity = DEFAULTCAPACITY;
@@ -341,24 +317,30 @@ public class TextData implements Editable, Parcelable, Serializable
 	 */
 	private @Nullable UndoManager mUndoManager;
 	
-	/** undo mode. can select in UNDO_MODE_... */
-	private int mUndoMode = UNDO_MODE_AUTOMARK;
-	
-	/** last undo mode. used when return to last mode. */
-	private int mLastUndoMode;
-	
 	/** the {@code TextWather} listeners */
 	transient @NonNull ArrayList<TextWatcher> mListeners = new ArrayList<TextWatcher>();
 	
 	/** for more faster calculate. */
 	private @NonNull Cache mCache;
 	
+	/**
+	 * Marks if needed invaildate and already did it.
+	 * True for need to invaildate and not invaildated yet.
+	 * Used when only used in view.
+	 */
+	private boolean mNeedInvaildate = true;
+	
+	/** Marks dirty bounds not invaildated. */
+	private Rect mDirtyRect;
+	
+	/** Called when called {@code TextData.invaildate()} */
+	private OnInvaildateListener mInvaildateListener;
+	
 	/** text encoding. */
 	String mEncoding = "UTF-16"; //TODO
 	
 	/** parent text drawing method. */
-	transient //because this is parent so not need to save
-	TextDraw mDraw;
+	transient TextDraw mDraw;
 	
 	/**
 	 * For wrap object from stream and decide it.
@@ -389,8 +371,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	protected TextData(Parcel p) {
 		mText = p.createCharArray();
 		mUndoManager = (UndoManager) p.readSerializable();
-		mUndoMode = p.readInt();
-		mLastUndoMode = p.readInt();
 		mEncoding = p.readString();
 		mCache = (Cache) p.readSerializable();
 		mCache.updateScrollableSize();
@@ -483,6 +463,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 */
 	public void setDraw(TextDraw draw) {
 		mDraw = draw;
+		mDirtyRect = new Rect(0, 0, draw.getWidth(), draw.getHeight());
 		mCache.updateIfNeeded();
 	}
 	
@@ -494,15 +475,74 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
+	 * {@hide}
 	 * Invaildate the view if TextData is used in any view.
+	 * This only marks whether needs invaildate or not.
+	 * Might require UI thread.
 	 */
 	public void invaildate() {
-		
+		invaildate(new Rect(0, 0, mDraw.getWidth(), mDraw.getHeight()));
 	}
 	
 	/**
+	 * {@hide}
 	 * Invaildate the view if TextData is used in any view.
+	 * This only marks whether needs invaildate or not.
+	 * Might require UI thread.
 	 */
+	public void invaildate(int l, int t, int r, int b) {
+		invaildate(new Rect(l, t, r, l));
+	}
+	
+	/**
+	 * {@hide}
+	 * Invaildate the view if TextData is used in any view.
+	 * This only marks whether needs invaildate or not.
+	 * Might require UI thread.
+	 */
+	public void invaildate(Rect rect) {
+		mNeedInvaildate = true;
+		mDirtyRect.set(rect);
+		callOnInvaildateIfAvailable();
+	}
+	
+	/**
+	 * {@hide}
+	 * Set the listener called on needs to invaildate.
+	 */
+	public void setOnInvaildateListener(OnInvaildateListener listener) {
+		mInvaildateListener = listener;
+	}
+	
+	/**
+	 * {@hide}
+	 * Returns whether needs invaildate.
+	 */
+	public boolean isNeedInvaildate() {
+		return mNeedInvaildate;
+	}
+	
+	/**
+	 * {@hide}
+	 * Set whether dirty or not.
+	 */
+	public void setNeedInvaildate(boolean is) {
+		mNeedInvaildate = is;
+	}
+	
+	/**
+	 * {@hide}
+	 * Return the not invaildated rect.
+	 */
+	public Rect getDirtyRect() {
+		return mDirtyRect;
+	}
+	
+	private void callOnInvaildateIfAvailable() {
+		if(mInvaildateListener != null) {
+			mNeedInvaildate = !mInvaildateListener.onInvaildate(this);
+		}
+	}
 	
 	/** {@hide} */
 	public Cache getCache() {
@@ -535,18 +575,8 @@ public class TextData implements Editable, Parcelable, Serializable
 			watcher.beforeTextChanged(this, start, count, after);
 		}
 		
-		// add to library
-		TextWatcher undoWatcher = mUndoManager.getAutoMarkWatcher();
-		switch(mUndoMode) {
-			case UNDO_MODE_OFF:
-			case UNDO_MODE_DISABLED:
-				break;
-				
-			case UNDO_MODE_AUTOMARK:
-			case UNDO_MODE_OPENED:
-				undoWatcher.beforeTextChanged(this, start, count, after);
-				break;
-		}
+		// call UndoManager
+		mUndoManager.beforeTextChanged(this, start, count, after);
 	}
 	
 	/**
@@ -557,21 +587,8 @@ public class TextData implements Editable, Parcelable, Serializable
 			watcher.onTextChanged(this, start, before, count);
 		}
 		
-		// add to history
-		switch(mUndoMode) {
-			case UNDO_MODE_OFF:
-			case UNDO_MODE_DISABLED:
-				break;
-				
-			case UNDO_MODE_AUTOMARK:
-				TextWatcher undoWatcher = mUndoManager.getAutoMarkWatcher();
-				undoWatcher.onTextChanged(this, start, before, count);
-				break;
-				
-			case UNDO_MODE_OPENED:
-				mUndoManager.addOpenAction(this, start, before, count);
-				break;
-		}
+		// marks in undo stack
+		mUndoManager.onTextChanged(this, start, before, count);
 	}
 	
 	/**
@@ -583,13 +600,13 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 		
 		// add to history
-		switch(mUndoMode) {
+		switch(mUndoManager.getUndoMode()) {
 			case UNDO_MODE_OFF:
 			case UNDO_MODE_DISABLED:
 				break;
 				
 			case UNDO_MODE_AUTOMARK:
-				TextWatcher undoWatcher = mUndoManager.getAutoMarkWatcher();
+				TextWatcher undoWatcher = mUndoManager;
 				undoWatcher.afterTextChanged(this);
 				break;
 
@@ -601,41 +618,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	// Undo / redo methods.
 	
-	/**
-	 * Set the undo / redo stack mode.
-	 * If mode setted to UNDO_MODE_OFF, all history will be destoryed.
-	 */
-	public int undoMode(int mode) {
-		if(mLastUndoMode == mode) return mLastUndoMode;
-		mLastUndoMode = mUndoMode;
-		switch(mode) {
-			case UNDO_MODE_OFF:
-			case UNDO_MODE_DISABLED:
-				switch(mLastUndoMode) {
-					case UNDO_MODE_OPENED:
-						closeUndoActions();
-						break;
-				}
-				break;
-				
-			case UNDO_MODE_OPENED:
-				if(mLastUndoMode != UNDO_MODE_OPENED) {
-					openUndoActions();
-				}
-				break;
-				
-			case UNDO_MODE_AUTOMARK:
-				break;
-				
-			default:
-				throw new IllegalArgumentException("unknown mode: " + Integer.toHexString(mode));
-		}
-		mUndoMode = mode;
-		if(mode == UNDO_MODE_OFF) {
-			mUndoManager = null;
-		}
-		return mLastUndoMode;
-	}
 	
 	/**
 	 * Open the undo actions.
@@ -643,13 +625,12 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * opened {@link Actions}, close it and open new {@link Actions}.
 	 */
 	public void openUndoActions() {
-		if(mLastUndoMode == UNDO_MODE_OPENED)
-			return;
-		mLastUndoMode = mUndoMode;
-		mUndoMode = UNDO_MODE_OPENED;
-		
-		mUndoManager.close();
 		mUndoManager.openActions();
+	}
+	
+	
+	public void closeUndoActions() {
+		mUndoManager.closeActions();
 	}
 	
 	/**
@@ -657,12 +638,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * @see openUndoActions()
 	 */
 	public void openUndoActionsTemporary() {
-		switch(mUndoMode) {
-			case UNDO_MODE_AUTOMARK:
-			case UNDO_MODE_OPENED:
-				openUndoActions();
-				break;
-		}
+		mUndoManager.openUndoActionsTemporary();
 	}
 	
 	/**
@@ -670,29 +646,14 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * opened the actions and restore to last mode.
 	 */
 	public void closeUndoActionsTemporary() {
-		switch(mLastUndoMode) {
-			case UNDO_MODE_AUTOMARK:
-			case UNDO_MODE_OPENED:
-				closeUndoActions();
-				mUndoMode = mLastUndoMode;
-				break;
-		}
-	}
-	
-	/**
-	 * Close the undo actions.
-	 * Used when undo mode is {@link UNDO_MODE_OPENED} and closes the same
-	 * all {@link Actions} and doesn't open new {@link Actions}.
-	 */
-	public void closeUndoActions() {
-		mUndoManager.close();
+		mUndoManager.closeUndoActionsTemporary();
 	}
 	
 	/**
 	 * Used when tempory disable undo mode.
 	 */
 	public int disableUndo() {
-		return undoMode(UNDO_MODE_DISABLED);
+		return mUndoManager.disableUndo();
 	}
 	
 	/**
@@ -702,14 +663,21 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * For instance, when mode is a and called disableUndo() and later called
 	 * this method, actions between calling disableUndo() and calling this will
 	 * be not marked on undo history.
+	 *
+	 * @throws IllegalStateException if undo mode is not disabled
 	 */
-	public void turnOnUndo() {
-		if(mUndoMode == UNDO_MODE_DISABLED) {
-			if(mLastUndoMode != UNDO_MODE_DISABLED) {
-				undoMode(mLastUndoMode);
-			}
-		} else throw new IllegalStateException("this only can used when last mode is UNDO_MODE_DISABLED");
+	public void enableUndo() {
+		mUndoManager.enableUndo();
 	}
+	
+	/**
+	 * Set the undo / redo stack mode.
+	 * If mode setted to UNDO_MODE_OFF, all history will be destoryed.
+	 */
+	public int undoMode(int mode) {
+		return mUndoManager.setMode(mode);
+	}
+	
 	
 	
 	// Text methods.
@@ -723,17 +691,30 @@ public class TextData implements Editable, Parcelable, Serializable
 		mEncoding = encoding;
 	}
 	
+	/**
+	 * Return the encoding.
+	 * This method doesn't ensure which thia text was written in that encoding.
+	 * It might set by {@link setEncoding}.
+	 */
 	public String getEncoding() {
 		return mEncoding;
 	}
 	
-	public void setText(TextData data) {
-		mText = data.mText;
-		mCount = data.mCount;
-		if(data.mDraw != null) mDraw = data.mDraw;
+	/**
+	 * Set the text data from other data.
+	 * If other has parent or not, parent will not be changed.
+	 * Also update the caches.
+	 */
+	public void setText(TextData other) {
+		mText = other.mText;
+		mCount = other.mCount;
+		//if(other.mDraw != null) setDraw(other.mDraw);
 		mCache.updateScrollableSize();
 	}
 	
+	/**
+	 * Set the text data.
+	 */
 	public void setText(CharSequence data) {
 		mCount = data.length();
 		mText = TextUtils.getChars(data, 0, mCount);
@@ -1509,8 +1490,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	public void writeToParcel(Parcel p, int flags) {
 		p.writeCharArray(mText);
 		p.writeSerializable(mUndoManager);
-		p.writeInt(mUndoMode);
-		p.writeInt(mLastUndoMode);
+		p.writeInt(mUndoManager.getUndoMode());
 		p.writeString(mEncoding);
 		p.writeSerializable(mCache);
 	}
