@@ -60,7 +60,8 @@ License about ASM Team
 		
 		When redistribution granted:
 			
-			(a)	when copyright owner granted you to redistibute
+			(a)	when copyright owner granted contributors to redistibute to specific
+				person who copyright owner defined
 		
 		If redistribution granted to you:
 			
@@ -74,7 +75,12 @@ License about ASM Team
 				provided Your use, reproduction, and distribution of the Work
 				otherwise complies with the conditions stated in this License.
 		
-	4.	Duty of Contributors
+	4.	Distribution. All contributors basically allowed to see, create, modify,
+		delete anything in source. But contributors cannot be granted by copyright
+		owner and copyright owner can select permission: cannot read, read-only, or
+		read and write.
+		
+	5.	Duty of Contributors
 		
 		All contributors should improve our works to support more devices, work
 		faster, look good, and satisfy many users as much as possible. Contributors
