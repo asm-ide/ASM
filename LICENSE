@@ -27,6 +27,8 @@
 
 License about ASM Team
 	
+WARNING: THIS LICENSE IS NOT STABLE UNTIL RELEASE AND CAN BE CHANGED WITHOUT ANY NOTIFICATIONS.
+	
 	
 	TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 	
@@ -53,7 +55,7 @@ License about ASM Team
 		License, copyright owner hereby grants to contributors a perpetual,
 		worldwide, non-exclusive, no-charge, royalty-free copyright license and
 		rights to create, modify, and delete anything in source while copyright
-		owner does not granted very contributors.
+		owner granted the very contributors.
 		
 	3.	Redistribution. Except following conditions, all contributors and others
 		must not reproduce and distribute source to the others.
@@ -77,14 +79,11 @@ License about ASM Team
 		
 	4.	Distribution. All contributors basically allowed to see, create, modify,
 		delete anything in source. But contributors cannot be granted by copyright
-		owner and copyright owner can select permission: cannot read, read-only, or
-		read and write.
+		owner and copyright owner can select permission per file.
 		
-	5.	Duty of Contributors
-		
-		All contributors should improve our works to support more devices, work
-		faster, look good, and satisfy many users as much as possible. Contributors
-		should not redistribute source.
+	5.	Duty of Contributors. All contributors should improve our source to support
+		more devices, work faster, look good, and satisfy many users as much as
+		possible. Contributors should not redistribute source.
 	
 	
 	END OF TERMS AND CONDITIONS
