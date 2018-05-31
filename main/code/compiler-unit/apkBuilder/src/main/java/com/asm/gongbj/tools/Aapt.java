@@ -12,6 +12,9 @@ public class Aapt
 	public Aapt(String android_jar_path){
 		jarPath = android_jar_path;
 	}
+	public String getAndroidJarPath(){
+		rerurbem
+	}
 	public static String requestAndroidJar(Context activity) throws Exception{
 		File destFile = new File(Environment.getExternalStorageDirectory()+"/.ASM/android.jar");
 		if (!destFile.getParentFile().exists()) destFile.getParentFile().mkdirs();
