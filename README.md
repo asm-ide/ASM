@@ -8,12 +8,13 @@ The ASM Team makes the android studio in the mobile device.
 
 ## Features
 ### Project code
-[tree main/code](https://github.com/lhwdev/ASM/tree/master/main/code)<br>
+[tree main/code](main/code)<br>
 Real-time code highlighter - `CodeEdit (com.asm.widget.codeedit)`<br>
 Code analysis - `CodeAnalysis (com.asm.analysis)`
 
 
 ## Licenses
+For details, see [HERE](LICENSE).
 ```
 		
                         Project ASM

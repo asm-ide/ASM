@@ -17,14 +17,48 @@ import java.util.*;
 
 import android.support.v7.widget.Toolbar;
 import com.asm.coreui.*;
+import com.asm.io.*;
+import android.support.v4.app.*;
+import android.Manifest;
+import android.app.*;
+import android.content.pm.*;
 
 
 public class CodeEditActivity extends AppCompatActivity
 {
+	private class MyServiceConnection implements ServiceConnection {
+		@Override
+		public void onServiceConnected(ComponentName p1, IBinder binder)
+		{
+			Toast.makeText(CodeEditActivity.this, "connected", Toast.LENGTH_LONG).show();
+			ITestService svb = ITestService.Stub.asInterface(binder);
+			try {
+				File f = new File("/sdcard/myfile.txt");
+				if(!f.exists()) f.mkdirs();
+				FileStream fs = new FileStream("/sdcard/myfile.txt", Stream.MODE_READ | Stream.MODE_WRITE);
+				RemoteStream rs = new RemoteStream(fs);
+				svb.work("1", rs);
+			} catch(Exception e) {
+				Toast.makeText(CodeEditActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+			}
+		}
+		@Override
+		public void onServiceDisconnected(ComponentName p1)
+		{
+			// TODO: Implement this method
+		}
+	}  
+	
+	
+	private static final int REQUIRE_PERMISSION_CODE = 100;
+	
 	private Toolbar toolbar;
 	private ScrollingTextView edit;
 	private EditText dbg;
 	private FloatingActionButton fab;
+	private MyServiceConnection svc;
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -53,6 +87,15 @@ public class CodeEditActivity extends AppCompatActivity
 			});
 		
 		super.onCreate(savedInstanceState);
+		
+		if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+			onCreatePrimary();
+		} else {
+			ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, REQUIRE_PERMISSION_CODE);
+		}
+	}
+	
+	private void onCreatePrimary() {
 		//Toast.makeText(this, todo, Toast.LENGTH_LONG).show();
 		Log.d(".", "before set view");
 		final EditText e = new EditText(this);
@@ -99,7 +142,12 @@ public class CodeEditActivity extends AppCompatActivity
 					// TODO: Implement this method
 				}
 			});
-		setContentView(e);
+		//setContentView(e);
+		
+		setContentView(R.layout.default_layout);
+		svc = new MyServiceConnection();
+		bindService(new Intent(this, TestService.class), svc, BIND_AUTO_CREATE);
+		//Toast.makeText(this, "" + (), Toast.LENGTH_SHORT).show();
 //		setContentView(R.layout.default_layout);
 //		setContentView(R.layout.codeedit);
 //		Log.d(".", "after set view");
@@ -163,5 +211,24 @@ public class CodeEditActivity extends AppCompatActivity
 //			}
 //		};
 //		h.post(run);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch(requestCode) {
+			case REQUIRE_PERMISSION_CODE:
+				if(resultCode == PackageManager.PERMISSION_GRANTED) {
+					onCreatePrimary();
+				} else {
+					Toast.makeText(this, "permission not granted", Toast.LENGTH_LONG).show();
+				}
+		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(svc != null) unbindService(svc);
 	}
 }

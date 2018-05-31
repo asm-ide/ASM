@@ -5,6 +5,7 @@ import com.asm.annotation.NonNull;
 
 import com.lhw.util.TextUtils;
 
+import android.graphics.Rect;
 import android.graphics.Canvas;
 import android.text.Editable;
 import android.text.TextPaint;
@@ -17,6 +18,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+import static com.asm.text.UndoManager.*;
 
 
 
@@ -257,7 +261,8 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * position data when returns to {@code getPositionData}.
+	 * Position data when returns to {@code getPositionData}.
+	 * It marks position, lines, cols, x position, and y position.
 	 */
 	public static class PositionData
 	{
@@ -277,6 +282,12 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 	}
 	
+	/** hide */
+	public static interface OnInvaildateListener
+	{
+		public boolean onInvaildate(TextData data);
+	}
+	
 	
 	/** tag for Log */
 	private static final String TAG = "TextData";
@@ -284,43 +295,10 @@ public class TextData implements Editable, Parcelable, Serializable
 	/** max array size */
 	private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 	
-	/**
-	 * Undo mode and marks that do not use undo.
-	 * If this mode was setted, all undo history will be destoryed and
-	 * set to null.
-	 */
-	public static final int UNDO_MODE_OFF = 0;
-	
-	/**
-	 * Undo mode and marks that undo was disenabled for a while.
-	 * 
-	 * UNDO_MODE_OFF does mean no not use undo manager forever and
-	 * destory all undo history but this does mean not mark on undo
-	 * stack while this mode was set.
-	 * 
-	 * This can be used during edit text without history.
-	 */
-	public static final int UNDO_MODE_DISENABLED = 1;
-	
-	/**
-	 * Default undo mode.
-	 * 
-	 * This mode automaticly sence that insert, replace,
-	 * or delete texts and add to history.
-	 */
-	public static final int UNDO_MODE_AUTOMARK = 2;
-	
-	/** 
-	 * Undo mode and marks that do not use undo.
-	 * 
-	 * This is the mode that put all actions while this mode was set
-	 * in one action. So, if undo() or redo() called, all actions
-	 * with this mode will be edited.
-	 */
-	public static final int UNDO_MODE_OPENED = 3;
 	
 	/** default capacity. */
 	public static int DEFAULTCAPACITY = 16;
+	
 	
 	/** current capacity */
 	//public int mCapacity = DEFAULTCAPACITY;
@@ -339,24 +317,30 @@ public class TextData implements Editable, Parcelable, Serializable
 	 */
 	private @Nullable UndoManager mUndoManager;
 	
-	/** undo mode. can select in UNDO_MODE_... */
-	private int mUndoMode = UNDO_MODE_AUTOMARK;
-	
-	/** last undo mode. used when return to last mode. */
-	private transient int mLastUndoMode;
-	
 	/** the {@code TextWather} listeners */
 	transient @NonNull ArrayList<TextWatcher> mListeners = new ArrayList<TextWatcher>();
 	
 	/** for more faster calculate. */
 	private @NonNull Cache mCache;
 	
+	/**
+	 * Marks if needed invaildate and already did it.
+	 * True for need to invaildate and not invaildated yet.
+	 * Used when only used in view.
+	 */
+	private boolean mNeedInvaildate = true;
+	
+	/** Marks dirty bounds not invaildated. */
+	private Rect mDirtyRect;
+	
+	/** Called when called {@code TextData.invaildate()} */
+	private OnInvaildateListener mInvaildateListener;
+	
 	/** text encoding. */
 	String mEncoding = "UTF-16"; //TODO
 	
 	/** parent text drawing method. */
-	transient //because this is parent so not need to save
-	TextDraw mDraw;
+	transient TextDraw mDraw;
 	
 	/**
 	 * For wrap object from stream and decide it.
@@ -364,7 +348,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * 1 : from parcel
 	 * 2 : from serializable
 	 */
-	private int mStreamFrom = 0;
+	private transient int mStreamFrom = 0;
 	
 	
 	protected TextData() {
@@ -385,7 +369,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	protected TextData(Parcel p) {
-		p.readCharArray(mText);
+		mText = p.createCharArray();
 		mUndoManager = (UndoManager) p.readSerializable();
 		mEncoding = p.readString();
 		mCache = (Cache) p.readSerializable();
@@ -405,7 +389,8 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * set all datas from other. 
+	 * set all datas from other.
+	 * @param other the other data which will set
 	 */
 	public void set(TextData other) {
 		mCache = other.mCache;
@@ -463,9 +448,13 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * move the cursor position.
+	 * @param add add cursor position. 0 to not change
 	 */
 	public void addCursorPosition(int add) {
-		mCache.addCursorPosition(add);
+		if(add != 0) {
+			mCache.addCursorPosition(add);
+			invaildate();
+		}
 	}
 	
 	/**
@@ -474,6 +463,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 */
 	public void setDraw(TextDraw draw) {
 		mDraw = draw;
+		mDirtyRect = new Rect(0, 0, draw.getWidth(), draw.getHeight());
 		mCache.updateIfNeeded();
 	}
 	
@@ -482,6 +472,76 @@ public class TextData implements Editable, Parcelable, Serializable
 	 */
 	public TextDraw getDraw() {
 		return mDraw;
+	}
+	
+	/**
+	 * {@hide}
+	 * Invaildate the view if TextData is used in any view.
+	 * This only marks whether needs invaildate or not.
+	 * Might require UI thread.
+	 */
+	public void invaildate() {
+		invaildate(new Rect(0, 0, mDraw.getWidth(), mDraw.getHeight()));
+	}
+	
+	/**
+	 * {@hide}
+	 * Invaildate the view if TextData is used in any view.
+	 * This only marks whether needs invaildate or not.
+	 * Might require UI thread.
+	 */
+	public void invaildate(int l, int t, int r, int b) {
+		invaildate(new Rect(l, t, r, l));
+	}
+	
+	/**
+	 * {@hide}
+	 * Invaildate the view if TextData is used in any view.
+	 * This only marks whether needs invaildate or not.
+	 * Might require UI thread.
+	 */
+	public void invaildate(Rect rect) {
+		mNeedInvaildate = true;
+		mDirtyRect.set(rect);
+		callOnInvaildateIfAvailable();
+	}
+	
+	/**
+	 * {@hide}
+	 * Set the listener called on needs to invaildate.
+	 */
+	public void setOnInvaildateListener(OnInvaildateListener listener) {
+		mInvaildateListener = listener;
+	}
+	
+	/**
+	 * {@hide}
+	 * Returns whether needs invaildate.
+	 */
+	public boolean isNeedInvaildate() {
+		return mNeedInvaildate;
+	}
+	
+	/**
+	 * {@hide}
+	 * Set whether dirty or not.
+	 */
+	public void setNeedInvaildate(boolean is) {
+		mNeedInvaildate = is;
+	}
+	
+	/**
+	 * {@hide}
+	 * Return the not invaildated rect.
+	 */
+	public Rect getDirtyRect() {
+		return mDirtyRect;
+	}
+	
+	private void callOnInvaildateIfAvailable() {
+		if(mInvaildateListener != null) {
+			mNeedInvaildate = !mInvaildateListener.onInvaildate(this);
+		}
 	}
 	
 	/** {@hide} */
@@ -515,18 +575,8 @@ public class TextData implements Editable, Parcelable, Serializable
 			watcher.beforeTextChanged(this, start, count, after);
 		}
 		
-		// add to library
-		TextWatcher undoWatcher = mUndoManager.getAutoMarkWatcher();
-		switch(mUndoMode) {
-			case UNDO_MODE_OFF:
-			case UNDO_MODE_DISENABLED:
-				break;
-				
-			case UNDO_MODE_AUTOMARK:
-			case UNDO_MODE_OPENED:
-				undoWatcher.beforeTextChanged(this, start, count, after);
-				break;
-		}
+		// call UndoManager
+		mUndoManager.beforeTextChanged(this, start, count, after);
 	}
 	
 	/**
@@ -537,21 +587,8 @@ public class TextData implements Editable, Parcelable, Serializable
 			watcher.onTextChanged(this, start, before, count);
 		}
 		
-		// add to history
-		switch(mUndoMode) {
-			case UNDO_MODE_OFF:
-			case UNDO_MODE_DISENABLED:
-				break;
-				
-			case UNDO_MODE_AUTOMARK:
-				TextWatcher undoWatcher = mUndoManager.getAutoMarkWatcher();
-				undoWatcher.onTextChanged(this, start, before, count);
-				break;
-				
-			case UNDO_MODE_OPENED:
-				mUndoManager.addOpenAction(this, start, before, count);
-				break;
-		}
+		// marks in undo stack
+		mUndoManager.onTextChanged(this, start, before, count);
 	}
 	
 	/**
@@ -563,13 +600,13 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 		
 		// add to history
-		switch(mUndoMode) {
+		switch(mUndoManager.getUndoMode()) {
 			case UNDO_MODE_OFF:
-			case UNDO_MODE_DISENABLED:
+			case UNDO_MODE_DISABLED:
 				break;
 				
 			case UNDO_MODE_AUTOMARK:
-				TextWatcher undoWatcher = mUndoManager.getAutoMarkWatcher();
+				TextWatcher undoWatcher = mUndoManager;
 				undoWatcher.afterTextChanged(this);
 				break;
 
@@ -581,41 +618,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	// Undo / redo methods.
 	
-	/**
-	 * Set the undo / redo stack mode.
-	 * If mode setted to UNDO_MODE_OFF, all history will be destoryed.
-	 */
-	public int undoMode(int mode) {
-		if(mLastUndoMode == mode) return mLastUndoMode;
-		mLastUndoMode = mUndoMode;
-		switch(mode) {
-			case UNDO_MODE_OFF:
-			case UNDO_MODE_DISENABLED:
-				switch(mLastUndoMode) {
-					case UNDO_MODE_OPENED:
-						closeUndoActions();
-						break;
-				}
-				break;
-				
-			case UNDO_MODE_OPENED:
-				if(mLastUndoMode != UNDO_MODE_OPENED) {
-					openUndoActions();
-				}
-				break;
-				
-			case UNDO_MODE_AUTOMARK:
-				break;
-				
-			default:
-				throw new IllegalArgumentException("unknown mode: " + Integer.toHexString(mode));
-		}
-		mUndoMode = mode;
-		if(mode == UNDO_MODE_OFF) {
-			mUndoManager = null;
-		}
-		return mLastUndoMode;
-	}
 	
 	/**
 	 * Open the undo actions.
@@ -623,25 +625,35 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * opened {@link Actions}, close it and open new {@link Actions}.
 	 */
 	public void openUndoActions() {
-		mUndoMode = UNDO_MODE_OPENED;
-		mUndoManager.close();
 		mUndoManager.openActions();
 	}
 	
-	/**
-	 * Close the undo actions.
-	 * Used when undo mode is {@link UNDO_MODE_OPENED} and closes the same
-	 * all {@link Actions} and doesn't open new {@link Actions}.
-	 */
+	
 	public void closeUndoActions() {
-		mUndoManager.close();
+		mUndoManager.closeActions();
+	}
+	
+	/**
+	 * Open the undo actions if current undo mode marks actions.
+	 * @see openUndoActions()
+	 */
+	public void openUndoActionsTemporary() {
+		mUndoManager.openUndoActionsTemporary();
+	}
+	
+	/**
+	 * Close the actions if when called openUndoActionsTemporary()
+	 * opened the actions and restore to last mode.
+	 */
+	public void closeUndoActionsTemporary() {
+		mUndoManager.closeUndoActionsTemporary();
 	}
 	
 	/**
 	 * Used when tempory disable undo mode.
 	 */
 	public int disableUndo() {
-		return undoMode(UNDO_MODE_DISENABLED);
+		return mUndoManager.disableUndo();
 	}
 	
 	/**
@@ -651,14 +663,21 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * For instance, when mode is a and called disableUndo() and later called
 	 * this method, actions between calling disableUndo() and calling this will
 	 * be not marked on undo history.
+	 *
+	 * @throws IllegalStateException if undo mode is not disabled
 	 */
-	public void turnOnUndo() {
-		if(mUndoMode == UNDO_MODE_DISENABLED) {
-			if(mLastUndoMode != UNDO_MODE_DISENABLED) {
-				undoMode(mLastUndoMode);
-			}
-		} else throw new IllegalStateException("this only can used when last mode is UNDO_MODE_DISABLED");
+	public void enableUndo() {
+		mUndoManager.enableUndo();
 	}
+	
+	/**
+	 * Set the undo / redo stack mode.
+	 * If mode setted to UNDO_MODE_OFF, all history will be destoryed.
+	 */
+	public int undoMode(int mode) {
+		return mUndoManager.setMode(mode);
+	}
+	
 	
 	
 	// Text methods.
@@ -672,17 +691,30 @@ public class TextData implements Editable, Parcelable, Serializable
 		mEncoding = encoding;
 	}
 	
+	/**
+	 * Return the encoding.
+	 * This method doesn't ensure which thia text was written in that encoding.
+	 * It might set by {@link setEncoding}.
+	 */
 	public String getEncoding() {
 		return mEncoding;
 	}
 	
-	public void setText(TextData data) {
-		mText = data.mText;
-		mCount = data.mCount;
-		if(data.mDraw != null) mDraw = data.mDraw;
+	/**
+	 * Set the text data from other data.
+	 * If other has parent or not, parent will not be changed.
+	 * Also update the caches.
+	 */
+	public void setText(TextData other) {
+		mText = other.mText;
+		mCount = other.mCount;
+		//if(other.mDraw != null) setDraw(other.mDraw);
 		mCache.updateScrollableSize();
 	}
 	
+	/**
+	 * Set the text data.
+	 */
 	public void setText(CharSequence data) {
 		mCount = data.length();
 		mText = TextUtils.getChars(data, 0, mCount);
@@ -811,13 +843,10 @@ public class TextData implements Editable, Parcelable, Serializable
 		beforeTextChanged(where, 0, end - start);
 		mCache.onInsert(where, text, start, end);
 		
-		onInsert(where, text, start, end);
-		
-		//on text changed
-		onTextChanged(where, 0, end - start);
+		boolean changed = onInsert(where, text, start, end);
 		
 		//after text changed
-		afterTextChanged();
+		if(changed) afterTextChanged();
 		
 		return this;
 	}
@@ -825,14 +854,17 @@ public class TextData implements Editable, Parcelable, Serializable
 	/**
 	 * Overrideable function for insert().
 	 * 
-	 * When you override this method, call super.onInsert() will
-	 * actually insert the texts. And, before this method called,
-	 * beforeTextChanged() was called, and when returns, onTextChanged()
-	 * and afterTextChanged() will called.
-	 * You should call super because all the event on the insert
-	 * will be called.
+	 * When you override this method, calling super.onInsert() will
+	 * actually deletes the texts and calls onTextChanged(). And,
+	 * before this method called, beforeTextChanged() was called,
+	 * and after returns, onTextChanged() and afterTextChanged()
+	 * will called.
+	 * <p>
+	 * You should call super if you not want to not changing texts
+	 * because all the event on the insert will be called.
+	 * @returns whether actually text was changed
 	 */
-	protected void onInsert(int where, CharSequence text, int start, int end) {
+	protected boolean onInsert(int where, CharSequence text, int start, int end) {
 		char[] t = new char[text.length()];
 		text.toString().getChars(start, end, t, 0);
 		
@@ -842,6 +874,11 @@ public class TextData implements Editable, Parcelable, Serializable
 		ensureCapacity(mCount + len);
 		System.arraycopy(mText, where, mText, where + len, mCount - where);
 		System.arraycopy(t, 0, mText, where, len);
+		
+		//on text changed
+		onTextChanged(where, 0, end - start);
+		
+		return true;
 	}
 	
 	/** 
@@ -854,14 +891,14 @@ public class TextData implements Editable, Parcelable, Serializable
 	/** 
 	 * index of <code>text</code> in this text. 
 	 */
-	public int indexOf(String text) { 
+	public int indexOf(CharSequence text) { 
 		return indexOf(text, 0, mCount); 
 	}
 	
 	/**
 	 * index of <code>text</code> in this text, start from <code>fromIndex</code>. 
 	 */
-	public int indexOf(String text, int fromIndex) { 
+	public int indexOf(CharSequence text, int fromIndex) { 
 		return indexOf(text, fromIndex, mCount); 
 	}
 	
@@ -869,21 +906,21 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * index of <code>text</code> from <code>fromIndex</code> to <code>endIndex</code>. 
 	 * same as <code>substring(startIndex, endIndex).indexOf(text)</code> but more faster.
 	 */
-	public int indexOf(String text, int fromindex, int endIndex) { 
+	public int indexOf(CharSequence text, int fromindex, int endIndex) { 
 		return TextUtils.indexOf(this, text, fromindex, endIndex);
 	}
 	
 	/**
 	 * last index of <code>text</code>. 
 	 */
-	public int lastIndexOf(String text) {
+	public int lastIndexOf(CharSequence text) {
 		return lastIndexOf(text, mCount, 0);
 	}
 	
 	/** 
 	* last index of <code>text</code>. 
 	*/
-	public int lastIndexOf(String text, int fromIndex) {
+	public int lastIndexOf(CharSequence text, int fromIndex) {
 		return lastIndexOf(text, fromIndex, 0);
 	}
 	
@@ -891,7 +928,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * last index of text from to limit.
 	 * same as substring(limit, fromIndex).lastIndexOf(text) but faster.
 	 */
-	public int lastIndexOf(String text, int fromIndex, int limit) {
+	public int lastIndexOf(CharSequence text, int fromIndex, int limit) {
 		return TextUtils.lastIndexOf(this, text, fromIndex, limit);
 	}
 	
@@ -906,25 +943,23 @@ public class TextData implements Editable, Parcelable, Serializable
 	/** 
 	 * return the count in this text witch equals target.
 	 */
-	public int countOf(String target) {
+	public int countOf(CharSequence target) {
 		return this.countOf(target, 0); 
 	}
 	
 	/** 
 	 * return the count in this text witch equals target.
 	 */
-	public int countOf(String target, int fromindex) {
+	public int countOf(CharSequence target, int fromindex) {
 		return TextUtils.countOf(this, target, fromindex, length());
 	}
 	
 	/** 
 	 * return the count in this text witch equals target.
 	 */
-	public int countOf(String target, int fromindex, int endIndex) {
+	public int countOf(CharSequence target, int fromindex, int endIndex) {
 		return TextUtils.countOf(this, target, fromindex, endIndex); 
 	}
-	
-	
 	
 	/**
 	 * convert {@code TextData} object to {@code String}.
@@ -958,6 +993,48 @@ public class TextData implements Editable, Parcelable, Serializable
 		return TextUtils.subSequence(this, start, end);
 	}
 	
+	/** 
+	 * Lightly return the charsequence.
+	 * Different to subSequence(), this task is very fast and not use
+	 * much memory. But if TextData's text was changed, lightly subsequenced
+	 * text will be also changed.
+	 */
+	public CharSequence lightSubSequence(int start, int end) {
+		return TextUtils.lightSubSequence(this, start, end);
+	}
+	
+	/** 
+	 * Spilt the text by given text.
+	 */
+	public String[] split(CharSequence by) {
+		return split(by, 0, length());
+	}
+	
+	/** 
+	 * Split the text by given text, start from {@code start}.
+	 * @param start start index.
+	 */
+	public String[] split(CharSequence by, int start) {
+		return split(by, start, length());
+	}
+	
+	/**
+	 * Split the text by given text, start from {@code start}.
+	 * @param start start index.
+	 * @param end end index.
+	 */
+	public String[] split(CharSequence by, int start, int end) {
+		ArrayList<String> list = new ArrayList<String>();
+		int lastIndex = start;
+		int i = indexOf(by, start + 1, end);
+		
+		do {
+			list.add(substring(lastIndex, i));
+		} while((i = indexOf(by, i + 1, end)) != 1);
+		
+		return list.toArray(new String[0]);
+	}
+	
 	/**
 	 * same as <code>str.delete(st, en); str.insert(st, source, start, end);</code>
 	 */
@@ -965,6 +1042,77 @@ public class TextData implements Editable, Parcelable, Serializable
 	public TextData replace(int start, int end, CharSequence text) {
 		replace(start, end, text, 0, text.length());
 		return this;
+	}
+	
+	/**
+	 * Find things which matches to param {@code from} in plain text and replace.
+	 * @returns if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
+	 */
+	public int[] replace(String from, CharSequence to) {
+		return replaceRegex(Pattern.quote(from), to);
+	}
+	
+	/**
+	 * Find things which matches to param {@code regex} in regular expressions and replace.
+	 * @returns if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
+	 */
+	public int[] replaceRegex(String regex, CharSequence to) {
+		return replaceRegex(Pattern.compile(regex), to, 0, mCount);
+	}
+	
+	/**
+	 * Find things which matches to param {@code regex} in regular expressions and replace.
+	 * @returns if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
+	 */
+	public int[] replaceRegex(Pattern regex, CharSequence to, int start, int end) {
+		Matcher matcher = regex.matcher(this).region(start, end);
+		matcher.find();
+		if(matcher.hitEnd()) return null;
+		int starts = matcher.start(), ends = matcher.end();
+		replace(starts, ends, to, 0, to.length());
+		return new int[] {starts, ends};
+	}
+	
+	/**
+	 * Replace all texts equals with param {@code from} to param {@code to}.
+	 * @returns all replaced count. if replaced nothing, returns 0.
+	 */
+	public int replaceAll(String from, CharSequence to) {
+		return replaceAllRegex(Pattern.quote(from), to);
+	}
+	
+	/**
+	 * Replace all texts matches with param {@code regex} to param {@code to}.
+	 * @returns all replaced count. if replaced nothing, returns 0.
+	 */
+	public int replaceAllRegex(String regex, CharSequence to) {
+		return replaceAllRegex(Pattern.compile(regex), to, 0, mCount);
+	}
+	
+	/**
+	 * Replace all texts matches with param {@code regex} to param {@code to}, bounds
+	 * in {@code start} to {@code end}.
+	 * @returns all replaced count. if replaced nothing, returns 0.
+	 */
+	public int replaceAllRegex(Pattern regex, CharSequence to, int start, int end) {
+		if(start > end)
+			throw new StringIndexOutOfBoundsException("start > end");
+		else if(end > mCount)
+			throw new StringIndexOutOfBoundsException("end > length");
+		else if(start < 0 || end < 0)
+			throw new StringIndexOutOfBoundsException("minus " + start + "~" + end);
+		
+		openUndoActionsTemporary();
+		int[] lastIndex = {0, 0};
+		int replacedCount = 0;
+		
+		while(lastIndex != null) {
+			lastIndex = replaceRegex(regex, to, lastIndex[1] + 1, end);
+			lastIndex[1] += lastIndex[3] - lastIndex[2] - (lastIndex[1] - lastIndex[0]);
+			replacedCount++;
+		}
+		closeUndoActionsTemporary();
+		return replacedCount;
 	}
 	
 	/**
@@ -993,19 +1141,28 @@ public class TextData implements Editable, Parcelable, Serializable
 		//replace text
 		mCache.onDelete(st, en);
 		mCache.onInsert(st, str, start, end);
-		onReplace(st, en, str, start, end);
 		
-		//on text changed
-		
-		onTextChanged(st, lastLen, len);
+		boolean changed = onReplace(st, en, str, start, end);
 		
 		//after text changed
-		afterTextChanged();
+		if(changed) afterTextChanged();
 		
 		return this;
 	}
 	
-	public void onReplace(int st, int en, CharSequence text, int start, int end) {
+	/**
+	 * Overrideable function for replace().
+	 * 
+	 * When you override this method, calling super.onReplace() will
+	 * actually replaces the texts and calls onTextChanged(). And,
+	 * before this method called, beforeTextChanged() was called,
+	 * and after returns, onTextChanged() and afterTextChanged()
+	 * will called.
+	 * <p>
+	 * You should call super if you not want to not changing texts
+	 * because all the event on the replace will be called.
+	 */
+	protected boolean onReplace(int st, int en, CharSequence text, int start, int end) {
 		int len = end - start;
 		int lastLen = en - st;
 		int newCount = mCount + len - lastLen;
@@ -1015,6 +1172,11 @@ public class TextData implements Editable, Parcelable, Serializable
 		System.arraycopy(mText, en, mText, st + len, mCount - en);
 		text.toString().getChars(start, end, mText, st);
 		mCount = newCount;
+		
+		//on text changed
+		onTextChanged(st, lastLen, len);
+		
+		return true;
 	}
 	
 	/**
@@ -1034,13 +1196,10 @@ public class TextData implements Editable, Parcelable, Serializable
 			//before text changed
 			beforeTextChanged(start, len, 0);
 
-			onDelete(start, end);
-			
-			//on text changed
-			onTextChanged(start, len, 0);
+			boolean changed = onDelete(start, end);
 			
 			//after text changed
-			afterTextChanged();
+			if(changed) afterTextChanged();
 		}
 		
 		return this;
@@ -1049,20 +1208,27 @@ public class TextData implements Editable, Parcelable, Serializable
 	/**
 	 * Overrideable function for delete().
 	 * 
-	 * When you override this method, call super.onDelete() will
-	 * actually delete the texts. And, before this method called,
-	 * beforeTextChanged() was called, and when returns, onTextChanged()
-	 * and afterTextChanged() will called.
-	 * You should call super because all the event on the delete
-	 * will be called.
+	 * When you override this method, calling super.onDelete() will
+	 * actually deletes the texts and calls onTextChanged(). And,
+	 * before this method called, beforeTextChanged() was called,
+	 * and after returns, onTextChanged() and afterTextChanged()
+	 * will called.
+	 * <p>
+	 * You should call super if you not want to not changing texts
+	 * because all the event on the delete will be called.
 	 */
-	protected void onDelete(int start, int end) {
+	protected boolean onDelete(int start, int end) {
 		int len = end - start;
 		
 		//delete text
 		mCache.onDelete(start, end);
 		System.arraycopy(mText, start + len, mText, start, mCount - end);
 		mCount -= len;
+		
+		//on text changed
+		onTextChanged(start, len, 0);
+		
+		return true;
 	}
 	
 	/**
@@ -1078,32 +1244,12 @@ public class TextData implements Editable, Parcelable, Serializable
 	 */
 	@Override
 	public TextData append(CharSequence text, int start, int end){
-		if(text == null) return append("null");
-		if(start < 0)
-			throw new StringIndexOutOfBoundsException(start);
-		if(start > mCount)
-			throw new StringIndexOutOfBoundsException(start);
-		if(start > end)
-			throw new StringIndexOutOfBoundsException("start > end");
-		
-		int len = text.length();
-		int lastCount = mCount;
-		
-		//before text changed
-		beforeTextChanged(mCount, 0, len);
-		
-		//append text
-		ensureCapacity(mCount + len);
-		text.toString().getChars(0, len, mText, mCount);
-		mCount += len;
-		
-		//on text changed
-		onTextChanged(lastCount, 0, len);
-		return this;
+		return insert(mCount, text, start, end);
 	}
 	
 	/**
 	 * Append one charactor end of text.
+	 * This not inserts number id of char; just one character.
 	 */
 	@Override
 	public TextData append(char character) {
@@ -1185,11 +1331,11 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * Not support: TextData only supports text editing, not span
-	 * @throws UnsupportedOperationException always
+	 * //@throws UnsupportedOperationException always
 	 */
 	@Deprecated
 	public void clearSpans() {
-		throw new UnsupportedOperationException();
+		//throw new UnsupportedOperationException();
 	}
 	
 	/**
@@ -1203,10 +1349,10 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * Not support: TextData only supports text editing, not span
-	 * @throws UnsupportedOperationException always
+	 * //@throws UnsupportedOperationException always
 	 */
 	@Deprecated public void removeSpan(Object tag) {
-		throw new UnsupportedOperationException();
+		//throw new UnsupportedOperationException();
 	}
 	
 	/**
@@ -1326,9 +1472,12 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * create the TextData from parcel.
 	 */
 	public static TextData fromParcel(Parcel p, TextDraw parent) {
-		return new TextData(p);
+		TextData data = new TextData(p);
+		data.mDraw = parent;
+		return data;
 	}
 	
+	/** @hide */
 	@Override
 	public int describeContents() {
 		return 0;
@@ -1341,6 +1490,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	public void writeToParcel(Parcel p, int flags) {
 		p.writeCharArray(mText);
 		p.writeSerializable(mUndoManager);
+		p.writeInt(mUndoManager.getUndoMode());
 		p.writeString(mEncoding);
 		p.writeSerializable(mCache);
 	}

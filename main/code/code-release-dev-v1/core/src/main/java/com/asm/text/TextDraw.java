@@ -47,7 +47,7 @@ public class TextDraw implements View.OnKeyListener, Parcelable
 	}
 	
 	/**
-	 * set the line margin. Not applied twice.
+	 * Set the line margin. Not applied twice.
 	 * <code>
 	 * Line 1
 	 *  ||| <- line margin
@@ -60,25 +60,46 @@ public class TextDraw implements View.OnKeyListener, Parcelable
 	}
 	
 	/**
-	 * set the text size.
+	 * Set the text size.
 	 */
 	public void setTextSize(float size) {
 		paint.setTextSize(size);
 	}
 	
 	/**
-	 * return the text size.
+	 * Return the text size.
 	 */
 	public float getTextSize() {
 		return paint.getTextSize();
 	}
 	
 	/**
-	 * return the line margin.
+	 * Return the line margin.
 	 * @see setLineMargin()
 	 */
 	public float getLineMargin() {
 		return lineMargin;
+	}
+	
+	/**
+	 * Return the view.
+	 */
+	public ScrollingTextView getView() {
+		return text;
+	}
+	
+	/**
+	 * Return the width of the view.
+	 */
+	public int getWidth() {
+		return text.getWidth();
+	}
+	
+	/**
+	 * Return the height of the view.
+	 */
+	public int getHeight() {
+		return text.getHeight();
 	}
 	
 	/**

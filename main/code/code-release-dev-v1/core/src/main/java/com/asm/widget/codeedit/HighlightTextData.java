@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class HighlightTextData extends TextData implements Serializable
 {
-	private Object mLock = new Object();
 	private NonReferenceArrayList mHighlightCache;
 	//int[] is just a pair
 	private ArrayList<int[]> list = new ArrayList<int[]>();
@@ -41,9 +40,7 @@ public class HighlightTextData extends TextData implements Serializable
 	protected HighlightTextData(Parcel p) {
 		super(p);
 		
-		char[] data = new char[p.readInt()];
-		p.readCharArray(data);
-		initHighlightCache(data);
+		initHighlightCache(p.createCharArray());
 	}
 	
 	private void init() {
@@ -61,7 +58,7 @@ public class HighlightTextData extends TextData implements Serializable
 	}
 	
 	@Override
-	protected void onInsert(int where, CharSequence text, int start, int end) {
+	protected boolean onInsert(int where, CharSequence text, int start, int end) {
 		super.onInsert(where, text, start, end);
 		
 		int len = end - start;
@@ -69,18 +66,22 @@ public class HighlightTextData extends TextData implements Serializable
 		Arrays.fill(arr, (char) -1);
 		mHighlightCache.insert(where, arr, 0, len);
 		list.add(new int[] {start, end});
+		
+		return true;
 	}
 	
 	@Override
-	protected void onDelete(int start, int end) {
+	protected boolean onDelete(int start, int end) {
 		super.onDelete(start, end);
 		
 		mHighlightCache.delete(start, end);
 		list.add(new int[] {start, start});
+		
+		return true;
 	}
 
 	@Override
-	public void onReplace(int st, int en, CharSequence text, int start, int end) {
+	public boolean onReplace(int st, int en, CharSequence text, int start, int end) {
 		super.onReplace(st, en, text, start, end);
 		
 		int len = end - start;
@@ -89,6 +90,15 @@ public class HighlightTextData extends TextData implements Serializable
 		mHighlightCache.delete(st, en);
 		mHighlightCache.insert(st, arr, 0, len);
 		list.add(new int[] {st, st + len});
+		
+		return true;
+		
+	}
+
+	@Override
+	protected void wrapFromDataStream() {
+		super.wrapFromDataStream();
+		
 	}
 	
 	public static HighlightTextData fromParcel(Parcel p, TextDraw parent) {

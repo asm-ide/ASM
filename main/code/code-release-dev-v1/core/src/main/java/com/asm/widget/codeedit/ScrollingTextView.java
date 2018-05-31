@@ -1,5 +1,6 @@
 package com.asm.widget.codeedit;
 
+
 import com.asm.Settings;
 import com.asm.text.TextData;
 import com.asm.text.TextDraw;
@@ -26,13 +27,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+// TODO : passes some calculate methods to TextDraw
+
 /**
  * The EditText for fast perfomance, and customize styles.
  * You can customize view style by override this.
  * <code>onDrawLine(Canvas canvas, int index, int line, String text, float y);
  * onDrawCharactors(Canvas canvas, int index, int lines, int cols, float x, float y);
  */
-public class ScrollingTextView extends View implements TextsDrawingInterface, GestureDetector.OnGestureListener, CharSequence
+public class ScrollingTextView extends View implements TextsDrawingInterface, GestureDetector.OnGestureListener, CharSequence, TextData.OnInvaildateListener
 {
 	/** used when if user pointer is move than this, will scrolled. */
 	private static final float MAXSCROLLPOS = 3f;
@@ -100,8 +103,6 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 		
 		Settings.loadSettingIfNotLoaded(context);
 		mDraw = TextDraw.create(this);
-		mData = mFactory.newEditable("package com.lhw;\na\nb\npublic class Test\n{\n\tpublic int a = 0; \n}\n\n\n\n\n\n\nho"); //TODO: TEMP
-		mData.setDraw(mDraw);
 		setTextSize(Settings.textSize);
 	}
 	
@@ -207,10 +208,15 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 	}
 	
 	/**
-	 * Returns the current text value
+	 * Returns the current text value.
 	 * @return current text value
 	 */
 	public @NonNull TextData getText() {
+		if(mData == null) {
+			mData = mFactory.newEditable("package com.lhw;\na\nb\npublic class Test\n{\n\tpublic int a = 0; \n}\n\n\n\n\n\n\nho"); //TODO: TEMP
+			mData.setDraw(mDraw);
+			mData.setOnInvaildateListener(this);
+		}
 		return mData;
 	}
 	
@@ -436,7 +442,7 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 	
 	/**
 	 * Return position data.
-	 * @see com.asm.widget.codeedit.TextData.PositionData
+	 * @see TextData.PositionData
 	 */
 	public TextData.PositionData getPositionToX(int position, int startLine, int startPos) {
 		return mData.getPositionData(position, startLine, startPos);
@@ -558,6 +564,11 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 		mScroller.setFinalX(state.scrollX);
 		mScroller.setFinalY(state.scrollY);
 		mScroller.abortAnimation();
+	}
+	
+	public boolean onInvaildate(TextData data) {
+		invalidate(data.getDirtyRect());
+		return true;
 	}
 	
 	/**

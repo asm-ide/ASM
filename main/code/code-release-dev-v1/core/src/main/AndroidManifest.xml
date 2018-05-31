@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.asm.widget" >
-	<application />
+    package="com.asm.core">
+	<application>
+		<!-- application is not defined here yet, will be defined in child projects -->
+		<!-- TODO: USE RESOURCES IN LABEL -->
+			<activity
+				android:label="ASM Error"
+				android:name="com.asm.troubleshoot.DebugActivity" />
+	</application>
 </manifest>
