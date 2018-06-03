@@ -4,6 +4,7 @@ package com.asm.widget.codeedit;
 import com.asm.Settings;
 import com.asm.text.TextData;
 import com.asm.text.TextDraw;
+import com.asm.text.PositionData;
 import com.asm.annotation.NonNull;
 import com.asm.annotation.Nullable;
 
@@ -444,7 +445,7 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 	 * Return position data.
 	 * @see TextData.PositionData
 	 */
-	public TextData.PositionData getPositionToX(int position, int startLine, int startPos) {
+	public PositionData getPositionToX(int position, int startLine, int startPos) {
 		return mData.getPositionData(position, startLine, startPos);
 	}
 	

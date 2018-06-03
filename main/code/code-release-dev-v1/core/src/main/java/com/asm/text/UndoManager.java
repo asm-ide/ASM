@@ -15,166 +15,6 @@ import android.util.*;
 
 public class UndoManager implements Serializable, TextWatcher
 {
-	public static class Actions implements Serializable
-	{
-		private ArrayList<Action> mActions = new ArrayList<Action>();
-		private boolean appendable = true;
-		
-		
-		public Actions() {}
-		
-		
-		public Actions(Action oneChild) {
-			mActions.add(oneChild);
-		}
-		
-		public Actions(ArrayList<Action> actions) {
-			mActions = actions;
-		}
-		
-		public Actions setAppendable(boolean is) {
-			appendable = is;
-			return this;
-		}
-		
-		public boolean isAppendable() {
-			return appendable;
-		}
-		
-		public Action get(int index) {
-			return mActions.get(index);
-		}
-		
-		public Action getLast() {
-			return mActions.get(mActions.size() - 1);
-		}
-		
-		public void add(Action act) {
-			mActions.add(act);
-		}
-		
-		public void remove(int index) {
-			mActions.remove(index);
-		}
-		
-		public void clear() {
-			mActions.clear();
-		}
-		
-		public int size() {
-			return mActions.size();
-		}
-		
-		public void undo(Editable e) {
-			for(int i = 0; i < mActions.size(); i++) {
-				mActions.get(i).undo(e);
-			}
-		}
-		
-		public void redo(Editable e) {
-			for(int i = 0; i > mActions.size(); i--) {
-				mActions.get(i).redo(e);
-			}
-		}
-	}
-	
-	
-	public static class Action implements Serializable
-	{
-		public static final byte ACTION_INSERT = 0;
-		public static final byte ACTION_REPLACE = 1;
-		public static final byte ACTION_DELETE = 2;
-		
-		public CharSequence text;
-		public CharSequence text2;
-		public int pos;
-		
-		
-		public Action() {}
-		
-		
-		public Action(int pos, CharSequence text, CharSequence text2) {
-			this.text = text;
-			this.text2 = text2;
-			this.pos = pos;
-		}
-		
-		
-		public boolean edit(CharSequence txt, CharSequence lastText, int start, int before, int count, boolean appendAction) {
-			switch(getAction()) {
-				case Action.ACTION_INSERT:
-					if(pos + text.length() == start) appendAction = true;
-					if(appendAction) {
-						text += txt.subSequence(start, start + count).toString();
-						//lastAct.dbg();
-					}
-					break;
-				case Action.ACTION_REPLACE: break;
-				case Action.ACTION_DELETE:
-					if(pos - before == start) appendAction = true;
-					if(appendAction) {
-						text = lastText.toString() + text;
-					}
-					break;
-				default: throw new IllegalStateException();
-			}
-			return appendAction;
-		}
-		
-		public void undo(Editable e) {
-			//Log.d("undo", pos + " " + e.toString() + "," + text + "," + text2);
-			switch(getAction()) {
-				case Action.ACTION_INSERT: e.delete(pos, pos + text.length()); break;
-				case Action.ACTION_REPLACE: e.replace(pos, pos + text2.length(), text); break;
-				case Action.ACTION_DELETE: e.insert(pos, text); break;
-				default: throw new IllegalStateException("unexcepted: unknown action " + getAction());
-			}
-		}
-		
-		public void redo(Editable e) {
-			switch(getAction()) {
-				case Action.ACTION_INSERT: e.insert(pos, text); break;
-				case Action.ACTION_DELETE: e.delete(pos, pos + text.length()); break;
-				case Action.ACTION_REPLACE: e.replace(pos, pos + text.length(), text2); break;
-				default: throw new IllegalStateException("unexcepted: unknown action " + getAction());
-			}
-		}
-		
-		//public void dbg() { Log.d("Action", "action=" + action + ", text=" + (text == null? "null" : text) + ", text2=" + (text2 == null? "null" : text2) + ", pos=" + pos); }
-		
-		public static Action del(int pos, CharSequence before) {
-			return new Action(pos, before, null);
-		}
-		
-		public static Action rep(int pos, CharSequence before, CharSequence after) {
-			return new Action(pos, before, after);
-		}
-		
-		public static Action ins(int pos, CharSequence after) {
-			return new Action(pos, after, null);
-		}
-		
-		public byte getAction() {
-			if(text == null) {
-				if(text2 == null) return -1;
-				else return ACTION_INSERT;
-			} else {
-				if(text2 == null) return ACTION_DELETE;
-				else return ACTION_REPLACE;
-			}
-		}
-		
-		public static byte getAction(int before, int after) {
-			if(before == 0) {
-				if(after > 0) return ACTION_INSERT;
-				else return -1;
-			} else {
-				if(after > 0) return ACTION_REPLACE;
-				else return ACTION_DELETE;
-			}
-		}
-	}
-	
 	/**
 	 * Undo mode and marks that do not use undo.
 	 * If this mode was setted, all undo history will be destoryed and
@@ -231,7 +71,7 @@ public class UndoManager implements Serializable, TextWatcher
 	 * undo mode.
 	 * Can select UNDO_MODE_...
 	 */
-	private int mUndoMode = UNDO_MODE_AUTOMARK;
+	private int mUndoMode = UNDO_MODE_OPENED;//UNDO_MODE_AUTOMARK;
 	
 	/**
 	 * last undo mode.
@@ -253,12 +93,15 @@ public class UndoManager implements Serializable, TextWatcher
 	
 	public void addOpenAction(int start, CharSequence last, CharSequence text) {
 		addOpenAction(new Action(start, last, text));
-		android.util.Log.d("addOpenAction()", start + ", " + last + "->" + text);
 	}
 	
 	public void addOpenAction(Action act) {
 		if(mOpenedActions == null) mOpenedActions = new Actions();
 		mOpenedActions.add(act);
+		Log.d("addOpenAction()", act.pos + ", " + act.text + "->" + act.text2);
+		TextData e = TextData.valueOf("AAAAAAAAAAAAAAAAAAAAAAA");
+		mOpenedActions.undo(e);
+		Log.d("addOpenAction()", e.toString());
 	}
 	
 	public void storeOpenedActions() {
@@ -398,7 +241,7 @@ public class UndoManager implements Serializable, TextWatcher
 			if(mLastUndoMode != UNDO_MODE_DISABLED) {
 				setMode(mLastUndoMode);
 			}
-		} else throw new IllegalStateException("this only can used when last mode is UNDO_MODE_DISABLED");
+		} else throw new IllegalStateException("this only can used when mode is UNDO_MODE_DISABLED");
 	}
 	
 	
@@ -425,7 +268,7 @@ public class UndoManager implements Serializable, TextWatcher
 				break;
 
 			case UNDO_MODE_AUTOMARK:
-				android.util.Log.d("onTextChanged", text + "@" + start + " " + before + "/" + count);
+				Log.d("onTextChanged", text + "@" + start + " " + before + "/" + count);
 				
 				// marks in automark mode
 				CharSequence cur = text.subSequence(start, start + count);
@@ -490,6 +333,7 @@ public class UndoManager implements Serializable, TextWatcher
 				break;
 		}
 		mLastText = null;
+		Log.d("UM", "changed index " + mIndex);
 	}
 	
 	@Override
@@ -510,7 +354,9 @@ public class UndoManager implements Serializable, TextWatcher
 		
 		Actions cur = mHistory.get(mIndex);
 		cur.undo(e);
-		mIndex--;
+		mIndex--; // TODO : after undo made new action: how to save last actions?
+		
+		Log.d("UM", "index " + mIndex);
 		
 		return true;
 	}
@@ -519,9 +365,9 @@ public class UndoManager implements Serializable, TextWatcher
 		closeActions();
 		if(mIndex >= mHistory.size() - 1 || mIndex == -1) return false;
 		
-		mIndex++;
 		Actions cur = mHistory.get(mIndex);
 		cur.redo(e);
+		mIndex++;
 		
 		return true;
 	}

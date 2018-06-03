@@ -260,27 +260,6 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 	}
 	
-	/**
-	 * Position data when returns to {@code getPositionData}.
-	 * It marks position, lines, cols, x position, and y position.
-	 */
-	public static class PositionData
-	{
-		public int position;
-		public int line, col;
-		public float x, y;
-		
-		
-		public PositionData() {}
-		
-		public PositionData(int p, int l, int c, float x, float y) {
-			position = p;
-			line = l;
-			col = c;
-			this.x = x;
-			this.y = y;
-		}
-	}
 	
 	/** hide */
 	public static interface OnInvaildateListener

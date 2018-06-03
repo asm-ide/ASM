@@ -57,7 +57,11 @@ public class TextUtils
 		
 		
 		public CharSyncCharSequence(char[] text, int start, int end) {
+			
+			
 			mText = text;
+			mStart = start;
+			mEnd = end;
 		}
 
 		@Override
@@ -81,13 +85,13 @@ public class TextUtils
 		}
 
 		@Override
-		public boolean equals(Object obj)
-		{
+		public boolean equals(Object obj) {
 			if(!(obj instanceof CharSequence)) return false;
 			return TextUtils.equals(this, TextUtils.lightSubSequence(this, mStart, mEnd));
 		}
 	}
 	
+	// TODO : check bounda and throw StringIndexOutOfBoundsException
 	
 	private static class SyncCharSequence implements CharSequence
 	{
@@ -96,6 +100,8 @@ public class TextUtils
 		
 		
 		public SyncCharSequence(CharSequence text, int start, int end) {
+			checkRange(start, end);
+			
 			mText = text;
 			mStart = start;
 			mEnd = end;
@@ -108,14 +114,19 @@ public class TextUtils
 
 		@Override
 		public char charAt(int index) {
-			return mText.charAt(mStart + index);
+			int realIndex = mStart + index;
+			checkClipedRange(realIndex, mStart, mEnd);
+			
+			return mText.charAt(realIndex);
 		}
 
 		@Override
 		public CharSequence subSequence(int start, int end) {
+			checkRange(start, end);
 			int len = mEnd - mStart;
 			if(end > len) end = len;
 			if(start < 0) start = 0;
+			
 			return TextUtils.subSequence(this, mStart + start, mStart + end);
 		}
 
@@ -162,8 +173,8 @@ public class TextUtils
 			if((i = indexOf(str, target, i + 1, endIndex)) == -1) return count;
 			count++;
 		}
-
-		return -1;
+		
+		return count;
 	}
 	
 	/**
@@ -334,6 +345,28 @@ public class TextUtils
 			if(text.charAt(i) != c) return false;
 		
 		return true;
+	}
+	
+	public static CharSequence asSequence(char[] c) {
+		return asSequence(c, 0, c.length);
+	}
+	
+	public static CharSequence asSequence(char[] c, int off, int len) {
+		return new CharSyncCharSequence(c, off, len);
+	}
+	
+	public static void checkRange(int start, int end) {
+		if(start < 0)
+			throw new StringIndexOutOfBoundsException("start < 0");
+		if(start > end)
+			throw new StringIndexOutOfBoundsException("start > end");
+	}
+	
+	public static void checkClipedRange(int index, int min, int max) {
+		if(index < min)
+			throw new StringIndexOutOfBoundsException("index < 0");
+		if(index > max)
+			throw new StringIndexOutOfBoundsException("index > len");
 	}
 	
 	public static int writeUTF(String str, DataOutput out) throws IOException {
