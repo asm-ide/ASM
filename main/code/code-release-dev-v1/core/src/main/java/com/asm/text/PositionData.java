@@ -1,5 +1,8 @@
 package com.asm.text;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.lhw.util.TextUtils;
 
 
@@ -7,7 +10,7 @@ import com.lhw.util.TextUtils;
  * Position data when returns to {@code getPositionData}.
  * It marks position, lines, cols, x position, and y position.
  */
-public class PositionData
+public class PositionData implements Parcelable
 {
 	private int mPosition;
 	private int mLine, mCol;
@@ -23,7 +26,15 @@ public class PositionData
 		mPosX = x;
 		mPosY = y;
 	}
-
+	
+	public void set(int pos, int line, int col, float x, float y) {
+		mPosition = pos;
+		mLine = line;
+		mCol = col;
+		mPosX = x;
+		mPosY = y;
+	}
+	
 	public void setPosition(int position) {
 		this.mPosition = position;
 	}
@@ -67,6 +78,11 @@ public class PositionData
 
 	public float getY() {
 		return mPosY;
+	}
+	
+	public void setPosition(CharSequence text, int len, TextDraw draw) {
+		set(0, 0, 0, 0f, 0f);
+		resolveDelta(text, 0, len, draw);
 	}
 	
 	public void resolveDelta(CharSequence text, int offset, int length, TextDraw draw) {
@@ -122,5 +138,21 @@ public class PositionData
 		data.setPosition(pos);
 		
 		return data;
+	}
+	
+	public static PositionData obtain(Parcel p, CharSequence text, TextDraw draw) {
+		PositionData data = new PositionData();
+		data.resolveDelta(text, 0, p.readInt(), draw);
+		return data;
+	}
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel p, int flags) {
+		p.writeInt(mPosition);
 	}
 }

@@ -46,10 +46,7 @@ public class TextData implements Editable, Parcelable, Serializable
 		transient public TextData data;
 		
 		/** cursor positions. */
-		public int cursorPosition;
-		
-		/** cursor positions. */
-		transient public int cursorLine, cursorCol, cursorEnd;
+		public TextPointer cursorPosition;
 		
 		/** all lines count */
 		transient public int lines = 0;
@@ -69,7 +66,7 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 		
 		public Cache(Parcel p) {
-			cursorPosition = p.readInt();
+			cursorPosition = PositionData.obtain(p, data, data.getDraw());
 		}
 		
 		@Override
@@ -79,7 +76,7 @@ public class TextData implements Editable, Parcelable, Serializable
 
 		
 		public void writeToParcel(Parcel p, int flags) {
-			p.writeInt(cursorPosition);
+			cursorPosition.writeToParcel(p, flags);
 		}
 		
 		/**
@@ -90,9 +87,7 @@ public class TextData implements Editable, Parcelable, Serializable
 			int newLineCount = TextUtils.countOf(String.valueOf(text.subSequence(start, end)), "\n", 0);
 			lines += newLineCount;
 			
-			if(cursorPosition >= where) {
-				addCursorPosition(end - start);
-			}
+			
 			isWidthOlds = true;
 		}
 		
