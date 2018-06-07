@@ -40,7 +40,7 @@ __SO, *YOU CAN SEE IT BUT YOU CANNOT USE IT*.__
 ### Terms and Conditions for Use, Reproduction, and Distribution
 	
 
-1. Definitions
+### 1. Definitions
 "License" shall mean the terms and conditions for use, reproduction,
 and distribution as defined by this document.
 
@@ -57,35 +57,35 @@ any type of files written by the contributors.
 by copyright owner or not involved on creating, modificating, and
 improving source.
 
-2. Grant of Copyright Licenses
+### 2. Grant of Copyright Licenses
 Subject to the terms and conditions of this
 License, copyright owner hereby grants to contributors a perpetual,
 worldwide, non-exclusive, no-charge, royalty-free copyright license and
 rights to create, modify, and delete anything in source while copyright
 owner granted the very contributors.
 
-3. Redistribution. Except following conditions, all contributors and others
+### 3. Redistribution. Except following conditions, all contributors and others
 must not reproduce and distribute source to the others.
 
-##### When redistribution granted:
+#### When redistribution granted:
 when copyright owner granted contributors to redistibute to specific
 person who copyright owner defined
 		
-##### If redistribution granted to you:
-###### You should copy this LICENSE file into its root directory; reveal copyright.
-###### You may add Your own copyright statement
+#### If redistribution granted to you:
+##### You should copy this LICENSE file into its root directory; reveal copyright.
+##### You may add Your own copyright statement
 You may add your own copyright statement to your modificationsd may provide additional or different license terms and
 conditions for use, reproduction, or distribution of Your
 modifications, or for any such Derivative Works as a whole,
 provided Your use, reproduction, and distribution of the Work
 otherwise complies with the conditions stated in this License.
 
-4. Distribution
+### 4. Distribution
 All contributors basically allowed to see, create, modify,
 delete anything in source. But contributors cannot be granted by copyright
 owner and copyright owner can select permission per file.
 
-5. Duty of Contributors.
+### 5. Duty of Contributors.
 All contributors should improve our source to support
 more devices, work faster, look good, and satisfy many users as much as
 possible. Contributors should not redistribute source.
