@@ -89,7 +89,7 @@ provided Your use, reproduction, and distribution of the Work
 otherwise complies with the conditions stated in this License.
 
 ### 4. Distribution
-> Basically, all contributors can see, modify, create, delete something in Source.
+> Short version: Basically, all contributors can see, modify, create, delete something in Source.
 
 All contributors basically allowed to see, create, modify,
 delete anything in source. But contributors may not be granted by copyright
