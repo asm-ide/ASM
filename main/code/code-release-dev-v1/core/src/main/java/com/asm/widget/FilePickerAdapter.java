@@ -1,5 +1,7 @@
 package com.asm.widget;
 
+import com.asm.R;
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
@@ -65,8 +67,7 @@ public class FilePickerAdapter extends RecyclerView.Adapter
 	}
 	
 	@Override
-	public int getItemCount()
-	{
+	public int getItemCount() {
 		return 0;
 	}
 }

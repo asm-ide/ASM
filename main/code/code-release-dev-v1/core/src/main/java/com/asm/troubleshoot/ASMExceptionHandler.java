@@ -28,7 +28,7 @@ public class ASMExceptionHandler implements Thread.UncaughtExceptionHandler
 	
 	@Override
 	public void uncaughtException(Thread thread, Throwable throwable) {
-		Intent i = new Intent(sActivity, DebugActivity.class);
+		Intent intent = new Intent(sActivity, DebugActivity.class);
 		Writer stringWriter = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(stringWriter);
 		while (throwable != null) {
@@ -37,11 +37,9 @@ public class ASMExceptionHandler implements Thread.UncaughtExceptionHandler
 		}
 		String obj = stringWriter.toString();
 		Log.d("err", obj);
-		i.putExtra("error", obj);
-		PendingIntent pIntent = PendingIntent.getActivity(sActivity, 
-		sActivity.getSystemService(AlarmManager.class).set(AlarmManager.ELAPSED_REALTIME, new PendingIntent(sActivity, 
-		
-		sActivity.finish();
+		intent.putExtra("error", obj);
+		PendingIntent pIntent = PendingIntent.getActivity(sActivity, 10, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_CANCEL_CURRENT);
+		sActivity.getSystemService(AlarmManager.class).set(AlarmManager.ELAPSED_REALTIME, 500L, pIntent);
 		Process.killProcess(android.os.Process.myPid());
 	}
 }

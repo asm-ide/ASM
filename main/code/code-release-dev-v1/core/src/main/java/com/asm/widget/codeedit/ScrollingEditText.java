@@ -1,6 +1,6 @@
 package com.asm.widget.codeedit;
 
-import com.asm.widget.R;
+import com.asm.R;
 import com.asm.text.TextData;
 import com.asm.text.PositionData;
 
@@ -274,23 +274,24 @@ public class ScrollingEditText extends ScrollingTextView
 		}
 	}
 	
-	private void solveCursorPosition() {
-		TextData.Cache cache = getText().getCache();
-		cache.updateBothIfNeeded();
-		PositionData data = getText().getPositionData(cache.cursorPosition);
-		int width = cursorWidth;
-		int height = cursorHeight;
-		int x = (int) data.getX() - width / 2;
-		int y = (int) data.getY() - width / 2 + (int) getTextSize();
-		switch(cursorMode) {
-			case CURSOR_SINGLE:
-				cursorDrawable.setBounds(x, y, x + width, y + height);
-				break;
-				
-			case CURSOR_SELECT:
-				leftCursorDrawable.setBounds(x, y, x + width, y + height);
-				rightCursorDrawable.setBounds(x, y, x + width, y + height);
-				break;
-		}
-	}
+	// TODOn
+//	private void solveCursorPosition() {
+//		TextData.Cache cache = getText().getCache();
+//		cache.updateBothIfNeeded();
+//		PositionData data = getText().getPositionData(cache.cursorPosition);
+//		int width = cursorWidth;
+//		int height = cursorHeight;
+//		int x = (int) data.getX() - width / 2;
+//		int y = (int) data.getY() - width / 2 + (int) getTextSize();
+//		switch(cursorMode) {
+//			case CURSOR_SINGLE:
+//				cursorDrawable.setBounds(x, y, x + width, y + height);
+//				break;
+//				
+//			case CURSOR_SELECT:
+//				leftCursorDrawable.setBounds(x, y, x + width, y + height);
+//				rightCursorDrawable.setBounds(x, y, x + width, y + height);
+//				break;
+//		}
+//	}
 }

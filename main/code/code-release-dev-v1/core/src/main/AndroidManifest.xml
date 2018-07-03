@@ -3,9 +3,11 @@
     package="com.asm.core">
 	<application>
 		<!-- application is not defined here yet, will be defined in child projects -->
-		<!-- TODO: USE RESOURCES IN LABEL -->
 			<activity
-				android:label="ASM Error"
+				android:label="@string/asm_activity_error_label"
 				android:name="com.asm.troubleshoot.DebugActivity" />
+			<activity
+				android:label="@string/asm_activity_settings_label"
+				android:name="com.asm.ui.activity.SettingsActivity" />
 	</application>
 </manifest>

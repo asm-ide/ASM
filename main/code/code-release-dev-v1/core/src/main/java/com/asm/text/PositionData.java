@@ -12,9 +12,9 @@ import com.lhw.util.TextUtils;
  */
 public class PositionData implements Parcelable
 {
-	private int mPosition;
-	private int mLine, mCol;
-	private float mPosX, mPosY;
+	private int mPosition = 0;
+	private int mLine = 0, mCol = 0;
+	private float mPosX = 0f, mPosY = 0f;
 
 
 	public PositionData() {}
@@ -78,6 +78,53 @@ public class PositionData implements Parcelable
 
 	public float getY() {
 		return mPosY;
+	}
+	
+	public PositionData add(PositionData data) {
+		PositionData d = new PositionData();
+		d.mPosition = mPosition + data.mPosition;
+		d.mLine = mLine + data.mLine;
+		d.mPosX = mPosX + data.mPosX;
+		if(data.mLine > 0) {
+			d.mCol = data.mCol;
+			d.mPosX = data.mPosX;
+		} else {
+			d.mCol = mCol + data.mCol;
+			d.mPosY = mPosY + data.mPosY;
+		}
+		
+		return d;
+	}
+	
+	/**
+	 * Subtract data from this.
+	 * new position = cur - arg
+	 * new lines = cur - arg
+	 * new position x = 
+	 * new position y = cur - arg
+	 */
+	public PositionData sub(PositionData data, CharSequence text, TextDraw draw) {
+		PositionData d = new PositionData();
+		if(data.mPosition < mPosition) return data.sub(this, text, draw);
+		d.mPosition = mPosition - data.mPosition;
+		d.mLine = mLine - data.mLine;
+		d.mPosY = mPosY - data.mPosX;
+		if(data.mLine > mLine || data.mCol > mCol) {
+			// isColDef = false; resolve column
+			int pos = d.mPosition;
+			d.mCol = 0;
+			d.mPosX = 0f;
+			
+			while(pos >= 0 && text.charAt(pos) != '\n') {
+				pos--;
+				d.mCol++;
+				d.mPosX += draw.getPaint().measureText(text, pos, pos + 1);
+			}
+		} else {
+			d.mCol = mCol - data.mCol;
+			d.mPosX = mPosX - data.mPosX;
+		}
+		return d;
 	}
 	
 	public void setPosition(CharSequence text, int len, TextDraw draw) {

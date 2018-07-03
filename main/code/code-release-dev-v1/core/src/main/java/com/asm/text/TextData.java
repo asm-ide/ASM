@@ -45,9 +45,6 @@ public class TextData implements Editable, Parcelable, Serializable
 		/** parent {@code TextData}. */
 		transient public TextData data;
 		
-		/** cursor positions. */
-		public TextPointer cursorPosition;
-		
 		/** all lines count */
 		transient public int lines = 0;
 		
@@ -66,7 +63,7 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 		
 		public Cache(Parcel p) {
-			cursorPosition = PositionData.obtain(p, data, data.getDraw());
+			
 		}
 		
 		@Override
@@ -76,7 +73,7 @@ public class TextData implements Editable, Parcelable, Serializable
 
 		
 		public void writeToParcel(Parcel p, int flags) {
-			cursorPosition.writeToParcel(p, flags);
+			
 		}
 		
 		/**
@@ -99,33 +96,7 @@ public class TextData implements Editable, Parcelable, Serializable
 			int subtractLineCount = TextUtils.countOf(data.substring(start, end), "\n", 0);
 			lines -= subtractLineCount;
 			
-			if(cursorPosition > end) {
-				addCursorPosition(-(end - start));
-			} else if(cursorPosition > start) {
-				setCursorPosition(start);
-			}
 			isWidthOlds = true;
-		}
-		
-		/**
-		 * move cursor position
-		 */
-		public void addCursorPosition(int add) {
-			int newPosition = Math.max(0, Math.min(add + cursorPosition, data.length()));
-			int newLineCount = TextUtils.countOf(data.substring(newPosition, cursorPosition), "\n", 0);
-			if(add > 0) cursorLine += newLineCount;
-			else cursorLine -=  newLineCount;
-			int addCol = data.lastIndexOf("\n", newPosition);
-			if(addCol == -1) cursorCol = newPosition;
-			else cursorCol += addCol;
-			cursorPosition += add;
-		}
-		
-		/**
-		 * set cursof position
-		 */
-		public void setCursorPosition(int pos) {
-			addCursorPosition(pos - cursorPosition);
 		}
 		
 		/**
@@ -147,7 +118,8 @@ public class TextData implements Editable, Parcelable, Serializable
 		 * update width and height.
 		 */
 		public void updateScrollableSize() {
-			if(data.mDraw == null) return;
+			TextDraw draw = data.getDraw();
+			if(draw == null) return;
 			
 			int lineCount = 0;
 			float curW = 1;
@@ -158,11 +130,11 @@ public class TextData implements Editable, Parcelable, Serializable
 					curW = 0;
 					lineCount++;
 				} else {
-					curW += data.mDraw.getPaint().measureText(new char[]{data.charAt(i)}, 0, 1);
+					curW += draw.getPaint().measureText(new char[]{data.charAt(i)}, 0, 1);
 				}
 			}
 			this.scrollableWidth = maxW;
-			this.scrollableHeight = (int) (lineCount * data.mDraw.getLineSpacing());
+			this.scrollableHeight = (int) (lineCount * draw.getLineSpacing());
 			this.lines = lineCount;
 			this.isWidthOlds = false;
 			this.isHeightOlds = false;
@@ -189,13 +161,14 @@ public class TextData implements Editable, Parcelable, Serializable
 		 * update if needed and return line count.
 		 */
 		public int lines() {
+			TextDraw draw = data.getDraw();
 			if(isLineCountOlds) {
 				lines = data.countOf("\n");
 			}
 			isLineCountOlds = false;
-			if(data.mDraw != null) {
-				scrollableHeight = (int) (lines * data.mDraw.getLineSpacing());
-				isWidthOlds = false;
+			if(draw != null) {
+				scrollableHeight = (int) (lines * draw.getLineSpacing());
+				isHeightOlds = false;
 			}
 			return lines;
 		}
@@ -219,20 +192,10 @@ public class TextData implements Editable, Parcelable, Serializable
 			return -1;
 		}
 		
-		public Cache clone(TextData newParent) {
-			Cache cache = new Cache(newParent);
-			cache.cursorCol = cursorCol;
-			cache.cursorEnd = cursorEnd;
-			cache.cursorLine = cursorLine;
-			cache.cursorPosition = cursorPosition;
-			cache.isHeightOlds = isHeightOlds;
-			cache.isWidthOlds = isWidthOlds;
-			cache.isLineCountOlds = isHeightOlds;
-			cache.lines = lines;
-			cache.scrollableHeight = scrollableHeight;
-			cache.scrollableWidth = scrollableWidth;
-			return cache;
+		public static Cache newInstance(TextData parent) {
+			return new Cache(parent);
 		}
+		
 		
 		public static final Creator<Cache> CREATOR = new Creator<Cache>() {
 			@Override
@@ -252,6 +215,10 @@ public class TextData implements Editable, Parcelable, Serializable
 		@Override
 		public TextData newEditable(CharSequence source) {
 			return TextData.valueOf(source);
+		}
+		
+		public Cache newCache(TextData parent) {
+			return Cache.newInstance(parent);
 		}
 	}
 	
@@ -322,7 +289,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * 1 : from parcel
 	 * 2 : from serializable
 	 */
-	private transient int mStreamFrom = 0;
+	//private transient int mStreamFrom = 0;
 	
 	
 	protected TextData() {
@@ -393,45 +360,6 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * Return the cursor's line count.
-	 */
-	public int getCursorLines() {
-		return mCache.cursorLine;
-	}
-	
-	/**
-	 * Return the cursor's column, count start from each line's head.
-	 */
-	public int getCursorCols() {
-		return mCache.cursorCol;
-	}
-	
-	/**
-	 * Return the cursor's position start from first charactor.
-	 */
-	public int getCursorPosition() {
-		return mCache.cursorPosition;
-	}
-	
-	/**
-	 * move the cursor position.
-	 */
-	public void setCursorPosition(int pos) {
-		mCache.setCursorPosition(pos);
-	}
-	
-	/**
-	 * move the cursor position.
-	 * @param add add cursor position. 0 to not change
-	 */
-	public void addCursorPosition(int add) {
-		if(add != 0) {
-			mCache.addCursorPosition(add);
-			invaildate();
-		}
-	}
-	
-	/**
 	 * Set the drawing method {@code TextDraw}.
 	 * if using {@code CodeEdit}, it will be called automatic.
 	 */
@@ -455,7 +383,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * Might require UI thread.
 	 */
 	public void invaildate() {
-		invaildate(new Rect(0, 0, mDraw.getWidth(), mDraw.getHeight()));
+		invaildate(new Rect(0, 0, getDraw().getWidth(), getDraw().getHeight()));
 	}
 	
 	/**
@@ -739,6 +667,8 @@ public class TextData implements Editable, Parcelable, Serializable
 		if(position > mCount) throw new IllegalArgumentException("position is bigger than length");
 		if(startPos > mCount) throw new IllegalArgumentException("startPos is bigger than length");
 		
+		TextDraw draw = getDraw();
+		
 		int lines = startLine;
 		int lastLinePos = 0;
 		int curPos = startPos;
@@ -749,11 +679,11 @@ public class TextData implements Editable, Parcelable, Serializable
 				lastLinePos = curPos;
 				x = 0;
 			} else
-				x += mDraw.getPaint().measureText(new char[] {mText[curPos]}, 0, 1);
+				x += draw.getPaint().measureText(new char[] {mText[curPos]}, 0, 1);
 			curPos++;
 		}
 		
-		return new PositionData(position, lines, curPos - lastLinePos, x, lines * mDraw.getLineSpacing() - mDraw.getLineMargin());
+		return new PositionData(position, lines, curPos - lastLinePos, x, lines * draw.getLineSpacing() - draw.getLineMargin());
 	}
 	
 	
@@ -1258,7 +1188,7 @@ public class TextData implements Editable, Parcelable, Serializable
 		TextData data = new TextData();
 		data.ensureCapacity(mText.length);
 		System.arraycopy(mText, 0, data.mText, 0, mText.length);
-		data.mCache = mCache.clone(data);
+		data.mCache = mCache.newInstance(data);
 		data.mCount = mCount;
 		return data;
 	}
@@ -1432,7 +1362,7 @@ public class TextData implements Editable, Parcelable, Serializable
 		
 		TextData data2 = (TextData) data;
 		if(data2 == null) throw new IllegalArgumentException("argument is null");
-		data2.mDraw = parent;
+		data2.setDraw(parent);
 		data2.wrapFromDataStream();
 		return data2;
 	}
@@ -1447,7 +1377,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 */
 	public static TextData fromParcel(Parcel p, TextDraw parent) {
 		TextData data = new TextData(p);
-		data.mDraw = parent;
+		data.setDraw(parent);
 		return data;
 	}
 	
