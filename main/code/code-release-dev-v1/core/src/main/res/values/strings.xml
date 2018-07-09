@@ -3,7 +3,7 @@
 	
 	<!-- Global -->
 	<string name="asm_activity_error_label">Unexcepted error was occured</string>
-	
+	<string name="asm_activity_settings_label">Settings</string>
 	
 	<!-- Preferences -->
 	<string name="pref_asm_application_title">Application</string>

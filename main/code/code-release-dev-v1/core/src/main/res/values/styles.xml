@@ -4,7 +4,7 @@
 		
 	</style>
 	<style name="AppThemeBase" parent="@style/Theme.AppCompat.Light.NoActionBar">
-		<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-		
+		<!--<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+		-->
 	</style>
 </resources>
