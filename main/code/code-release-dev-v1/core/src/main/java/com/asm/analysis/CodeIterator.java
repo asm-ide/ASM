@@ -6,21 +6,41 @@ import com.lhw.util.TextUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 // ISSUE #1
 
+
+/**
+ * Very simple code analysis utility.
+ * This implements Iterator, and next() returns the part of code.
+ * CodePart includes three things: text, index, type. This seperate
+ * the code, like " to ", // to \n, the variable name(a-z, A-Z, ..).
+ * This also seperate all the operators, such as ; , . " = / ( ...
+ * The type indicates what it is, like text(surrounded with ""/''/...), comment
+ * (/* ... *\/, // ... \n), normal(plain, such as int, abc, class, ArrayList).
+ */
 public class CodeIterator implements Iterator<CodeIterator.CodePart>
 {
+	/**
+	 * Being returned by {@code CodeIterator.next()}, this shows what each part is
+	 * and what type is. 
+	 */
 	public static class CodePart {
-		public static final CodePart UNKNOWN = new CodePart().type(TYPE_UNKNOWN);
-		
-		
+		/** the text of this. */
 		public CharSequence text;
+		
+		/** the location where this text located on whole text. */
 		public int index;
+		
+		/** the type, normal, text, comment or etc. */
 		public int type;
 		
 		
+		/** public constructor. */
 		public CodePart() {}
+		
 		
 		CodePart type(int type) {
 			this.type = type;
@@ -43,17 +63,46 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 	}
 	
 	
+	/** unknown type. something went wrong. */
 	public static final int TYPE_UNKNOWN = -1;
+	
+	/**
+	 * Just plain text formed by {@code LanguageInfo.getArg("varName")}.
+	 * In java, "public", "int", "text"(just some variable), "ArrayList"
+	 * can be this.
+	 */
 	public static final int TYPE_NORMAL = 0;
+	
+	/** just number. starts with 0-9. */
 	public static final int TYPE_NUMBER = 1;
+	
+	/**
+	 * Some characters like {}();,.="|&![]
+	 * All seperators are seperated between all of their forward/back.
+	 */
 	public static final int TYPE_SEPERATOR = 2;
+	
+	/** text, in java, surrounded by something like "" ''. */
 	public static final int TYPE_TEXT = 3;
+	
+	/** comment. in java, surrounded by //\n /**\/ */
 	public static final int TYPE_COMMENT = 4;
 	
 	
+	/** attached code. */
 	private CharSequence mCode;
+	
+	/** attached language informatipn. */
 	private LanguageInfo mInfo;
+	
+	/** read starting position. */
 	private int mIndex = 0;
+	
+	/** RegEx and provide varname search. */
+	private Pattern mVarName;
+	
+	/** last found position cache. */
+	private int mVarNameStart;
 	
 	
 	public CodeIterator() {}
@@ -63,8 +112,8 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 	}
 	
 	public CodeIterator(CharSequence code, LanguageInfo info) {
-		mCode = code;
-		mInfo = info;
+		setCode(code);
+		setInfo(info);
 	}
 
 	public void setCode(CharSequence code) {
@@ -77,12 +126,22 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 
 	public void setInfo(LanguageInfo info) {
 		this.mInfo = info;
+		
+		String varName = info.getArg("varName", null);
+		if(varName != null) {
+			mVarName = Pattern.compile(varName);
+		}
+		mVarNameStart = -1;
 	}
 
 	public LanguageInfo getInfo() {
 		return mInfo;
 	}
 	
+	/**
+	 * Set the current position.
+	 * Do not put 
+	 */
 	public void move(int index) {
 		mIndex = index;
 	}
@@ -107,7 +166,13 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 		CodePart part = new CodePart().index(mIndex);
 		
 		char cur = text.charAt(mIndex);
-		if(TextUtils.isAlphabet(cur) || cur == '_') { // NOTE : think about down slach can be inserted at start of varname
+		if(mVarNameStart < startIndex) {
+			Matcher varMatcher = mVarName.matcher(text);
+			varMatcher.find();
+			mVarNameStart = varMatcher.start();
+		}
+		
+		if(mVarNameStart == startIndex) {
 			//variable _temp, abc, a123, ... (common)
 			while(hasNext()) {
 				char c = text.charAt(mIndex);
