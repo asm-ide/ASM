@@ -1,4 +1,4 @@
-package com.asm.coreui.activity;
+package com.asm.ui.activity;
 
 import com.asm.ui.R;
 import android.app.*;

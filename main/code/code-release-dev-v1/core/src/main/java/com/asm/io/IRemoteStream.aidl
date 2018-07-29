@@ -11,4 +11,5 @@ interface IRemoteStream
 	void setLength(long newLength);
 	void write(byte data);
 	void getState(out ExceptionParcelable e);
+	boolean isLengthAvailable();
 }

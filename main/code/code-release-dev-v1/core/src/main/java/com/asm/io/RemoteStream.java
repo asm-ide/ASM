@@ -53,6 +53,11 @@ public class RemoteStream extends Stream implements Parcelable
 		}
 		
 		@Override
+		public boolean isLengthAvailable() {
+			return mStream.isLengthAvailable();
+		}
+		
+		@Override
 		public long length() throws RemoteException {
 			try {
 				return mStream.length();
@@ -102,6 +107,8 @@ public class RemoteStream extends Stream implements Parcelable
 	
 	// unlocal cache
 	private long mLength = -1; // when write mode was not set
+	private boolean mLengthAvailable;
+	private boolean mLengthAvailableInited = false;
 	
 	
 	public RemoteStream(Stream stream) throws IOException {
@@ -184,6 +191,20 @@ public class RemoteStream extends Stream implements Parcelable
 		} catch(RemoteException e) {
 			onException(e);
 		}
+	}
+	
+	@Override
+	public boolean isLengthAvailable() {
+		if(!mLengthAvailableInited) {
+			try {
+				mLengthAvailable = mBinder.isLengthAvailable();
+				mLengthAvailableInited = true;
+			} catch(RemoteException e) {
+				onException(e);
+			}
+		}
+		
+		return mLengthAvailable;
 	}
 	
 	@Override

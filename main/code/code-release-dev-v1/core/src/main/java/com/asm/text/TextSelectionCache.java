@@ -15,8 +15,10 @@ public class TextSelectionCache extends TextSelection
 		
 		mDraw = draw;
 		mData = new PositionData();
-		mData.resolveDelta(text, start, end - start, draw);
-		mData2 = null;
+		mData.resolveDelta(text, 0, start, draw);
+		PositionData delta = new PositionData();
+		delta.resolveDelta(text, start, end - start, draw);
+		mData2 = mData.add(delta);
 	}
 	
 	public int getLine() {
@@ -35,19 +37,41 @@ public class TextSelectionCache extends TextSelection
 		return mData.getY();
 	}
 	
-	public int get
+	public int getLineEnd() {
+		return mData2.getLine();
+	}
+
+	public int getColEnd() {
+		return mData2.getCol();
+	}
+
+	public float getXEnd() {
+		return mData2.getX();
+	}
+
+	public float getYEnd() {
+		return mData2.getY();
+	}
 	
 	@Override
 	public void beforeTextChanged(CharSequence text, int start, int count, int after) {
 		super.beforeTextChanged(text, start, count, after);
-		if(count != 0)
-			mData.resolveRemovedDelta(text, start, count, mDraw);
+		if(count != 0) {
+			PositionData delta = new PositionData();
+			delta.resolveDelta(text, start, count, mDraw);
+			mData = mData.sub(delta, text, mDraw);
+			mData2 = mData2.sub(delta, text, mDraw);
+		}
 	}
 	
 	@Override
 	public void onTextChanged(CharSequence text, int start, int before, int count) {
 		super.onTextChanged(text, start, before, count);
-		if(count != 0)
-			mData.resolveDelta(text, start, count, mDraw);
+		if(count != 0) {
+			PositionData delta = new PositionData();
+			delta.resolveDelta(text, start, count, mDraw);
+			mData = mData.add(delta);
+			mData2 = mData2.add(delta);
+		}
 	}
 }

@@ -73,13 +73,14 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 	private float mScrollX, mScrollY, mDownX, mDownY;
 	
 	/** shows that scrolling is being started. */
-//	private boolean isScrollStarted = false; //while end
-//	
-//	/**
-//	 * shows scrolling way. True for scroll x, and
-//	 * false for scrolling y.
-//	 */
-//	private boolean isScrollVertical;
+	private boolean isScrollStarted = false; //while end
+	
+	/**
+	 * shows scrolling way. True for scroll x, and
+	 * false for scrolling y.
+	 */
+	private int scrollOrientation;
+	
 //	
 //	/** last x and y when touch down. */
 //	private float lastx, lasty;
@@ -300,60 +301,9 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 		return mDraw;
 	}
 	
-	public void setTextFactory(TextData.Factory factory) {
+	public void setFactory(TextData.Factory factory) {
 		mFactory = factory;
 	}
-	
-//	/** {@hide} */
-//	@Override
-//	public boolean onTouchEvent(MotionEvent event) {
-//		switch(event.getAction()) {
-//			case MotionEvent.ACTION_DOWN:
-//				lastx = event.getX();
-//				lasty = event.getY();
-//				isScrollStarted = false;
-//				break;
-//				
-//			case MotionEvent.ACTION_MOVE:
-//				if(isScrollStarted) {
-//					scroller.computeScrollOffset();
-//					int curx = scroller.getCurrX();
-//					int cury = scroller.getCurrY();
-//					int finalx, finaly;
-//					if(isScrollVertical) {
-//						finalx = (int) (cury + event.getX() - lastx);
-//						finaly = cury;
-//					} else {
-//						finalx = curx;
-//						finaly = (int) (cury + event.getY() - lastx);
-//					}
-//					if(finalx < 0) finalx = 0;
-//					else if(finalx > getScrollableWidth() - getWidth()) finalx = getScrollableWidth() - getWidth();
-//					if(finaly < 0) finaly = 0;
-//					else if(finaly > getScrollableHeight() - getHeight()) finaly = getScrollableHeight() - getHeight();
-//					
-//					scroller.forceFinished(true);
-//					Log.d(TAG, "scroll v=" + isScrollVertical + " finalx=" + finalx + ", finaly=" + finaly);
-//					invalidate();
-//				} else {
-//					if(Math.abs(lastx - event.getX()) > MAXSCROLLPOS) {
-//						//start x scroll
-//						isScrollStarted = true;
-//						isScrollVertical = true;
-//						//recall to compute scroll
-//						return onTouchEvent(event);
-//					}
-//					else if(Math.abs(lasty - event.getY()) > MAXSCROLLPOS) {
-//						//start y scroll
-//						isScrollStarted = true;
-//						isScrollVertical = false;
-//						//recall to compute scroll
-//						return onTouchEvent(event);
-//					}
-//				}
-//		}
-//		return true;
-//	}
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		return mGestureDetector.onTouchEvent(event);
@@ -368,7 +318,7 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 		mDownX = e.getX();
 		mDownY = e.getY();
 		ViewCompat.postInvalidateOnAnimation(this);
-		return false;
+		return true;
 	}
 	
 	/** {@hide} */
@@ -380,29 +330,22 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 	/** {@hide} */
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
-		return false;
+		return true;
 	}
 	
 	/** {@hide} */
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//		scroller.forceFinished(true);
-//		scroller.setFinalX((int) (scrollX - distanceX));
-//		scroller.setFinalY((int) (scrollY - distanceY));
-//		Log.d("scroll", (scrollX - distanceX) + "," + (scrollY - distanceY));
-//		ViewCompat.postInvalidateOnAnimation(this);
-		mScroller.setFinalX((int) (mScrollX + e2.getX() - mDownX));
-		mScroller.setFinalY((int) (mScrollY + e2.getY() - mDownY));
-		mScroller.abortAnimation();
-		invalidate();
-		//ViewCompat.postInvalidateOnAnimation(this);
-		return false;
+		if(isScrollStarted) {
+			
+		}
+		return true;
 	}
 	
 	/** {@hide} */
 	@Override
-	public void onLongPress(MotionEvent e1) {
-		//setBackgroundColor(0x22ffff00);
+	public void onLongPress(MotionEvent e) {
+		
 	}
 	
 	/** {@hide} */
@@ -415,9 +358,14 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 			(int) velocityX,
 			(int) velocityY,
 			0, 0, getScrollableWidth(), getScrollableHeight());
-		
+		doScroll();
 		ViewCompat.postInvalidateOnAnimation(this);
 		return true;
+	}
+	
+	private void doScroll() {
+		mScroller.computeScrollOffset();
+		scrollBy(mScroller.getCurrX(), mScroller.getCurrY());
 	}
 	
 	/**
@@ -476,16 +424,16 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 		setMeasuredDimension(width, height);
 	}
 	
-//	/** {@hide} */
-//	@Override
-//	public void computeScroll()
-//	{
-//		super.computeScroll();
-//		if(scroller.computeScrollOffset()) {
-//			scrollTo(scroller.getCurrX(), scroller.getCurrY());
-//			ViewCompat.postInvalidateOnAnimation(this);
-//		}
-//	}
+	/** {@hide} */
+	@Override
+	public void computeScroll()
+	{
+		super.computeScroll();
+		if(mScroller.computeScrollOffset()) {
+			scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
+			ViewCompat.postInvalidateOnAnimation(this);
+		}
+	}
 	
 	@Override
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
@@ -584,7 +532,7 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 		boolean animating = mScroller.computeScrollOffset();
 		//computeScroll();
 		//canvas.drawColor(0x1fff0000);
-		canvas.translate(mScroller.getCurrX(), mScroller.getCurrY());
+		//canvas.translate(mScroller.getCurrX(), mScroller.getCurrY());
 		//canvas.drawRect(-50, -50, 50, 50, draw.getPaint());
 		TextPaint paint = mDraw.getPaint();
 		float lineMargin = mDraw.getLineMargin();
@@ -608,7 +556,7 @@ public class ScrollingTextView extends View implements TextsDrawingInterface, Ge
 		Log.d(".", "draw" + showsStart + " to " + showsEnd + ", line" + showsStartLines + " to" + showsEndLines);
 		
 		//TEMP
-		canvas.translate(100, -y); // TODO
+		//canvas.translate(100, -y); // TODO
 		
 		while(endIndex != -1){
 			//Log.d(TAG, "before " + startIndex + "~" + endIndex);

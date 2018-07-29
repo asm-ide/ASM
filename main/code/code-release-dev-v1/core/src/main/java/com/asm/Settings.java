@@ -55,8 +55,7 @@ public final class Settings
 	}
 	
 	/** load settings */
-	public static void loadSetting(Context context)
-	{
+	public static void loadSetting(Context context) {
 		isLoaded = true;
 		mainPrefs = context.getSharedPreferences("code-edit$setting", prefMode);
 		textSize = mainPrefs.getFloat("textSize", textSize);

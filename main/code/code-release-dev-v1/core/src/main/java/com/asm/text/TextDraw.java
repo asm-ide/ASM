@@ -129,18 +129,18 @@ public class TextDraw implements View.OnKeyListener, Parcelable
 		if(event.isSystem()) result = false;
 		else if(event.isCtrlPressed()) {
 			
-		} else {
-			int curPos = data.getCursorPosition();
+		} else { // TODOn
+			//int curPos = data.getCursorPosition();
 			
-			switch(key) {
-				case KeyEvent.KEYCODE_DEL: data.delete(curPos - 1, curPos); break;
-				case KeyEvent.KEYCODE_FORWARD_DEL: data.delete(curPos, curPos + 1); break;
-				case KeyEvent.KEYCODE_FORWARD: data.addCursorPosition(1); break;
-				case KeyEvent.KEYCODE_MOVE_HOME: data.setCursorPosition(0); break;
-				case KeyEvent.KEYCODE_MOVE_END: data.setCursorPosition(data.length() - 1); break;
-				case KeyEvent.KEYCODE_INSERT: insert = !insert;  break;
-				
-			}
+//			switch(key) {
+//				case KeyEvent.KEYCODE_DEL: data.delete(curPos - 1, curPos); break;
+//				case KeyEvent.KEYCODE_FORWARD_DEL: data.delete(curPos, curPos + 1); break;
+//				case KeyEvent.KEYCODE_FORWARD: data.addCursorPosition(1); break;
+//				case KeyEvent.KEYCODE_MOVE_HOME: data.setCursorPosition(0); break;
+//				case KeyEvent.KEYCODE_MOVE_END: data.setCursorPosition(data.length() - 1); break;
+//				case KeyEvent.KEYCODE_INSERT: insert = !insert;  break;
+//				
+//			}
 			lastKey = key;
 		}
 		return result;
@@ -150,8 +150,7 @@ public class TextDraw implements View.OnKeyListener, Parcelable
 	 * draw texts on canvas.
 	 * This method only draw texts, not about edit.
 	 */
-	public void onDraw(Canvas canvas, TextsDrawingInterface draw)
-	{
+	public void onDraw(Canvas canvas, TextsDrawingInterface draw) {
 		// TODO
 	}
 	

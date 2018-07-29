@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.0"
+    buildToolsVersion "23.1.0"
 
     defaultConfig {
-        applicationId "com.asm.core"
-        minSdkVersion 9
-        targetSdkVersion 21
+		applicationId 'com.asm'
+        minSdkVersion 14
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -21,7 +21,9 @@ android {
 }
 
 dependencies {
-	compile 'com.android.support:design:23+'
+	compile 'com.android.support:design:27.1.1'
+	//compile 'com.android.support:recyclerview-v7:+' // resolve right version like 23+
+	compile 'com.android.support:preference-v14:27.0.0'
 	compile project(':interface')
 	compile fileTree(dir: 'libs', include: ['*.jar'])
 }
