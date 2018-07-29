@@ -1,6 +1,6 @@
 package com.asm.coreui.activity;
 
-import com.asm.coreui.R;
+import com.asm.ui.R;
 import android.app.*;
 import android.os.*;
 import java.io.*;

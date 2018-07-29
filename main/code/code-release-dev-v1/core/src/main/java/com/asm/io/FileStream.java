@@ -38,6 +38,11 @@ public class FileStream extends Stream
 	}
 	
 	@Override
+	public boolean isLengthAvailable() {
+		return true;
+	}
+	
+	@Override
 	protected void onWrite(byte data) throws IOException {
 		mFile.write(data);
 	}

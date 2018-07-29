@@ -57,8 +57,6 @@ public class TextUtils
 		
 		
 		public CharSyncCharSequence(char[] text, int start, int end) {
-			
-			
 			mText = text;
 			mStart = start;
 			mEnd = end;
@@ -91,7 +89,7 @@ public class TextUtils
 		}
 	}
 	
-	// TODO : check bounda and throw StringIndexOutOfBoundsException
+	// TODO : check bounds and throw StringIndexOutOfBoundsException
 	
 	private static class SyncCharSequence implements CharSequence
 	{

@@ -8,6 +8,8 @@ import java.io.EOFException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 import com.lhw.util.Bits;
 import com.lhw.util.TextUtils;
@@ -94,18 +96,28 @@ public abstract class Stream implements Closeable, DataInput, DataOutput
 	
 	public long length() throws IOException {
 		if(!isReadable()) throw new SecurityException("read mode was not set");
+		if(!isLengthAvailable()) throw new SecurityException("this stream was not allowed to check length");
 		return onLength();
 	}
 	
 	protected abstract int onRead(long position) throws IOException;
 	
-	protected abstract long onLength() throws IOException;
+	/**
+	 * Not according to available, if reached at end, return -1.
+	 */
+	protected abstract long onLength() throws IOException, UnsupportedOperationException;
 	
-	protected abstract void onSetLength(long len) throws IOException;
+	protected abstract void onSetLength(long len) throws IOException, UnsupportedOperationException;
+	
+	public abstract boolean isLengthAvailable();
 	
 	
 	public long position() {
 		return mPosition;
+	}
+	
+	public boolean isLeft() throws IOException {
+		return onLength() != -1;
 	}
 	
 	public long leftBytes() throws IOException {
@@ -121,6 +133,49 @@ public abstract class Stream implements Closeable, DataInput, DataOutput
 		byte[] data = new byte[len];
 		readFully(data);
 		return data;
+	}
+	
+	public int read(byte[] data) throws IOException {
+		return read(data, 0, data.length);
+	}
+	
+	public int read(byte[] data, int offset, int len) throws IOException {
+		if(offset < 0)
+			throw new IndexOutOfBoundsException("offset < 0");
+		else if(len < 0)
+			throw new IndexOutOfBoundsException("len < 0");
+		
+		for(int i = 0; i < len; i++) {
+			try {
+				int d = read();
+				data[i + offset] = (byte) d;
+			} catch(EOFException e) {
+				return i;
+			}
+		}
+		return len;
+	}
+	
+	public byte[] readAll() throws IOException {
+		if(isLengthAvailable()) {
+			long len = leftBytes();
+			if(len > Integer.MAX_VALUE - 1)
+				throw new OutOfMemoryError();
+			
+			return read((int) len);
+		} else {
+			byte[] data = new byte[0];
+			byte[] buf = new byte[128];
+			int len;
+			
+			while((len = read(buf)) != -1) {
+				int lastlen = data.length;
+				data = Arrays.copyOf(data, lastlen + len);
+				System.arraycopy(buf, 0, data, lastlen, len);
+			}
+			
+			return data;
+		}
 	}
 
 	@Override
@@ -167,11 +222,7 @@ public abstract class Stream implements Closeable, DataInput, DataOutput
 	
 	@Override
 	public String readUTF() throws IOException {
-		long left = leftBytes();
-		if(left > Integer.MAX_VALUE - 1) {
-			throw new OutOfMemoryError();
-		}
-		ByteBuffer bbuf = ByteBuffer.wrap(read((int) left));
+		ByteBuffer bbuf = ByteBuffer.wrap(readAll());
 		CharBuffer cbuf = Charset.forName("UTF-8").decode(bbuf);
 		char[] arr = cbuf.array();
 		return String.valueOf(arr);
@@ -184,22 +235,12 @@ public abstract class Stream implements Closeable, DataInput, DataOutput
 	
 	@Override
 	public void readFully(byte[] data, int offset, int len) throws IOException {
-		if(offset < 0)
-			throw new IndexOutOfBoundsException("offset < 0");
-		else if(len < 0)
-			throw new IndexOutOfBoundsException("len < 0");
-		
-		int limit = offset + len;
-		for(int i = offset; i < limit; i++) {
-			int d = read();
-			if(d == -1) throw new EOFException();
-			data[i] = (byte) d;
-		}
+		read(data, offset, len);
 	}
 	
 	@Override
 	public void readFully(byte[] data) throws IOException {
-		readFully(data, 0, data.length);
+		read(data, 0, data.length);
 	}
 	
 	@Override

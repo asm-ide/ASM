@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 21
     buildToolsVersion "23.1.0"
 
     defaultConfig {
@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-	compile 'com.android.support:design:23+'
+	compile 'com.android.support:design:27.1.1'
 	compile project(':core')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

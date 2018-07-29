@@ -16,12 +16,13 @@ import java.io.*;
 import java.util.*;
 
 import android.support.v7.widget.Toolbar;
-import com.asm.coreui.*;
+import com.asm.ui.*;
 import com.asm.io.*;
 import android.support.v4.app.*;
 import android.Manifest;
 import android.app.*;
 import android.content.pm.*;
+import com.asm.*;
 
 
 public class CodeEditActivity extends AppCompatActivity
@@ -63,30 +64,10 @@ public class CodeEditActivity extends AppCompatActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler(){
-				@Override
-				public void uncaughtException(Thread p1, Throwable th)
-				{
-					Intent i = new Intent(CodeEditActivity.this, DebugActivity.class);
-					Writer stringWriter = new StringWriter();
-					PrintWriter printWriter = new PrintWriter(stringWriter);
-					while (th != null) {
-						th.printStackTrace(printWriter);
-						th = th.getCause();
-					}
-					String obj = stringWriter.toString();
-					Log.d("err", obj);
-					i.putExtra("error", obj);
-					startActivity(i);
-					//try {
-					//	Thread.sleep(100L);
-					//} catch(InterruptedException e) {}
-					finish();
-					android.os.Process.killProcess(android.os.Process.myPid());
-				}
-			});
-		
 		super.onCreate(savedInstanceState);
+		
+		ASM.initOnActivity(this);
+		
 		
 		if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 			onCreatePrimary();
@@ -144,7 +125,7 @@ public class CodeEditActivity extends AppCompatActivity
 			});
 		//setContentView(e);
 		
-		setContentView(R.layout.default_layout);
+		setContentView(com.asm.ui.R.layout.default_layout);
 		svc = new MyServiceConnection();
 		bindService(new Intent(this, TestService.class), svc, BIND_AUTO_CREATE);
 		//Toast.makeText(this, "" + (), Toast.LENGTH_SHORT).show();

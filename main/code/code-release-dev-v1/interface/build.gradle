@@ -2,16 +2,16 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.0"
+    buildToolsVersion "23.1.0"
 
     defaultConfig {
-        applicationId "com.asm"
+		applicationId 'com.asm'
         minSdkVersion 14
         targetSdkVersion 23
     }
 }
 
 dependencies {
-	compile 'com.android.support:design:23+'
+	compile 'com.android.support:design:27.1.1'
 	compile fileTree(dir: 'libs', include: ["*.jar"])
 }

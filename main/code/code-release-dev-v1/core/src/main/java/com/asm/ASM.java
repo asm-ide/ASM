@@ -3,6 +3,7 @@ package com.asm;
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
+import com.asm.troubleshoot.ASMExceptionHandler;
 
 
 public class ASM
@@ -15,6 +16,8 @@ public class ASM
 		sContext = activity;
 		sIsLocal = true;
 		init();
+		
+		ASMExceptionHandler.init(activity);
 	}
 	
 	public static void initOnService(Service service) {
@@ -25,6 +28,7 @@ public class ASM
 	
 	private static void init() {
 		Settings.loadSettingIfNotLoaded(sContext);
+		
 	}
 	
 	
