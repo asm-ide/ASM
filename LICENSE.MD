@@ -1,4 +1,5 @@
 # ASM License
+> Testing license page
 Welcome to ASM License! I'm glad to meet you here. You can check license at here
 Please read this Terms of Service agreement carefully before using ASM. Because
 it is such an important thing to read license and contract with users.
@@ -34,7 +35,6 @@ it is such an important thing to read license and contract with users.
 	
 __WARNING: THIS LICENSE IS NOT STABLE UNTIL RELEASE AND CAN BE CHANGED WITHOUT ANY NOTIFICATIONS.__
 __FOLLOWING LICENSE IS TEMPORY LICENSE, AND CURRENTLY ASM PROJECT IS NO LICENSE.__
-__SO, *YOU CAN SEE IT BUT YOU CANNOT USE IT*.__
 	
 
 ### Terms and Conditions for Use, Reproduction, and Distribution

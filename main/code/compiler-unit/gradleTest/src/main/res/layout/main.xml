@@ -6,12 +6,36 @@
 	android:gravity="center"
 	android:orientation="vertical">
 
-	<EditText
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:ems="10"
-		android:layout_weight="1.0"
-		android:id="@+id/log"/>
+	<ScrollView
+		android:layout_height="270dp"
+		android:layout_width="match_parent">
+
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:orientation="vertical">
+
+			<HorizontalScrollView
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content">
+
+				<LinearLayout
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:orientation="horizontal">
+
+					<EditText
+						android:id="@+id/log"
+						android:layout_height="wrap_content"
+						android:layout_width="1000dp"/>
+
+				</LinearLayout>
+
+			</HorizontalScrollView>
+
+		</LinearLayout>
+
+	</ScrollView>
 
 	<ScrollView
 		android:layout_height="wrap_content"
@@ -162,6 +186,33 @@
 						android:layout_width="wrap_content"
 						android:ems="10"
 						android:id="@+id/path4_2"/>
+
+				</LinearLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:orientation="horizontal">
+
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="Clean\nCode"
+					android:id="@+id/clean"
+					android:onClick="cleanb"/>
+
+				<LinearLayout
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:orientation="vertical">
+
+					<EditText
+						android:layout_height="200dp"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path5_1"/>
 
 				</LinearLayout>
 

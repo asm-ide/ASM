@@ -16,9 +16,10 @@ public interface LanguageInfo
 	public boolean getArg(String name, boolean defaultValue);
 	
 	/**
-	 * varNamesMore : more texts which can be a variable name (not first).
-	 *				  excepts a~z, A~Z, 0~9, _
-	 * TODO : varFirstNameMore
+	 * varName : a RegExp string. defines what is s variable name.
+	 *			 ex) [[a-z][A-z]\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF_\$][[a-z][A-Z][0-9]_\$]*
+	 * number  : defines what is a number.
+	 * 			 ex) ([+-]?[0-9]+(.[0-9])?(e)?|0\x[[0-9][a-f][A-F]])
 	 */
 	public String getArg(String name, String defaultValue);
 }
