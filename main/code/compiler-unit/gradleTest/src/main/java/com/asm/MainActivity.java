@@ -8,6 +8,7 @@ import com.asm.gongbj.*;
 import com.asm.gongbj.gradle.ProjectManager;
 import com.asm.gongbj.gradle.*;
 import com.asm.gongbj.gradle.info.*;
+import com.asm.gongbj.codeManage.*;
 
 public class MainActivity extends Activity 
 {
@@ -49,6 +50,7 @@ public class MainActivity extends Activity
 
 
 	}
+	
 	public void ggi(View v){
 		EditText i1 = (EditText)findViewById(R.id.path3_1);
 		EditText i2 = (EditText)findViewById(R.id.path3_2);
@@ -86,6 +88,13 @@ public class MainActivity extends Activity
 
 
 	}
+	
+	/*
+	♥♥♥♥
+	j
+	{
+		
+	*/
 	String re = "";
 	public void syncb(View v){
 		EditText i1 = (EditText)findViewById(R.id.path4_1);
@@ -109,7 +118,7 @@ public class MainActivity extends Activity
 		s.setErrorListener(new Syncer.ErrorListener(){
 			@Override
 			public boolean onError(ProgressFail progressFail){
-				//Toast.makeText(getApplicationContext(),progressFail.getExplane().toString(),Toast.LENGTH_LONG).show();
+				
 				re = re + "\n" + progressFail.getExplane();
 				if(progressFail.getAnalysisData()!=null)re = re + "\n" + progressFail.getAnalysisData().toString();
 				
@@ -129,4 +138,20 @@ public class MainActivity extends Activity
 		
 		
 	}
+	
+	public void cleanb(View v){
+		EditText i1 = (EditText)findViewById(R.id.path5_1);
+		EditText o = (EditText)findViewById(R.id.log);
+		
+		try{
+			o.setText(CleanJavaCode.clean(i1.getText().toString(),"       "));
+		}catch(Exception e){
+			Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
+			o.setText(e.toString());
+		}
+
+
+
+	}
+	
 }

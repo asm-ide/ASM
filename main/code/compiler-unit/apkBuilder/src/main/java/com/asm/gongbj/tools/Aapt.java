@@ -12,9 +12,18 @@ public class Aapt
 	public Aapt(String android_jar_path){
 		jarPath = android_jar_path;
 	}
+
+	/**
+	 return the android jar path that the app can use.
+	 if there's no jar file, it returns null
+	 */
 	public String getAndroidJarPath(){
-		rerurbem
+		File destFile = new File(Environment.getExternalStorageDirectory()+"/.ASM/android.jar");
+		if(destFile.exists()){
+			return destFile.getAbsolutePath();
+		}else return null;
 	}
+
 	public static String requestAndroidJar(Context activity) throws Exception{
 		File destFile = new File(Environment.getExternalStorageDirectory()+"/.ASM/android.jar");
 		if (!destFile.getParentFile().exists()) destFile.getParentFile().mkdirs();
@@ -42,7 +51,7 @@ public class Aapt
 				cmd += "-I " + jar + " ";
 			}
 		}
-		
+
 		return apkBuilder.runAapt(cmd);
 	}
 
@@ -77,5 +86,5 @@ public class Aapt
 		return apkBuilder.runAapt(cmd);
 	}
 	private static void copyFile(InputStream in, OutputStream out) throws IOException { byte[] buffer = new byte[1024]; int read; while ((read = in.read(buffer)) != -1) { out.write(buffer, 0, read); } }
-	
+
 }
