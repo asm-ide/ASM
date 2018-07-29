@@ -59,40 +59,44 @@ public class HighlightTextData extends TextData implements Serializable
 	
 	@Override
 	protected boolean onInsert(int where, CharSequence text, int start, int end) {
-		super.onInsert(where, text, start, end);
-		
-		int len = end - start;
-		char[] arr = new char[len];
-		Arrays.fill(arr, (char) -1);
-		mHighlightCache.insert(where, arr, 0, len);
-		list.add(new int[] {start, end});
-		
-		return true;
+		if(super.onInsert(where, text, start, end)) {
+			int len = end - start;
+			char[] arr = new char[len];
+			Arrays.fill(arr, (char) -1);
+			mHighlightCache.insert(where, arr, 0, len);
+			list.add(new int[] {start, end});
+			
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
 	protected boolean onDelete(int start, int end) {
-		super.onDelete(start, end);
-		
-		mHighlightCache.delete(start, end);
-		list.add(new int[] {start, start});
-		
-		return true;
+		if(super.onDelete(start, end)) {
+			
+			mHighlightCache.delete(start, end);
+			list.add(new int[] {start, start});
+			
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean onReplace(int st, int en, CharSequence text, int start, int end) {
-		super.onReplace(st, en, text, start, end);
-		
-		int len = end - start;
-		char[] arr = new char[len];
-		Arrays.fill(arr, (char) -1);
-		mHighlightCache.delete(st, en);
-		mHighlightCache.insert(st, arr, 0, len);
-		list.add(new int[] {st, st + len});
-		
-		return true;
-		
+		if(super.onReplace(st, en, text, start, end)) {
+			
+			int len = end - start;
+			char[] arr = new char[len];
+			Arrays.fill(arr, (char) -1);
+			mHighlightCache.delete(st, en);
+			mHighlightCache.insert(st, arr, 0, len);
+			list.add(new int[] {st, st + len});
+			
+			return true;
+		}
+		return false;
 	}
 
 	@Override

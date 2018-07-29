@@ -46,10 +46,7 @@ public class TextData implements Editable, Parcelable, Serializable
 		transient public TextData data;
 		
 		/** cursor positions. */
-		public int cursorPosition;
-		
-		/** cursor positions. */
-		transient public int cursorLine, cursorCol, cursorEnd;
+		public TextPointer cursorPosition;
 		
 		/** all lines count */
 		transient public int lines = 0;
@@ -69,7 +66,7 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 		
 		public Cache(Parcel p) {
-			cursorPosition = p.readInt();
+			cursorPosition = PositionData.obtain(p, data, data.getDraw());
 		}
 		
 		@Override
@@ -79,7 +76,7 @@ public class TextData implements Editable, Parcelable, Serializable
 
 		
 		public void writeToParcel(Parcel p, int flags) {
-			p.writeInt(cursorPosition);
+			cursorPosition.writeToParcel(p, flags);
 		}
 		
 		/**
@@ -90,9 +87,7 @@ public class TextData implements Editable, Parcelable, Serializable
 			int newLineCount = TextUtils.countOf(String.valueOf(text.subSequence(start, end)), "\n", 0);
 			lines += newLineCount;
 			
-			if(cursorPosition >= where) {
-				addCursorPosition(end - start);
-			}
+			
 			isWidthOlds = true;
 		}
 		
@@ -260,27 +255,6 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 	}
 	
-	/**
-	 * Position data when returns to {@code getPositionData}.
-	 * It marks position, lines, cols, x position, and y position.
-	 */
-	public static class PositionData
-	{
-		public int position;
-		public int line, col;
-		public float x, y;
-		
-		
-		public PositionData() {}
-		
-		public PositionData(int p, int l, int c, float x, float y) {
-			position = p;
-			line = l;
-			col = c;
-			this.x = x;
-			this.y = y;
-		}
-	}
 	
 	/** hide */
 	public static interface OnInvaildateListener
