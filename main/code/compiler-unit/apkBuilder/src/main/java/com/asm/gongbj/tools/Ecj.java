@@ -1,13 +1,13 @@
 package com.asm.gongbj.tools;
 import android.app.*;
 import com.asm.gongbj.*;
+import java.io.*;
 
 public class Ecj
 {
 	private String androidJarPath;
-	private Activity ac;
-	public Ecj(Activity activity, String androidJarPath){
-		ac = activity;
+	
+	public Ecj( String androidJarPath){
 		this.androidJarPath = androidJarPath;
 	}
 	public String compile(String mainSourcePath, String sourcePath[], String destPath,String jar[]){
@@ -21,13 +21,22 @@ public class Ecj
 		command += "-bootclasspath ";
 		String b = "";
 		for(String t : sourcePath){
-			b += t + ":";
+			b += splitPath(t) + ":";
 		}
 		b = b.substring(0,b.length()-1);
 		command += b + " ";
 		command += mainSourcePath;
 		
 		return apkBuilder.runJavaCompiler(command);
+	}
+	private String splitPath(String path){
+		File f = new File(path);
+		if(!f.isDirectory())return path;
+		String r = "";
+		for(String t : f.list()){
+			r += t + ":";
+		}
+		return r.substring(0,r.length()-1);
 	}
 	
 	
