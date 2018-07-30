@@ -1,19 +1,51 @@
 # Contributing Guideline
-### 1. You should work hard to improve our code.
-You should improve our works to support more devices, work faster, look good, and satisfy many users as much as possible.
-
-### 2. You should append our license at the first of code.
-You should append [this](LICENSE_HEADER) at the header of the every code.
-> Note: currently license is not developed yet, and also there is no header yet.
-
-### 3. Try to use annotations.
+### 1. Use annotations.
 You can use `@NonNull` or `@Nullable` at the every code.<br>
 
-### 4. Try to make javadocs in all files.
+### 2. Make javadocs in all files.
 Other contributors and people can understand code easily, if javadoc exists.<br>
-**Making javadoc might be annoying, but it will help your code to improve.
+**Making javadoc might be annoying, but it will help your code to improve.**
 
-### 5. Thanks to all pull requests.
-There are many developers, and they can help us to improve our code.
+### 3. Write our short version of license, which is revealed at the end of [LICEMSE](LICENSE).
+**Notification: currently license is not developed and not have to do this.**<br>
+
+### 4. Unify the code style.
+Our code style is defined as:<br>
+
+#### global:
+Indent style: Tab(width : 4 space<br>
+Space between brackets: none `(...)`<br>
+Space between operators: 1 `abc = 123;`<br>
+
+#### java, c, c++:
+function: 
+```
+... myfunc() {
+    ...
+}
+```
+class, namespace(c++): 
+```
+... MyClass
+{
+    ...
+}
+```
+for: `for(int i = 0; i < max; i++) { ... }`
+
+#### xml
+attributes: 
+```
+<tag value="abc"
+    value2="123">
+```
+or 
+```
+<a_very_long_taggy_tag
+   value1="123">
+```
+space before `/>`: 1 `<mytag hello="hi" />`
+
+<p>
 
 > **We :heart: our all contributors.**
