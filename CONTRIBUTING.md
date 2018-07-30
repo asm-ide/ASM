@@ -6,7 +6,7 @@ You can use `@NonNull` or `@Nullable` at the every code.<br>
 Other contributors and people can understand code easily, if javadoc exists.<br>
 **Making javadoc might be annoying, but it will help your code to improve.**
 
-### 3. Write our short version of license, which is revealed at the end of [LICEMSE](LICENSE).
+### 3. Write our short version of license, which is revealed at the end of [LICENSE](LICENSE).
 **Notification: currently license is not developed and not have to do this.**<br>
 
 ### 4. Unify the code style.
