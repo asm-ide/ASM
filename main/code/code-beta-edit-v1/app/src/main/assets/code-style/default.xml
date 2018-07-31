@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<code-style>
-	<!--the base theme. You should make this or use tag <import-default/>.-->
-	<language lang="base">
-		<color name="foreground">#050505</color>
-		<color name="background">#f7f7f7</color>
-	</language>
-</code-style>
