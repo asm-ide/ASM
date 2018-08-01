@@ -3,10 +3,10 @@ package com.asm.gongbj.tools;
 import java.io.*;
 import com.asm.gongbj.*;
 
-public class dx
+public class Dx
 {
 	
-	public dx(){
+	public Dx(){
 		
 	}
 	
