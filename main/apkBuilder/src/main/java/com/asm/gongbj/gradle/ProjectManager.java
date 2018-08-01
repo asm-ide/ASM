@@ -232,6 +232,7 @@ public class ProjectManager{
 	public GradleInfo getGradleProjectInfo(String gradleProjectPath)throws ProgressFail{
 		gpp=gradleProjectPath;
 		GradleInfo g = new GradleInfo();
+		g.fullPath = gradleProjectPath;
 		File f=new File(gradleProjectPath+"/build.gradle");
 		if(!f.exists())throw new ProgressFail("'build.gradle'is not found in \n"+f.getAbsolutePath(),f.getAbsolutePath(),"Gradle");
 		String str;

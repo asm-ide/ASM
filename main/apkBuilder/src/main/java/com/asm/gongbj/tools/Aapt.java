@@ -17,7 +17,7 @@ public class Aapt
 	 return the android jar path that the app can use.
 	 if there's no jar file, it returns null
 	 */
-	public String getAndroidJarPath(){
+	public static String getAndroidJarPath(){
 		File destFile = new File(Environment.getExternalStorageDirectory()+"/.ASM/android.jar");
 		if(destFile.exists()){
 			return destFile.getAbsolutePath();

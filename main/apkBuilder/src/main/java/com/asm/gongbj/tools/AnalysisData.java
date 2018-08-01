@@ -17,6 +17,11 @@ public class AnalysisData
 		public String filePath;
 		public int lineNumber;
 		public String comment;
+		//for Ecj
+		public String type;
+		public String line;
+		public String errorCode;
+		//
 	}
 	public String toString(){
 		String str = "exitValue : ";

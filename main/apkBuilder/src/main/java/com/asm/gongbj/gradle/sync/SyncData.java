@@ -20,6 +20,16 @@ public class SyncData
 	public boolean isProjectScaned(String projectName){
 		return this.projectName.contains(projectName);
 	}
+	public String[] getSyncedProjectPath(){
+		String data[] = new String[gradleInfo.size()];
+		int i=0;
+		for(GradleInfo gi : (GradleInfo[])gradleInfo.toArray()){
+			data[i] = gi.fullPath;
+			i++;
+		}
+		return data;
+	}
+	
 	public String[] getSyncedProjectName(){
 		String[] data  = new String[projectName.size()];
 		for(int i= 0; i<projectName.size(); i++){

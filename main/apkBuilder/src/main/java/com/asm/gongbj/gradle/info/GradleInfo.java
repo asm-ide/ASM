@@ -4,6 +4,7 @@ package com.asm.gongbj.gradle.info;
 */
 public class GradleInfo
 {
+	public String fullPath;
 	public android android;
 	public dependencies dependencies;
 	public String plugin;
