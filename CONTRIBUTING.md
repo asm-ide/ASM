@@ -18,6 +18,11 @@ Space between brackets: none `(...)`<br>
 Space between operators: 1 `abc = 123;`<br>
 
 #### java, c, c++:
+U = upper case, l = lower case<br>
+class name: UllUlll... (upper case at first)<br>
+function name: llUllll... (lower case at first)<br>
+constant name: UUU_UUUU... (all upper)
+
 function: 
 ```
 ... myfunc() {
