@@ -18,7 +18,7 @@ public class AnalysisData
 		public int lineNumber;
 		public String comment;
 		//for Ecj
-		public String type;
+		public int type;
 		public String line;
 		public String errorCode;
 		//

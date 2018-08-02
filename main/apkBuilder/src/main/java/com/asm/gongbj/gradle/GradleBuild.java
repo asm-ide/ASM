@@ -81,7 +81,7 @@ public class GradleBuild
 			errorL.onError(new ProgressFail("Error while syncing...",androidGradlePath,"sync"));
 			resultValue=0;
 		}
-		if(resultValue==0||syncD==null)return;
+		
 		
 		//Start Ecj
 		Ecj ecj = new Ecj(androidJar);
@@ -94,7 +94,22 @@ public class GradleBuild
 			if(new File(p2).exists())projects.add(p2);
 		}
 		progL.onProgressChange("Java compiling...");
-		ecj.compile(mainGradlePath+"/src/main/java",(String[])projects.toArray(),mainGradlePath+"/build/bin/class",syncD.getScanedJar());
+		String log = ecj.compile(mainGradlePath+"/src/main/java",(String[])projects.toArray(),mainGradlePath+"/build/bin/class",syncD.getScanedJar());
+		AnalysisData ad = EcjResultAnalyze.analysis(log);
+		if(ad.exitValue==0){
+			
+		}else{
+			resultValue = 0;
+			ProgressFail pf = new ProgressFail("Java compile failed",mainGradlePath,"Gradle");
+			pf.analysisData = ad;
+			errorL.onError(pf);
+		}
+		
+		//Quit Gradle Build if there were some errors.
+		if(resultValue==0||syncD==null)return;
+		
+		//If there were no error, Continue...
+		
 		//Start aapt
 		Aapt aapt = new Aapt(androidJar);
 		
