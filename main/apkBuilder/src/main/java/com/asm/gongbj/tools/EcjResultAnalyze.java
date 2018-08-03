@@ -7,18 +7,20 @@ public class EcjResultAnalyze
 		
 		String lS[] = result.split("----------");
 		int count = 0;
-		
-		
+		data.fullLog = result;
 		for(String line : lS){
 			if(line.equals(lS[0])||line.equals(lS[lS.length-1])){
+				
 				if(line.contains("Compilation arguments:")){
 					line.trim();
 					line.substring("Compilation arguments:".length()+1);
 					data.cmd=line.split("\n");
 				}
+				
 				if(line.contains("Done in")){
 					String t = line;
 					t = t.trim();
+					t = t.substring(line.lastIndexOf("Done in"));
 					t = t.substring("Done in".length()+1);
 					t = t.substring(0,t.indexOf("sec"));
 					t = t.trim();
@@ -27,7 +29,8 @@ public class EcjResultAnalyze
 				if(line.contains("ExitValue")){
 					String t = line;
 					t = t.trim();
-					t = t.substring("ExitValue:".length()).trim();
+					t = t.substring(t.lastIndexOf("ExitValue:"));
+					t = t.substring("ExitValue:".length()+1).trim();
 					data.exitValue = Integer.parseInt(t);
 				}
 			}else{

@@ -4,6 +4,7 @@ public class AaptResultAnalyze
 {
 	public static AnalysisData analysis(String result){
 		AnalysisData data  = new AnalysisData();
+		data.fullLog = result;
 		String cmdStr = result.substring(0,result.indexOf("\n\n")).trim();
 		String elseStr = result.substring(result.indexOf("\n\n")).trim();
 		data.cmd = cmdStr.split("\n");

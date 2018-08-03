@@ -251,7 +251,7 @@ public class apkBuilder
 	public static String runJavaCompiler(String commandLine){
 		StringWriterOutputStream swos = new StringWriterOutputStream();
 		G.ide.fnRedirectOutput(swos);
-		G.ide.fnDx(commandLine);
+		G.ide.fnCompile(commandLine);
 
 		G.ide.fnLogOutput(swos);
 		return swos.toString();

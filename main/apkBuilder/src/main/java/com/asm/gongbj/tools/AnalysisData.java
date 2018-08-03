@@ -5,7 +5,7 @@ import java.util.*;
 
 public class AnalysisData
 {
-	
+	public String fullLog;
 	public int exitValue;
 	public String[] cmd;
 	public int time;
@@ -24,14 +24,21 @@ public class AnalysisData
 		//
 	}
 	public String toString(){
-		String str = "exitValue : ";
-		str += String.valueOf(exitValue);
-		str += "\n time : ";
-		str += String.valueOf(time);
-		str += "";
-		for(errData e : this.errData){
-			str = str + "\n\ncomment : " + e.comment.toString() + "\nfilePath : " + e.filePath.toString() + "\nlineNumber : "+ String.valueOf(e.lineNumber);
+		String str= "";
+		try{
+			str+= " exitValue : ";
+			str += String.valueOf(exitValue);
+			str += "\n time : ";
+			str += String.valueOf(time);
+			str += " \nfullLog : " + fullLog + "\n\n";
+			for(errData e : this.errData){
+				if(e!=null)str = str + "\n\ncomment : " + e.comment.toString() + "\nfilePath : " + e.filePath.toString() + "\nlineNumber : "+ String.valueOf(e.lineNumber);
+			}
+			
+		}catch(Exception e){
+			
 		}
+		
 		return str;
 	}
 }

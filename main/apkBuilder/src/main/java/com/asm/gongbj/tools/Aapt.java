@@ -8,9 +8,9 @@ import android.content.*;
 
 public class Aapt
 {
-	String jarPath;
+	String androidJarPath;
 	public Aapt(String android_jar_path){
-		jarPath = android_jar_path;
+		androidJarPath = android_jar_path;
 	}
 
 	/**
@@ -43,16 +43,17 @@ public class Aapt
 		cmd += "-J " + rPath + " ";
 		cmd += "-M " + androidManifetPath + " ";
 		for(String res : resPath){
-			cmd += "-S " + res + " ";
+			
+			if(res!=null)cmd += "-S " + res + " ";
 		}
-		cmd = cmd + "-I " + jarPath + " ";
+		cmd = cmd + "-I " + androidJarPath + " ";
 		if(jarPath!=null){
 			for(String jar : jarPath){
 				cmd += "-I " + jar + " ";
 			}
 		}
 
-		return apkBuilder.runAapt(cmd);
+		return cmd + "\n" + apkBuilder.runAapt(cmd);
 	}
 
 	public String generateApk(String apkPath, String androidManifestPath, String resPath[], String jarPath[]){
@@ -65,7 +66,7 @@ public class Aapt
 			cmd = cmd + " -j " + tmp;
 		}
 		cmd = cmd + " -F " + apkPath;
-		cmd += "-I " + jarPath;
+		cmd += "-I " + androidJarPath;
 
 		return apkBuilder.runAapt(cmd);
 	}

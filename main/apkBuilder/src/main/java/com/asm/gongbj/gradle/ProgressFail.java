@@ -32,7 +32,18 @@ public class ProgressFail extends Exception
 	public String getfilePath(){
 		return filePath;
 	}
+	
 	public String toString(){
-		return explane;
+		String r = "";
+		r+= "explane : " + explane + "\n";
+		r+= "filePath : " + filePath + "\n";
+		r+= "toolName : " + toolName + "\n";
+		if(analysisData!=null){
+			r+= "analysisData : \n" + analysisData.toString();
+		}
+		
+		return r;
+		
 	}
+	
 }

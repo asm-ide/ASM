@@ -53,7 +53,7 @@ public class MainActivity extends Activity
 	
 	public void ggi(View v){
 		EditText i1 = (EditText)findViewById(R.id.path3_1);
-		EditText i2 = (EditText)findViewById(R.id.path3_2);
+		//EditText i2 = (EditText)findViewById(R.id.path3_2);
 		
 		try
 		{
@@ -89,12 +89,7 @@ public class MainActivity extends Activity
 
 	}
 	
-	/*
-	♥♥♥♥
-	j
-	{
-		
-	*/
+	
 	String re = "";
 	public void syncb(View v){
 		EditText i1 = (EditText)findViewById(R.id.path4_1);
@@ -139,8 +134,40 @@ public class MainActivity extends Activity
 		
 	}
 	
-	public void cleanb(View v){
+	public void gradleBuildb(View v){
 		EditText i1 = (EditText)findViewById(R.id.path5_1);
+		EditText i2 = (EditText)findViewById(R.id.path5_2);
+		GradleBuild gb = new GradleBuild(this);
+		re="";
+		gb.setErrorListener(new GradleBuild.ErrorListener(){
+			public void onError(ProgressFail pf){
+				re += "\n\nonError : \n";
+				re += pf.toString();
+			}
+		});
+		gb.setProgressListener(new GradleBuild.ProgressListener(){
+			public void onProgressStart(){
+				re += "onProgressStart";
+			}
+			public void onProgressChange(String str){
+				re += "\n\nOnProgressChange : " + "\n" + str;
+			}
+			public void onprogressFinish(){
+				re += "\n\nOnProgresFinish : ";
+			}
+		});
+		try{
+			gb.run(i1.getText().toString(),i2.getText().toString());
+		}catch(Exception e){
+			re += "\n\n" + e.toString();
+		}finally{
+			EditText o = (EditText)findViewById(R.id.log);
+			o.setText(re);
+		}
+	}
+	
+	public void cleanb(View v){
+		EditText i1 = (EditText)findViewById(R.id.path6_1);
 		EditText o = (EditText)findViewById(R.id.log);
 		
 		try{

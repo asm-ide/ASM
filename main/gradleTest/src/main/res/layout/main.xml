@@ -55,7 +55,7 @@
 				<Button
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:text="CAP"
+					android:text="Create\nAndroid\nProject"
 					android:id="@+id/createAndroidProject"
 					android:onClick="cap"/>
 
@@ -68,19 +68,22 @@
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path1_1"/>
+						android:id="@+id/path1_1"
+						android:hint="appName"/>
 
 					<EditText
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path1_2"/>
+						android:id="@+id/path1_2"
+						android:hint="packageName"/>
 
 					<EditText
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path1_3"/>
+						android:id="@+id/path1_3"
+						android:hint="path"/>
 
 				</LinearLayout>
 
@@ -94,7 +97,7 @@
 				<Button
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:text="CLP"
+					android:text="Create\nLibrary\nProject"
 					android:id="@+id/createLibraryProject"
 					android:onClick="alp"/>
 
@@ -107,19 +110,22 @@
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path2_1"/>
+						android:id="@+id/path2_1"
+						android:hint="name"/>
 
 					<EditText
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path2_2"/>
+						android:id="@+id/path2_2"
+						android:hint="packageName"/>
 
 					<EditText
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path2_3"/>
+						android:id="@+id/path2_3"
+						android:hint="androidProjectPath"/>
 
 				</LinearLayout>
 
@@ -133,26 +139,22 @@
 				<Button
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:text="GGI"
+					android:text="Get\nGradle\nInfo"
 					android:id="@+id/getGradleInfo"
 					android:onClick="ggi"/>
 
 				<LinearLayout
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:orientation="vertical">
+					android:orientation="vertical"
+					android:gravity="center">
 
 					<EditText
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path3_1"/>
-
-					<EditText
-						android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
-						android:ems="10"
-						android:id="@+id/path3_2"/>
+						android:id="@+id/path3_1"
+						android:hint="gradleProjectPath"/>
 
 				</LinearLayout>
 
@@ -179,18 +181,56 @@
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path4_1"/>
+						android:id="@+id/path4_1"
+						android:hint="androidProjectPath"/>
 
 					<EditText
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path4_2"/>
+						android:id="@+id/path4_2"
+						android:hint="mainGradlePath"/>
 
 				</LinearLayout>
 
 			</LinearLayout>
 
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:orientation="horizontal">
+
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="Gradle\nBuild"
+					android:id="@+id/gradleBuild"
+					android:onClick="gradleBuildb"/>
+
+				<LinearLayout
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:orientation="vertical">
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path5_1"
+						android:hint="androidProjectPath"/>
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path5_2"
+						android:hint="mainGradlePath"/>
+
+				</LinearLayout>
+
+			</LinearLayout>
+			
+			
 			<LinearLayout
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
@@ -212,7 +252,8 @@
 						android:layout_height="200dp"
 						android:layout_width="wrap_content"
 						android:ems="10"
-						android:id="@+id/path5_1"/>
+						android:id="@+id/path6_1"
+						android:hint="code"/>
 
 				</LinearLayout>
 

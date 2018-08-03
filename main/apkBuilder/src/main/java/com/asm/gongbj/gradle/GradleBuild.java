@@ -87,14 +87,15 @@ public class GradleBuild
 		Ecj ecj = new Ecj(androidJar);
 		progL.onProgressChange("Starting compiler...");
 		ArrayList<String> projects = new ArrayList<String>();
+		String ms = mainGradlePath+"/src/main/java";
 		for(String str : syncD.getSyncedProjectPath()){
 			String p1 = str + "/src/main/java";
 			String p2 = str + "/build/gen";
-			if(new File(p1).exists())projects.add(p1);
+			if(new File(p1).exists()&&!p1.equals(ms))projects.add(p1);
 			if(new File(p2).exists())projects.add(p2);
 		}
 		progL.onProgressChange("Java compiling...");
-		String log = ecj.compile(mainGradlePath+"/src/main/java",(String[])projects.toArray(),mainGradlePath+"/build/bin/class",syncD.getScanedJar());
+		String log = ecj.compile(ms,projects.toArray(new String[projects.size()]),mainGradlePath+"/build/bin/class",syncD.getScanedJar());
 		AnalysisData ad = EcjResultAnalyze.analysis(log);
 		if(ad.exitValue==0){
 			
@@ -123,6 +124,6 @@ public class GradleBuild
 		public void onprogressFinish();
 	}
 	public static interface ErrorListener{
-		public boolean onError(ProgressFail progressFail);
+		public void onError(ProgressFail progressFail);
 	}
 }

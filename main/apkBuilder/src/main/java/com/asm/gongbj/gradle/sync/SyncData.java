@@ -23,7 +23,7 @@ public class SyncData
 	public String[] getSyncedProjectPath(){
 		String data[] = new String[gradleInfo.size()];
 		int i=0;
-		for(GradleInfo gi : (GradleInfo[])gradleInfo.toArray()){
+		for(GradleInfo gi : gradleInfo){
 			data[i] = gi.fullPath;
 			i++;
 		}

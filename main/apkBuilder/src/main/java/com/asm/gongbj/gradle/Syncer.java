@@ -106,7 +106,8 @@ public class Syncer
 		File gen = new File(build.getAbsolutePath()+"/gen");
 		if(!gen.exists())gen.mkdirs();
 		if(gen.isFile())gen.delete(); gen.mkdirs();
-		Aapt aapt = new Aapt("");
+		Aapt aapt = new Aapt(Aapt.getAndroidJarPath());
+		/*
 		try
 		{
 			aapt = new Aapt(Aapt.requestAndroidJar(ac));
@@ -115,7 +116,7 @@ public class Syncer
 		catch (Exception e)
 		{
 			errorListener.onError(new ProgressFail("cannot run Aapt\n" + e.toString(),null,"sync"));
-		}
+		}*/
 		String manifest = path + "/src/main/AndroidManifest.xml";
 		String res = path + "/src/main/res";
 		

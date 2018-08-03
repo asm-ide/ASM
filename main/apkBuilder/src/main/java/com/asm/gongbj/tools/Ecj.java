@@ -18,23 +18,23 @@ public class Ecj
 		for(String t : jar){
 			command += "-cp " + t + " ";
 		}
-		command += "-bootclasspath ";
+		command += "-sourcepath ";
 		String b = "";
 		for(String t : sourcePath){
-			b += splitPath(t) + ":";
+			b += t + ":";
 		}
 		b = b.substring(0,b.length()-1);
 		command += b + " ";
 		command += mainSourcePath;
 		
-		return apkBuilder.runJavaCompiler(command);
+		return command + "\n" + apkBuilder.runJavaCompiler(command);
 	}
 	private String splitPath(String path){
 		File f = new File(path);
 		if(!f.isDirectory())return path;
 		String r = "";
 		for(String t : f.list()){
-			r += t + ":";
+			r += path+"/"+t + ":";
 		}
 		return r.substring(0,r.length()-1);
 	}
