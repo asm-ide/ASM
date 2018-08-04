@@ -8,9 +8,8 @@ import com.asm.language.LanguageInfo;
 /**
  * The codeedit interface for use.
  */
-public interface CodeEditInterface
+public interface CodeEditInterface extends TextViewInterface
 {
-	public Editable getText();
 	public LanguageInfo getLanguageInfo();
 	public CodeStyleInterface getStyle();
 	public Language getLanguage();

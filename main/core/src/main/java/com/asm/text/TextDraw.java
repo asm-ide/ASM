@@ -1,6 +1,6 @@
 package com.asm.text;
 
-import com.asm.widget.codeedit.ScrollingTextView;
+import com.asm.widget.codeedit.TextViewInterface;
 import com.asm.widget.codeedit.TextsDrawingInterface;
 import com.asm.annotation.NonNull;
 import com.asm.annotation.Nullable;
@@ -16,7 +16,7 @@ import android.os.Parcelable;
 public class TextDraw implements View.OnKeyListener, Parcelable
 {
 	/** parent view */
-	@NonNull ScrollingTextView text;
+	@NonNull TextViewInterface text;
 	
 	
 	/** text paint that parent uses on draw it */
@@ -84,7 +84,7 @@ public class TextDraw implements View.OnKeyListener, Parcelable
 	/**
 	 * Return the view.
 	 */
-	public ScrollingTextView getView() {
+	public TextViewInterface getView() {
 		return text;
 	}
 	
@@ -125,7 +125,7 @@ public class TextDraw implements View.OnKeyListener, Parcelable
 	public boolean onKey(View view, int key, KeyEvent event)
 	{
 		boolean result = true;
-		TextData data = text.getText();
+		TextData data = (TextData) text.getText();
 		if(event.isSystem()) result = false;
 		else if(event.isCtrlPressed()) {
 			
@@ -188,7 +188,7 @@ public class TextDraw implements View.OnKeyListener, Parcelable
 	/**
 	 * create {@code TextDraw} from parcel.
 	 */
-	public static TextDraw fromParcel(Parcel p, ScrollingTextView parent) {
+	public static TextDraw fromParcel(Parcel p, TextViewInterface parent) {
 		TextDraw draw = new TextDraw();
 		draw.text = parent;
 		draw.paint.setTextSize(p.readFloat());
@@ -199,7 +199,7 @@ public class TextDraw implements View.OnKeyListener, Parcelable
 		return draw;
 	}
 	
-	public static TextDraw create(ScrollingTextView text) {
+	public static TextDraw create(TextViewInterface text) {
 		TextDraw draw = new TextDraw();
 		draw.text = text;
 		return draw;

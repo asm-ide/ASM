@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.MatchResult;
+
 
 // ISSUE #1
 
@@ -58,7 +60,7 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 		}
 		
 		CodePart text(CharSequence text, int start, int end) {
-			return text(text.subSequence(start, end));
+			return text(TextUtils.lightSubSequence(text, start, end));
 		}
 	}
 	
@@ -89,6 +91,8 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 	public static final int TYPE_COMMENT = 4;
 	
 	
+	public static final int MAX_TYPE_VALUE = 4;
+	
 	/** attached code. */
 	private CharSequence mCode;
 	
@@ -98,23 +102,18 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 	/** read starting position. */
 	private int mIndex = 0;
 	
-	/** RegEx and provide varname search. */
-	private Pattern mVarName;
-	
-	/** last found position cache. */
-	private int mVarNameStart;
-	
 	
 	public CodeIterator() {}
 	
 	public CodeIterator(CharSequence code) {
-		mCode = code;
+		setCode(code);
 	}
 	
 	public CodeIterator(CharSequence code, LanguageInfo info) {
 		setCode(code);
 		setInfo(info);
 	}
+	
 
 	public void setCode(CharSequence code) {
 		mCode = code;
@@ -126,12 +125,6 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 
 	public void setInfo(LanguageInfo info) {
 		this.mInfo = info;
-		
-		String varName = info.getArg("varName", null);
-		if(varName != null) {
-			mVarName = Pattern.compile(varName);
-		}
-		mVarNameStart = -1;
 	}
 
 	public LanguageInfo getInfo() {
@@ -140,7 +133,8 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 	
 	/**
 	 * Set the current position.
-	 * Do not put 
+	 * Do not put any position, because CodeIterator might
+	 * cause fatal error if position is strange.
 	 */
 	public void move(int index) {
 		mIndex = index;
@@ -159,99 +153,34 @@ public class CodeIterator implements Iterator<CodeIterator.CodePart>
 	public CodePart next() {
 		if(!hasNext()) throw new IllegalStateException("reached of end");
 		
-		LanguageInfo info = mInfo;
-		final CharSequence text = mCode;
-		int startIndex = mIndex;
 		
 		CodePart part = new CodePart().index(mIndex);
 		
-		char cur = text.charAt(mIndex);
-		if(mVarNameStart < startIndex) {
-			Matcher varMatcher = mVarName.matcher(text);
-			varMatcher.find();
-			mVarNameStart = varMatcher.start();
+		
+		for(int i = 0; i <= MAX_TYPE_VALUE; i++) {
+			MatchResult result = find(i);
+			
+			if(result != null) {
+				return part.text(mCode, result.start(), result.end()).type(i);
+			}
 		}
 		
-		if(mVarNameStart == startIndex) {
-			//variable _temp, abc, a123, ... (common)
-			while(hasNext()) {
-				char c = text.charAt(mIndex);
-				if(!(TextUtils.isVarNameExceptNumber(c) || TextUtils.isDigits(c) || TextUtils.includes(c, info.getArg("varNamesMore", "")))) break;
-				mIndex++;
-			}
-			
-			return part.type(TYPE_NORMAL).text(text, startIndex, mIndex++);
-		} else if(TextUtils.isDigits(cur)) {
-			//number 19, 0xabc, 09 ... (java)
-			while(hasNext()) {
-				char c = text.charAt(mIndex);
-				if(!(TextUtils.isHex(c))) break;
-				mIndex++;
-			}
-			
-			return part.type(TYPE_NUMBER).text(text, startIndex, mIndex++);
+		
+		return null;
+	}
+	
+	private MatchResult find(int type) {
+		CodeFinder finder = mInfo.finder(type);
+		
+		if(finder == null) return null;
+		
+		if(finder.isMatchStart(mCode, mIndex)) {
+			return finder.match(mCode, mIndex);
 		} else {
-			int i1 = TextUtils.equalsIndex(cur, info.textQuotes());
-			if(i1 == -1) { //not var,num,text
-				int i2 = -1;
-				String[] comments = info.comments();
-				{
-					for(int i = 0; i < comments.length; i += 2) {
-						int end = startIndex + comments[i].length();
-						if(end > text.length()) continue;
-						CharSequence c = text.subSequence(startIndex, end);
-						if(comments[i].contentEquals(c)) i2 = i;
-					}
-				}
-				
-				if(i2 == -1) {
-					//not var,num,text,note
-					if(TextUtils.includes(cur, info.textSeperators())) {
-						return part.type(TYPE_SEPERATOR).text(text, startIndex, mIndex++);
-					} else {
-						mIndex++;
-						return part.type(TYPE_UNKNOWN);
-					}
-				} else {
-					//note //text\n or /*lines*/ (java)
-					String ends = comments[i2 + 1];
-					
-					while(hasNext()) {
-						if(TextUtils.startsWithAt(mIndex, mCode, ends))
-							break;
-						mIndex++;
-					}
-					
-					return part.type(TYPE_COMMENT).text(mCode, startIndex, mIndex++);
-				}
-			} else {
-				//text "text" or 'c' (java)
-				final char textEscaper = info.textEscaper();
-				final char quote = info.textQuotes().charAt(i1);
-				boolean lastEscaper = false;
-				boolean isNewlineBreakText = info.getArg("isNewlineBreakText", false);
-				
-				while(hasNext()) {
-					if(lastEscaper) {
-						
-					} else {
-						char c = text.charAt(mIndex);
-						if(lastEscaper) {
-							lastEscaper = false;
-							continue;
-						} else if(c == textEscaper) {
-							lastEscaper = true;
-							continue;
-						} else if(c == quote) break;
-						else if(c == '\n') break;
-					}
-					mIndex++;
-				}
-				
-				return part.type(TYPE_TEXT).text(text, startIndex, mIndex++);
-			}
+			return null;
 		}
 	}
+	
 	
 	@Override
 	public void remove() {

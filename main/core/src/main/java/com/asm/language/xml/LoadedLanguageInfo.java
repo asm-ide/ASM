@@ -3,17 +3,17 @@ package com.asm.language.xml;
 import com.asm.language.LanguageInfo;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 import com.lhw.util.TypeUtils;
+import com.asm.analysis.CodeFinder;
+import com.asm.analysis.CodeIterator;
 
 
 public class LoadedLanguageInfo implements LanguageInfo
 {
 	public String name;
-	public String textQuotes = "\"\'";
-	public char textEscaper = '\\';
-	public String[] comments;
-	public String textSeperators = ";.,{}()[]:+-/*?<>&|!=^~";
-	public HashMap<String, Object> args = new HashMap<String, Object>();
+	public HashMap<String, Object> args = new HashMap<>();
+	public HashMap<Integer, CodeFinder> finders = new HashMap<>();
 	
 	
 	@Override
@@ -22,23 +22,8 @@ public class LoadedLanguageInfo implements LanguageInfo
 	}
 	
 	@Override
-	public String textQuotes() {
-		return textQuotes;
-	}
-	
-	@Override
-	public char textEscaper() {
-		return textEscaper;
-	}
-	
-	@Override
-	public String[] comments() {
-		return comments;
-	}
-	
-	@Override
-	public String textSeperators() {
-		return textSeperators;
+	public CodeFinder finder(int type) {
+		return finders.getOrDefault(type, null);
 	}
 	
 	@Override
@@ -51,28 +36,5 @@ public class LoadedLanguageInfo implements LanguageInfo
 	public String getArg(String name, String defaultValue) {
 		if(args.containsKey(name)) return (String) args.get(name);
 		return defaultValue;
-	}
-	
-	public void put(String name, String content) {
-		switch(name) {
-			case "textQuotes":
-				textQuotes = content;
-				break;
-			case "textEscaper":
-				if(content.length() != 1)
-					throw new IllegalArgumentException("content len is not 1");
-				textEscaper = content.charAt(0);
-				break;
-			case "comments":
-				comments = (String[]) TypeUtils.parseList(content);
-				break;
-			case "textSeperators":
-				textSeperators = content;
-				break;
-		}
-	}
-	
-	public void putArg(String name, String content, String type) {
-		args.put(name, TypeUtils.getObjectFromString(content, type));
 	}
 }

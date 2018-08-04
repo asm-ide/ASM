@@ -4,14 +4,16 @@ import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
 import com.asm.language.Language;
 import com.asm.language.LanguageInfo;
-import com.asm.widget.CodeEdit;
+import com.asm.annotation.Nullable;
+import com.asm.analysis.CodeFinder;
+import com.asm.analysis.CodeIterator;
+import com.lhw.util.TypeUtils;
+
 import com.asm.widget.codeedit.Highlightable;
 import com.asm.widget.codeedit.CodeEditInterface;
 
 import java.util.HashMap;
 import java.lang.reflect.Constructor;
-import com.asm.annotation.Nullable;
-import com.lhw.util.TypeUtils;
 
 
 /**
@@ -26,23 +28,8 @@ public class BaseLanguage implements Language
 		}
 		
 		@Override
-		public String textQuotes() {
-			return textQuote;
-		}
-		
-		@Override
-		public char textEscaper() {
-			return textEscaper;
-		}
-		
-		@Override
-		public String[] comments() {
-			return comment;
-		}
-		
-		@Override
-		public String textSeperators() {
-			return textSeperator;
+		public CodeFinder finder(int type) {
+			return null;
 		}
 		
 		@Override
@@ -60,13 +47,10 @@ public class BaseLanguage implements Language
 	
 	//private static final String SPACES = " \t\n";
 	
-	private CodeEdit edit;
+	private CodeEditInterface edit;
 	
 	private String langName = "base";
-	private String textQuote = null;
-	private char textEscaper = '\\';
-	private String[] comment;
-	private String textSeperator = ";.,{}()[]:+-/*?<>&|!=^~";
+	private HashMap<Integer, CodeFinder> finders = new HashMap<>();
 	private Class<CodeAnalysis> analysisClass;
 	private CodeSuggest suggest;
 	
@@ -98,14 +82,14 @@ public class BaseLanguage implements Language
 	
 	
 	public int getColor(String type) {
-		return edit.getColor(type);
+		return edit.getStyle().getColor(type);
 	}
 	
 	public int getColor(String type, String name) {
-		return edit.getColor(type, name);
+		return edit.getStyle().getColor(type, name);
 	}
 	
-	public CodeEdit getEdit() {
+	public CodeEditInterface getEdit() {
 		return edit;
 	}
 	
@@ -167,27 +151,11 @@ public class BaseLanguage implements Language
 		datas.put(name, value);
 	}
 	
-	public void setArg(String name, @Nullable String type, String value) {
-		if(type == null) {
-			switch(name) {
-				case "info.textQuotes": textQuote = value; break;
-				case "info.textSeperators": textSeperator = value; break;
-				case "info.textEscaper": textEscaper = value.charAt(0); break;
-				case "info.comments": comment = (String[]) TypeUtils.parseList(value); break;
-				default: throw new IllegalArgumentException("unknown name : " + name);
-			}
-		} else {
-			args.put(name, TypeUtils.getObjectFromString(value, type));
-		}
+	public void setArg(String name, String type, String value) {
+		args.put(name, TypeUtils.getObjectFromString(value, type));
 	}
 	
 	public void setArgByValue(String name, Object value) {
-		switch(name) {
-			case "info.textQuotes": textQuote = (String) value; break;
-			case "info.textSeperators": textSeperator = (String) value; break;
-			case "info.textEscaper": textEscaper = value; break;
-			case "info.comments": Object[] arr = (Object[]) value; comment = TypeUtils.castArrays(arr, new String[arr.length]); break;
-			default: args.put(name, value);
-		}
+		args.put(name, value);
 	}
 }

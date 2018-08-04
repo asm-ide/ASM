@@ -1,84 +1,147 @@
 package com.asm.language;
 
-import com.asm.analysis.*;
-import java.io.*;
-import javax.xml.parsers.*;
-import org.w3c.dom.*;
-import com.lhw.util.TypeUtils;
-import android.util.*;
+import com.asm.analysis.CodeAnalysis;
+import com.asm.analysis.CodeSuggest;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlPullParserException;
+
+import static org.xmlpull.v1.XmlPullParser.START_DOCUMENT;
+import static org.xmlpull.v1.XmlPullParser.START_TAG;
+import static org.xmlpull.v1.XmlPullParser.TEXT;
+import static org.xmlpull.v1.XmlPullParser.END_TAG;
+import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 
 
 public final class LanguageLoader
 {
-	@SuppressWarnings("raw-types")
 	public static Language fromXml(InputStream is) {
 		BaseLanguage lang = new BaseLanguage();
+		
+		XmlPullParserFactory factory;
+		
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(is);
-			
-			Node mainNode = document.getFirstChild();
-			if(!mainNode.getNodeName().equals("language"))
-				throw new IllegalStateException("root node is not language, node name = " + mainNode.getNodeName());
-			if(document.getChildNodes().getLength() != 1)
-				throw new IllegalStateException("rootnode length is wrong");
-			
-			NamedNodeMap attrs = mainNode.getAttributes();
-			
-			Node analysis = attrs.getNamedItem("analysisClass");
-			if(analysis != null) {
-				lang.setAnalysisClass((Class<CodeAnalysis>) Class.forName(analysis.getNodeValue()));
+			factory = XmlPullParserFactory.newInstance();
+		} catch(XmlPullParserException e) {
+			throw new RuntimeException("couldn't initialize the factory", e);
+		}
+		
+		
+		class ParseException extends Exception
+		{
+			public ParseException(String message) {
+				super(message);
 			}
-			Node suggest = attrs.getNamedItem("suggestClass");
-			if(suggest != null) {
-				String suggestName = suggest.getNodeValue();
-				Class suggestClass = Class.forName(suggestName);
-				lang.setSuggest((CodeSuggest) suggestClass.newInstance());
-			}
+		}
+		
+		try {
+			XmlPullParser parser = factory.newPullParser();
+			parser.setInput(is, null);
 			
-			String langName = attrs.getNamedItem("name").getNodeValue();
-			lang.setLanguageName(langName);
+			int event = parser.getEventType();
 			
-			NodeList rootList = mainNode.getChildNodes();
+			event = parser.next(); // <?xml version="1.0" encoding="utf-8"?>
+			if(parser.getName().equalsIgnoreCase("xml"))
+				event = parser.next(); // <language>
+			if(!parser.getName().equalsIgnoreCase("language"))
+				throw new ParseException("tag not starts by <language>");
 			
-			for(int i = 0; i < rootList.getLength(); i++) {
-				Node node = rootList.item(i);
-				//Log.d(".", "i = " + i);
-				switch(node.getNodeName()) {
-					case "data": {
-						
-						NamedNodeMap attrs2 = node.getAttributes();
-						String name = attrs2.getNamedItem("name").getNodeValue();
-						String type = attrs2.getNamedItem("type").getNodeValue();
-						//Log.d(".", node.getNodeValue() + ", " + node.getTextContent());
-						lang.setData(name, TypeUtils.getObjectFromString(node.getTextContent(), type));
-						break;
+			// attribute : analysisClass, suggestClass
+			{
+				String value = parser.getAttributeValue(null, "analysisClass");
+				
+				try {
+					if(value != null)
+						lang.setAnalysisClass((Class<CodeAnalysis>) Class.forName(value));
+				} catch(ClassNotFoundException e) {
+					throw new RuntimeException("class " + value + " in analysisClass not exist");
+				}
+				
+				value = parser.getAttributeValue(null, "suggestClass");
+				
+				try {
+					if(value != null) {
+						CodeSuggest suggest = (CodeSuggest) Class.forName(value).newInstance();
+						lang.setSuggest(suggest);
 					}
-					
-					case "arg": {
-						NamedNodeMap attrs2 = node.getAttributes();
-						String name = attrs2.getNamedItem("name").getNodeValue();
-						String _value = attrs2.getNamedItem("value").getNodeValue();
-						Object value;
-						String type = null;
-						if(attrs2.getNamedItem("type") != null)
-							type = attrs2.getNamedItem("type").getNodeValue();
-						if(_value.charAt(0) == '@') {
-							if(_value.startsWith("@data/")) {
-								value = lang.getData(_value.substring(6), null);
-							} else throw new IllegalStateException("wrong value on args: " + _value);
-						} else {
-							value = TypeUtils.getObjectFromString(_value, type);
-						}
-						lang.setArgByValue(name, value);
-						break;
-					}
+				} catch(ClassNotFoundException e) {
+					throw new RuntimeException("class " + value + " in suggestClass not exist");
+				} catch(IllegalAccessException | InstantiationException e) {
+					throw new RuntimeException("couldn't instantiate class " + value);
 				}
 			}
-		} catch(Exception e) {
-			throw new RuntimeException(e);
+			
+			while(event != END_DOCUMENT) {
+				switch(event) {
+					case START_DOCUMENT:
+						// none, never called
+						break;
+						
+					case START_TAG:
+						switch(parser.getName()) {
+							
+						}
+						
+						break;
+						
+					case TEXT:
+						
+						break;
+						
+					case END_TAG:
+						
+						break;
+						
+					case END_DOCUMENT:
+						
+						break;
+						
+				}
+				
+				event = parser.next();
+			}
+		} catch(XmlPullParserException | IOException e) {
+			throw new RuntimeException("failed to parse xml", e);
+		} catch(ParseException e) {
+			throw new RuntimeException("failed to parse xml" + e.getMessage());
 		}
+		
 		return lang;
 	}
 }
+/* example:
+
+<?xml version="1.0" encoding="utf-8"?>
+<language name="java"
+	analysisClass="com.asm.analysis.java.JavaAnalysis"
+	suggestClass="com.asm.analysis.java.JavaSuggest">
+	<data name="keywords" type="strings">
+	"abstract", "break", "case", "catch", "class", "continue", "default", "do", "else", "extends", "final", "finally", "for", "if", "import", "implements", "instanceof", 
+	"interface", "native", "new", "package", "public", "protected", "private", "return", "static", "super", "switch", "this", "throw", "throws", "try", "volatile", "while"
+	</data>
+	<data name="otherDatas" type="strings">
+	"true", "false", "null"
+	</data>
+	<data name="types" type="strings">
+	"boolean", "byte", "char", "double", "float", "int", "long", "short"
+	</data>
+	<data name="operators" type="string">;.,{}()[]:</data>
+	<data name="maths" type="string">"+-/*?&lt;&gt;&amp;|!="</data>
+	<data name="textSeperators" type="string"> ;.,{}()[]:+-/*?&lt;&gt;&amp;|!=</data>
+	<data name="textQuotes" type="string">"'</data>
+	<data name="textEscaper" type="char">\</data>
+	<data name="comments" type="strings">
+	"/*", "*\/",
+	"//", "\n"
+	</data>
+	<arg name="info.textQuotes" value="@data/textQuotes" />
+	<arg name="info.textSeperators" value="@data/textSeperators" />
+	<arg name="info.textEscaper" value="@data/textEscaper" />
+	<arg name="info.comments" value="@data/comments" />
+	<arg name="info.isNewlineBreakText" type="boolean" value="true" />
+	</language>
+*/
