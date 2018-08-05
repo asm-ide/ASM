@@ -24,12 +24,10 @@ public class GradleBuild
 	public void run(String androidGradlePath, String mainGradlePath){
 		//Ready
 		if(progL==null){
-			errorL.onError(new ProgressFail("Cannot start building because ProgressListener is null",androidGradlePath,"Gradle"));
-			return;
+			throw new RuntimeException("Cannot start building because ProgressListener is null");
 		}
 		if(errorL==null){
-			errorL.onError(new ProgressFail("Cannot start building because ErorrListener is null",androidGradlePath,"Gradle"));
-			return;
+			throw new RuntimeException("Cannot start building because ErorrListener is null");
 		}
 		resultValue = 1;
 		//Prepare

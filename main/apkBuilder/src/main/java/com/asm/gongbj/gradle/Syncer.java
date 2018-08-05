@@ -135,10 +135,12 @@ public class Syncer
 		String path = ci.value1;
 		String name = ci.value2;
 		String fullPath = mpath + "/" + path;
+		//Todo : make aar available
 		if(!"*.jar".equals(name)) errorListener.onError(new ProgressFail("Only \".jar\" is available",fullPath,"sync"));
 		File f = new File(fullPath);
 		if(!(f.exists())){
-			errorListener.onError(new ProgressFail("folder path is not exist in "+ path,fullPath,"sync"));
+			//errorListener.onError(new ProgressFail("folder path is not exist in "+ path,fullPath,"sync"));
+			//If, File Tree Path is Not exists : not error, but return.
 			return;
 		}
 		File list[] = f.listFiles();
