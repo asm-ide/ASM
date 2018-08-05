@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+		  package="com.asm.ui.base"
 	>
 	<application>
-		<!-- application is not defined here yet, will be defined in child projects -->
-			<activity
-				android:label="@string/asm_activity_error_label"
-				android:name="com.asm.troubleshoot.DebugActivity" />
-			<activity
-				android:label="@string/asm_activity_settings_label"
-				android:name="com.asm.ui.activity.SettingsActivity" />
+
+		<activity
+			android:label="@string/asm_activity_settings_label"
+			android:name="com.asm.ui.activity.SettingsActivity" />
 	</application>
 </manifest>

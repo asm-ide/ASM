@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="zipsigner-lib_all">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/apkBuilder/libs/zipsigner-lib_all.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

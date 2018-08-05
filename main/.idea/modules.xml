@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/apkBuilder/apkBuilder.iml" filepath="$PROJECT_DIR$/apkBuilder/apkBuilder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apkBuildingTest/apkBuildingTest.iml" filepath="$PROJECT_DIR$/apkBuildingTest/apkBuildingTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gradleTest/gradleTest.iml" filepath="$PROJECT_DIR$/gradleTest/gradleTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/interface/interface.iml" filepath="$PROJECT_DIR$/interface/interface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/main.iml" filepath="$PROJECT_DIR$/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-base/ui-base.iml" filepath="$PROJECT_DIR$/ui-base/ui-base.iml" />
+    </modules>
+  </component>
+</project>

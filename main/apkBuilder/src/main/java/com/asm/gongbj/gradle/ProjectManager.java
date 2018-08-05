@@ -24,9 +24,9 @@ public class ProjectManager{
 	}
 	/**
 	*Create Android project.
-	*@param String appName : Android Project's app name
-	*@param String pakageName : Android Project's pakageName
-	*@param String path : folder path that Android Project will be generated in.
+	*@param appName : Android Project's app name
+	*@param packageName : Android Project's pakageName
+	*@param Path : folder path that Android Project will be generated in.
 	*/
 	public void createAndroidProject(String appName, String packageName,String Path)throws Exception{
 		//Create Project Folder
@@ -115,9 +115,9 @@ public class ProjectManager{
 	/**
 	*It creates Library Project.
 	*When you call this method, top-level settins.gradle file will be outomatically modified.
-	*@param String name : Library Project's name
-	*@param String pakageName : Library Project's pakageName
-	*@param String androidProjectPath : folder path of android project that you want to create in.
+	*@param name : Library Project's name
+	*@param packageName : Library Project's pakageName
+	*@param androidProjectPath : folder path of android project that you want to create in.
 	*/
 	public void createLibraryProject(String name, String packageName, String androidProjectPath)throws Exception{
 		//Create Library Project Folder
@@ -156,14 +156,14 @@ public class ProjectManager{
 		write(str, new File(androidProjectPath+"/settings.gradle"));
 	}
 	private String ReadFile(String path)throws Exception{
-		String line = null;
+		String line;
 		File file = new File(path);
 		FileInputStream fileInputStream = new FileInputStream (file);
 		InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
 		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 		StringBuilder stringBuilder = new StringBuilder();
 		while ( (line = bufferedReader.readLine()) != null ){
-			stringBuilder.append(line + System.getProperty("line.separator"));
+			stringBuilder.append(line).append(System.getProperty("line.separator"));
 		}
 		fileInputStream.close();
 		line = stringBuilder.toString();
@@ -180,7 +180,7 @@ public class ProjectManager{
 		String str;
 		try{str = ReadFile(f.getAbsolutePath());}catch(Exception e){throw new ProgressFail("Cannot read 'settins.gradle' file : \n"+e.toString(),f.getAbsolutePath(),"Gradle");}
 		String st[] = str.split("\n");
-		ArrayList<GradleProjectInfo> list = new ArrayList<GradleProjectInfo>();
+		ArrayList<GradleProjectInfo> list = new ArrayList<>();
 		for(String sss : st){
 			sss = sss.trim().replace(" ","");
 			if(sss.contains("include")){
@@ -244,9 +244,9 @@ public class ProjectManager{
 		catch (Exception e)
 		{throw new ProgressFail("Cannot read 'build.gradle' file at : \n"+e.toString(),f.getAbsolutePath(),"Gradle");}
 		String lines[] = str.trim().split("\n");
-		String in = ;
+		String in = null;
 		count=0;
-		ci=new ArrayList<CompileInfo>();
+		ci=new ArrayList<>();
 		g = readBuildGradle(g,lines,"");
 		CompileInfo infos[] = new CompileInfo[ci.size()];
 		for(int co =0;co<ci.size();co++){
@@ -268,7 +268,7 @@ public class ProjectManager{
 		w : while(count<str.length){
 			
 			////////
-			if(tree==""){
+			if("".equals(tree)){
 				if(str[count].contains("apply plugin")){
 					g.plugin=str[count].replace("apply plugin","").replace(":","").replace("'","").trim();
 				}

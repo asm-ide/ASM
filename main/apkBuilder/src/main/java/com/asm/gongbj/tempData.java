@@ -5,8 +5,8 @@ import java.util.*;
 public class tempData
 {
 	
-	private ArrayList<String> filePath = new ArrayList<String>(); 
-	private ArrayList<String> data = new ArrayList<String>();
+	private ArrayList<String> filePath = new ArrayList<>();
+	private ArrayList<String> data = new ArrayList<>();
 	
 	public tempData(){
 		
@@ -39,7 +39,7 @@ public class tempData
 		
 	}
 	
-	public ArrayList getFileList(){
+	public ArrayList<String> getFileList(){
 		return filePath;
 	}
 	

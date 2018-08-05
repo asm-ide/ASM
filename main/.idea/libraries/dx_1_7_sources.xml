@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="dx-1.7-sources">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/apkBuilder/libs/dx-1.7-sources.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

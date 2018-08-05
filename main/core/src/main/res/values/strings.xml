@@ -3,37 +3,5 @@
 	
 	<!-- Global -->
 	<string name="asm_activity_error_label">Unexcepted error was occured</string>
-	<string name="asm_activity_settings_label">Settings</string>
-	
-	<!-- Preferences -->
-	<string name="pref_asm_application_title">Application</string>
-	<string name="pref_asm_application_summary">Configure global application settings.</string>
-	<string name="pref_asm_application_language_title">Language</string>
-	<string name="pref_asm_application_language_summary">Select language used in ASM.</string>
-	<string name="pref_asm_application_language_dialogtitle">Language</string>
-	
-	<string name="pref_asm_application_theme_title">Theme</string>
-	<string name="pref_asm_application_theme_summary">Change the looks of ASM, such as light or dark.</string>
-	<string name="pref_asm_application_theme_light">Light</string>
-	<string name="pref_asm_application_theme_dark">Dark</string>
-	<string-array name="pref_asm_application_theme_entries">
-		<item>Default</item>
-		<!--Add in by plugin (includes built-in plugins)-->
-	</string-array>
-	<string-array name="pref_asm_application_theme_entryvalues">
-		<item>$default</item>
-	</string-array>
-	<string-array name="pref_asm_application_language_entries">
-		<item>System Default</item>
-		<item>English</item>
-		<!--<item>Korean</item>-->
-	</string-array>
-	<string-array name="pref_asm_application_language_entryvalues">
-		<item>$default</item>
-		<item>en</item>
-	</string-array>
-	
-	<string name="pref_asm_editor_title">Editor</string>
-	<string name="pref_asm_editor_summary">Configure the editor.</string>
 	
 </resources>

@@ -1,4 +1,4 @@
-package com.asm.ui.activity;
+package com.asm.ui.base;
 
 import android.support.v7.app.AppCompatActivity;
 

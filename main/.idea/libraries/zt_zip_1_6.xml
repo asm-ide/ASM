@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="zt-zip-1.6">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/apkBuilder/libs/zt-zip-1.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

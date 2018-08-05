@@ -64,21 +64,21 @@ public class TypeUtils
 	public static String objectToString(Object data) {
 		String value;
 		if(data instanceof Integer)
-			value = Integer.toString(data);
+			value = Integer.toString((int) data);
 		else if(data instanceof Character)
-			value = String.valueOf(new char[] {data});
+			value = String.valueOf(new char[] {(char) data});
 		else if(data instanceof Float)
-			value = Float.toString(data);
+			value = Float.toString((float) data);
 		else if(data instanceof Double)
-			value = Double.toString(data);
+			value = Double.toString((double) data);
 		else if(data instanceof Long)
-			value = Long.toString(data);
+			value = Long.toString((long) data);
 		else if(data instanceof Byte)
-			value = Byte.toString(data);
+			value = Byte.toString((byte) data);
 		else if(data instanceof Short)
-			value = Short.toString(data);
+			value = Short.toString((short) data);
 		else if(data instanceof Boolean)
-			value = Boolean.toString(data);
+			value = Boolean.toString((boolean) data);
 		else if(data instanceof String)
 			value = (String) data;
 		else if(data instanceof String[])
@@ -90,7 +90,7 @@ public class TypeUtils
 
 	public static String stringArrayToString(Object[] datas) {
 		try {
-			JSONArray arr = new JSONArray(datas);
+			JSONArray arr = new JSONArray(datas); // TODO: this uses api level 19+
 			String text = arr.toString();
 			return text.substring(1, text.length());
 		} catch(JSONException e) {
@@ -98,7 +98,7 @@ public class TypeUtils
 		}
 	}
 
-	@SuppressWarnings("unsafe")
+	@SuppressWarnings("unchecked")
 	public static <T> T getObjectByClass(String data, Class<T> type) {
 		Object value;
 		if(type == Integer.TYPE)
@@ -128,7 +128,7 @@ public class TypeUtils
 		return (T) value;
 	}
 
-	@SuppressWarnings("unsafe")
+	@SuppressWarnings("unchecked")
 	public static <T> T[] castArrays(Object[] arr, T[] newArr) {
 		for(int i = 0; i < newArr.length; i++) {
 			newArr[i] = (T) arr[i];
