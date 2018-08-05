@@ -180,5 +180,19 @@ public class MainActivity extends Activity
 
 
 	}
+	public void class2codeb(View v){
+		
+		EditText i1 = (EditText)findViewById(R.id.path7_1);
+		EditText i2 = (EditText)findViewById(R.id.path7_2);
+		
+		EditText o = (EditText)findViewById(R.id.log);
+
+		try{
+			o.setText(CodeFromClass.get(i1.getText().toString(),i2.getText().toString(),this));
+		}catch(Exception e){
+			Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
+			o.setText(e.toString());
+		}
+	}
 	
 }

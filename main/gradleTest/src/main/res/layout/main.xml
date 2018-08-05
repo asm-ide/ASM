@@ -7,50 +7,43 @@
 	android:orientation="vertical">
 
 	<ScrollView
-		android:layout_height="270dp"
-		android:layout_width="match_parent">
+		android:layout_height="0dp"
+		android:layout_width="match_parent"
+		android:layout_weight="1.0"
+		android:background="#DCDEE3">
 
-		<LinearLayout
+		<HorizontalScrollView
 			android:layout_height="wrap_content"
-			android:layout_width="match_parent"
-			android:orientation="vertical">
+			android:layout_width="wrap_content">
 
-			<HorizontalScrollView
+			<EditText
+				android:id="@+id/log"
 				android:layout_height="wrap_content"
-				android:layout_width="wrap_content">
+				android:layout_width="wrap_content"/>
 
-				<LinearLayout
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
-					android:orientation="horizontal">
-
-					<EditText
-						android:id="@+id/log"
-						android:layout_height="wrap_content"
-						android:layout_width="1000dp"/>
-
-				</LinearLayout>
-
-			</HorizontalScrollView>
-
-		</LinearLayout>
+		</HorizontalScrollView>
 
 	</ScrollView>
 
 	<ScrollView
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
+		android:layout_height="0dp"
+		android:layout_width="match_parent"
 		android:layout_weight="1.0">
 
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
-			android:orientation="vertical">
+			android:orientation="vertical"
+			android:gravity="center_horizontal"
+			android:padding="10dp"
+			android:background="#EDF5FF">
 
 			<LinearLayout
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:layout_margin="10dp"
+				android:background="#ECEAF1">
 
 				<Button
 					android:layout_height="wrap_content"
@@ -92,7 +85,9 @@
 			<LinearLayout
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:layout_margin="10dp"
+				android:background="#ECEAF1">
 
 				<Button
 					android:layout_height="wrap_content"
@@ -134,7 +129,9 @@
 			<LinearLayout
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:layout_margin="10dp"
+				android:background="#ECEAF1">
 
 				<Button
 					android:layout_height="wrap_content"
@@ -163,7 +160,9 @@
 			<LinearLayout
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:layout_margin="10dp"
+				android:background="#ECEAF1">
 
 				<Button
 					android:layout_height="wrap_content"
@@ -198,7 +197,9 @@
 			<LinearLayout
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:layout_margin="10dp"
+				android:background="#ECEAF1">
 
 				<Button
 					android:layout_height="wrap_content"
@@ -229,12 +230,13 @@
 				</LinearLayout>
 
 			</LinearLayout>
-			
-			
+
 			<LinearLayout
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:layout_margin="10dp"
+				android:background="#ECEAF1">
 
 				<Button
 					android:layout_height="wrap_content"
@@ -254,6 +256,43 @@
 						android:ems="10"
 						android:id="@+id/path6_1"
 						android:hint="code"/>
+
+				</LinearLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:orientation="horizontal"
+				android:layout_margin="10dp"
+				android:background="#ECEAF1">
+
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="Get\nClass\nCode"
+					android:id="@+id/class2code"
+					android:onClick="class2codeb"/>
+
+				<LinearLayout
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:orientation="vertical">
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path7_1"
+						android:hint="folder path"/>
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path7_2"
+						android:hint="class name"/>
 
 				</LinearLayout>
 
