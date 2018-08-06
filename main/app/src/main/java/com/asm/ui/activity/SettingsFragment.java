@@ -2,11 +2,11 @@ package com.asm.ui.activity;
 
 import com.asm.R;
 
-import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v14.preference.PreferenceFragment;
 import android.os.Bundle;
 
 
-public class SettingsFragment extends PreferenceFragmentCompat
+public class SettingsFragment extends PreferenceFragment
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

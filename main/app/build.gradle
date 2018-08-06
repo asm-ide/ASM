@@ -27,6 +27,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:design:25.3.1'
+	compile 'com.android.support:preference-v14:25.3.1'
 	compile project(':core')
 	compile project(':ui-base')
     testCompile 'junit:junit:4.12'

@@ -1,5 +1,7 @@
 package com.asm.ui.activity;
 
+import com.asm.ui.base.BaseActivity;
+
 import android.os.Bundle;
 
 
