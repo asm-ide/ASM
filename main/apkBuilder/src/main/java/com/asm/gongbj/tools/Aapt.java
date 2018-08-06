@@ -53,7 +53,7 @@ public class Aapt
 			}
 		}
 
-		return cmd + "\n" + apkBuilder.runAapt(cmd);
+		return /*cmd + "\n" + */apkBuilder.runAapt(cmd);
 	}
 
 	public String generateApk(String apkPath, String androidManifestPath, String resPath[], String jarPath[]){

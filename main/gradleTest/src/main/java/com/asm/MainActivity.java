@@ -17,6 +17,21 @@ public class MainActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+		Thread.setDefaultUncaughtExceptionHandler(
+            new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException (Thread thread, Throwable e) {
+                    
+					//((EditText)findViewById(R.id.log)).setText(e.toString());
+					AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+					builder1.setMessage(e.toString());
+					builder1.setCancelable(true);
+
+
+					AlertDialog alert11 = builder1.create();
+					alert11.show();
+                }
+            });
 	}
 	public void cap(View v){
 		EditText i1 = (EditText)findViewById(R.id.path1_1);

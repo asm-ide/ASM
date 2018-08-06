@@ -1,10 +1,10 @@
 package com.asm.gongbj.gradle;
-import android.content.*;
 import android.app.*;
-import com.asm.gongbj.tools.*;
 import com.asm.gongbj.gradle.sync.*;
-import java.util.*;
+import com.asm.gongbj.tools.*;
 import java.io.*;
+import java.util.*;
+
 
 public class GradleBuild
 {
@@ -106,8 +106,106 @@ public class GradleBuild
 		
 		//Quit Gradle Build if there were some errors.
 		if(resultValue==0||syncD==null)return;
-		
+	
 		//If there were no error, Continue...
+		
+		//Start Dxing
+		{
+			Dx dx = new Dx();
+			progL.onProgressChange("dxing...");
+
+			String desPath = mainGradlePath + "/build/bin/dex/";
+			{
+				File f = new File(desPath);
+				if(!(f.exists())) {
+					f.mkdirs();
+				}else{
+					if(f.isFile()){
+						f.delete();
+						f.mkdirs();
+					}
+				}
+			}
+
+			//dx jars
+			for(String jarPath : syncD.getScanedJar()){
+				progL.onProgressChange("dexing : " + new File(jarPath).getName() + "...");
+				AnalysisData ad2 = DxResultAnalyze.analysis(dx.jar2dex(jarPath,desPath + new File(jarPath).getName() + ".dex"));
+				if(ad2.exitValue!=0){
+					resultValue = 0;
+					ProgressFail pf = new ProgressFail("dexing failed",jarPath,"Gradle");
+					pf.analysisData = ad2;
+					errorL.onError(pf);
+				}
+			}
+
+			//dx classes
+			progL.onProgressChange("dxing : projects...");
+			{
+				AnalysisData ad2 = DxResultAnalyze.analysis(dx.class2dex(new String[]{mainGradlePath+"/build/bin/class"},desPath + "main.dex"));
+				if(ad2.exitValue!=0){
+					resultValue = 0;
+					ProgressFail pf = new ProgressFail("dexing failed",mainGradlePath+"/build/bin/class","Gradle");
+					pf.analysisData = ad2;
+					errorL.onError(pf);
+
+				}
+			}
+		}
+		
+		
+		if(resultValue == 0){
+			return;
+		}
+		
+		//Start Merge
+		{
+			progL.onProgressChange("dx merge...");
+			DexMerge dxm = new DexMerge();
+			String dexPath = mainGradlePath + "/build/bin/dex/";
+			String desPath = mainGradlePath + "/build/bin/classes.dex";
+			
+			String dexes[] = new String[syncD.getScanedJar().length+1];
+			for(int i = 0; i < syncD.getScanedJar().length; i++){
+				
+				dexes[i] = dexPath + new File(syncD.getScanedJar()[i]).getName() + ".dex";
+			}
+			dexes[dexes.length-1] = dexPath + "main.dex";
+			
+			if(!(dexes.length>1)){
+				AnalysisData ad2 = dxm.Merge(desPath,dexes[0],dexes[dexes.length-1]);
+				if(ad2.exitValue!=0){
+					resultValue = 0;
+					ProgressFail pf = new ProgressFail("dex merge failed",dexes[dexes.length-1],"Gradle");
+					pf.analysisData = ad2;
+					errorL.onError(pf);
+
+				}
+				for(int i = 1; i < dexes.length-1; i++){
+					AnalysisData ad3 = dxm.Merge(desPath,desPath,dexes[i]);
+					if(ad2.exitValue!=0){
+						resultValue = 0;
+						ProgressFail pf = new ProgressFail("dex merge failed",dexes[dexes.length-1],"Gradle");
+						pf.analysisData = ad3;
+						errorL.onError(pf);
+
+					}
+				}
+			}else{
+				progL.onProgressChange("dx merge : main...");
+				AnalysisData ad2 = dxm.Merge(desPath,dexes[0],dexes[0]);
+				if(ad2.exitValue!=0){
+					resultValue = 0;
+					ProgressFail pf = new ProgressFail("dex merge failed",dexes[0],"Gradle");
+					pf.analysisData = ad2;
+					errorL.onError(pf);
+					
+				}
+			}
+			
+		}
+		
+		
 		
 		//Start aapt
 		Aapt aapt = new Aapt(androidJar);

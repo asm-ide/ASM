@@ -27,7 +27,7 @@ public class Ecj
 		command += b + " ";
 		command += mainSourcePath;
 		
-		return command + "\n" + apkBuilder.runJavaCompiler(command);
+		return /*command + "\n" + */apkBuilder.runJavaCompiler(command);
 	}
 	private String splitPath(String path){
 		File f = new File(path);
