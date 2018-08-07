@@ -10,9 +10,14 @@ public class DxResultAnalyze
 		{
 			String t = result;
 			t = t.trim();
-			t = t.substring(t.lastIndexOf("ExitValue:"));
-			t = t.substring("ExitValue:".length()+1).trim();
-			ad.exitValue = Integer.parseInt(t);
+			t = t.substring(0,t.lastIndexOf("Done in"));
+			t = t.trim();
+			//ad.fullLog = t;
+			if(t.endsWith(ad.cmd[ad.cmd.length-1].trim())){
+				ad.exitValue = 0;
+			}else{
+				ad.exitValue = 1;
+			}
 		}
 		
 		{

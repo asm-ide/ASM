@@ -17,6 +17,7 @@ public class MainActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+		/*
 		Thread.setDefaultUncaughtExceptionHandler(
             new Thread.UncaughtExceptionHandler() {
                 @Override
@@ -31,7 +32,7 @@ public class MainActivity extends Activity
 					AlertDialog alert11 = builder1.create();
 					alert11.show();
                 }
-            });
+            });*/
 	}
 	public void cap(View v){
 		EditText i1 = (EditText)findViewById(R.id.path1_1);

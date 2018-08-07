@@ -252,7 +252,8 @@ public int fnDx (String[] args)
     for (i=0;i<args.length;i++) System.out.println(args[i]);
     System.out.println("");
     // start dx
-    rc = com.android.dx.command.Main.main(args);
+    /*rc = */com.android.dx.command.Main.main(args);
+	rc = 1;
   }
   catch (Throwable t)
   {
@@ -261,7 +262,7 @@ public int fnDx (String[] args)
     t.printStackTrace();
   }
   System.out.println("\nDone in "+(System.currentTimeMillis()-start)/1000+" sec.\n");
-  System.out.println("ExitValue: "+rc);
+  //System.out.println("ExitValue: "+rc);
   return rc;
 } //fnDx
 //===================================================================

@@ -105,6 +105,7 @@ public class GradleBuild
 		}
 		
 		//Quit Gradle Build if there were some errors.
+		
 		if(resultValue==0||syncD==null)return;
 	
 		//If there were no error, Continue...
@@ -155,7 +156,7 @@ public class GradleBuild
 		
 		
 		if(resultValue == 0){
-			return;
+			//return;
 		}
 		
 		//Start Merge
@@ -172,7 +173,7 @@ public class GradleBuild
 			}
 			dexes[dexes.length-1] = dexPath + "main.dex";
 			
-			if(!(dexes.length>1)){
+			if(dexes.length>1){
 				AnalysisData ad2 = dxm.Merge(desPath,dexes[0],dexes[dexes.length-1]);
 				if(ad2.exitValue!=0){
 					resultValue = 0;
