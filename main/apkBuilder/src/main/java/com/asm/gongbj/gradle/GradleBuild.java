@@ -1,7 +1,9 @@
 package com.asm.gongbj.gradle;
 import android.app.*;
+import com.asm.ASMT.*;
 import com.asm.gongbj.gradle.sync.*;
 import com.asm.gongbj.tools.*;
+import com.asm.lib.io.*;
 import java.io.*;
 import java.util.*;
 
@@ -156,7 +158,7 @@ public class GradleBuild
 		
 		
 		if(resultValue == 0){
-			//return;
+			return;
 		}
 		
 		//Start Merge
@@ -174,6 +176,7 @@ public class GradleBuild
 			dexes[dexes.length-1] = dexPath + "main.dex";
 			
 			if(dexes.length>1){
+				progL.onProgressChange("dx merge : main...");
 				AnalysisData ad2 = dxm.Merge(desPath,dexes[0],dexes[dexes.length-1]);
 				if(ad2.exitValue!=0){
 					resultValue = 0;
@@ -183,6 +186,8 @@ public class GradleBuild
 
 				}
 				for(int i = 1; i < dexes.length-1; i++){
+					String name = dexes[i].substring(dexes[i].lastIndexOf("/")+1,dexes[i].lastIndexOf(".jar.dex"));
+					progL.onProgressChange("dx merge : " + name + "...");
 					AnalysisData ad3 = dxm.Merge(desPath,desPath,dexes[i]);
 					if(ad2.exitValue!=0){
 						resultValue = 0;
@@ -206,12 +211,81 @@ public class GradleBuild
 			
 		}
 		
+		if(resultValue==0)return;
 		
 		
 		//Start aapt
 		Aapt aapt = new Aapt(androidJar);
 		
+		String apkPath = mainGradlePath + "/build/bin/app.apk";
+		String manifestPath = mainGradlePath+"/src/main/AndroidManifest.xml";
+		String resPath[] =  new String[syncD.getSyncedProjectPath().length];
+		for(int i = 0; i < syncD.getSyncedProjectPath().length; i++){
+			resPath[i] = syncD.getSyncedProjectPath()[i] + "/src/main/res";
+		}
+		//resPath[resPath.length-1] = mainGradlePath+"/src/main/res";
+		progL.onProgressChange("APK building...");
+		{
+			AnalysisData ad2 = AaptResultAnalyze.analysis(aapt.generateApk(apkPath,manifestPath,resPath,syncD.getScanedJar()));
+			if(ad2.exitValue != 0){
+				resultValue = 0;
+				ProgressFail pf = new ProgressFail("Apk building failed",apkPath,"Gradle");
+				pf.analysisData = ad2;
+				errorL.onError(pf);
+			}
+			if(resultValue==0)return;
+		}
+		{
+			AnalysisData ad2 = AaptResultAnalyze.analysis(aapt.addFileInApk(apkPath,mainGradlePath + "/build/bin/classes.dex"));
+			if(ad2.exitValue != 0){
+				resultValue = 0;
+				ProgressFail pf = new ProgressFail("Apk building failed",apkPath,"Gradle");
+				pf.analysisData = ad2;
+				errorL.onError(pf);
+			}
+			if(resultValue==0)return;
+		}
 		
+		//sign apk
+		{
+			progL.onProgressChange("Apk sign...");
+			String cmd = "-M auto-testkey -I " + mainGradlePath + "/build/bin/app.apk -O " + mainGradlePath + "/build/bin/appSigned.apk";
+			long start=0;
+			int i, rc = 99;
+			AnalysisData ad2 = new AnalysisData();
+			ad2.cmd = IDE.fnTokenize(cmd);
+			start = System.currentTimeMillis();
+			try
+			{
+				StringWriterOutputStream swos = new StringWriterOutputStream();
+				G.ide.fnRedirectOutput(swos);
+				
+				// start SignApk
+				rc = SignApk.main(IDE.fnTokenize(cmd));
+				ad2.fullLog = swos.toString();
+			}
+			catch (Throwable t)
+			{
+				rc = 99;
+				ad2.fullLog = t.toString();
+				t.printStackTrace();
+			}finally{
+				ad2.exitValue = rc;
+				ad2.time = (int)(System.currentTimeMillis()-start)/1000;
+			}
+			
+			if(ad2.exitValue != 0){
+				resultValue = 0;
+				ProgressFail pf = new ProgressFail("Apk Sign failed",apkPath,"Gradle");
+				pf.analysisData = ad2;
+				errorL.onError(pf);
+			}
+			if(resultValue != 0){
+				return;
+			}
+		}
+		
+		progL.onprogressFinish();
 		
 	}
 	public static interface ProgressListener{
