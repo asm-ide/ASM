@@ -1,0 +1,21 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/primary"
+	android:padding="64dp"
+	android:id="@+id/masterlayout">
+	<ImageView
+		android:id="@+id/appicon"
+		android:layout_width="50dp"
+		android:layout_height="50dp"
+		android:layout_gravity="center"
+		android:src="@drawable/app_icon"
+		android:scaleType="fitCenter" />
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="@color/inversedForeground"
+		android:textSize="32sp"
+		android:layout_gravity="bottom | center_horizontal"
+		android:text="@string/app_name" />
+</FrameLayout>
