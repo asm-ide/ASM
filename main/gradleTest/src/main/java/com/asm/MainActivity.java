@@ -151,35 +151,71 @@ public class MainActivity extends Activity
 	}
 	
 	public void gradleBuildb(View v){
-		EditText i1 = (EditText)findViewById(R.id.path5_1);
-		EditText i2 = (EditText)findViewById(R.id.path5_2);
-		GradleBuild gb = new GradleBuild(this);
-		re="";
-		gb.setErrorListener(new GradleBuild.ErrorListener(){
-			public void onError(ProgressFail pf){
-				re += "\n\nonError : \n";
-				re += pf.toString();
+		final EditText i1 = (EditText)findViewById(R.id.path5_1);
+		final EditText i2 = (EditText)findViewById(R.id.path5_2);
+		//GradleBuild gb;
+		(new AsyncTask<Integer, Integer, Integer>() 
+		{
+			GradleBuild gb;
+			String re;
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+				gb = new GradleBuild(MainActivity.this);
+				re="";
+				gb.setErrorListener(new GradleBuild.ErrorListener(){
+						public void onError(ProgressFail pf){
+							re += "\n\nonError : \n";
+							re += pf.toString();
+							publishProgress();
+						}
+					});
+				gb.setProgressListener(new GradleBuild.ProgressListener(){
+						public void onProgressStart(){
+							re += "onProgressStart";
+							publishProgress();
+						}
+						public void onProgressChange(String str){
+							re += "\n\nOnProgressChange : " + "\n" + str;
+							publishProgress();
+						}
+						public void onprogressFinish(){
+							re += "\n\nOnProgresFinish : ";
+							publishProgress();
+						}
+					});
 			}
-		});
-		gb.setProgressListener(new GradleBuild.ProgressListener(){
-			public void onProgressStart(){
-				re += "onProgressStart";
+
+			@Override
+			protected Integer doInBackground(Integer... integers){
+				
+				try{
+					gb.run(i1.getText().toString(),i2.getText().toString());
+				}catch(Exception e){
+					re += "\n\n" + e.toString();
+				}
+				return 0;
 			}
-			public void onProgressChange(String str){
-				re += "\n\nOnProgressChange : " + "\n" + str;
+
+			@Override
+			protected void onProgressUpdate(Integer... params) {
+				EditText o = (EditText)findViewById(R.id.log);
+				o.setText(re);
+				o.requestFocus();
+				o.setSelection(o.getText().length());
 			}
-			public void onprogressFinish(){
-				re += "\n\nOnProgresFinish : ";
+
+			@Override
+			protected void onPostExecute(Integer result) {
+				super.onPostExecute(result);
+				EditText o = (EditText)findViewById(R.id.log);
+				o.setText(re);
+				o.setSelection(o.getText().length());
 			}
-		});
-		try{
-			gb.run(i1.getText().toString(),i2.getText().toString());
-		}catch(Exception e){
-			re += "\n\n" + e.toString();
-		}finally{
-			EditText o = (EditText)findViewById(R.id.log);
-			o.setText(re);
-		}
+		}).execute();
+
+		
+		
 	}
 	
 	public void cleanb(View v){
