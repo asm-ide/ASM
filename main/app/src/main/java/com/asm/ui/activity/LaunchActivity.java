@@ -1,15 +1,17 @@
 package com.asm.ui.activity;
 
 import com.asm.R;
-
 import com.asm.ui.base.BaseActivity;
 
 import android.os.Bundle;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 
 public class LaunchActivity extends BaseActivity
 {
-	//private ImageView mAppIcon;
+	private ImageView mAppIcon;
 	
 	
 	@Override
@@ -20,7 +22,7 @@ public class LaunchActivity extends BaseActivity
 		setContentView(R.layout.launch);
 		
 		
-		//mAppIcon = (ImageView) findViewById(R.id.appicon);
-		//Glide.with(this).load(R.drawable.app_icon).into(mAppIcon);
+		mAppIcon = (ImageView) findViewById(R.id.appicon);
+		Glide.with(this).load(R.drawable.app_icon).into(mAppIcon);
 	}
 }

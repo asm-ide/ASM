@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="asm_activity_settings_label">설정</string>
+
+    <string name="pref_asm_application_title">애플리케이션</string>
+    <string name="pref_asm_application_language_dialogtitle">언어</string>
+    <string name="pref_asm_application_language_summary">ASM에서 사용되는 언어를 선택합니다.</string>
+    <string name="pref_asm_application_language_title">언어</string>
+    <string name="pref_asm_application_summary">애플리케이션 전체적인 설정</string>
+
+    <string name="pref_asm_application_theme_dark">다크 테마</string>
+    <string name="pref_asm_application_theme_light">라이트 테마</string>
+    <string name="pref_asm_application_theme_summary">ASM의 테마를 변경합니다.</string>
+    <string name="pref_asm_application_theme_title">테마</string>
+
+    <string name="pref_asm_editor_summary">편집기를 구성합니다.</string>
+    <string name="pref_asm_editor_title">편집기</string>
+</resources>

@@ -28,6 +28,7 @@ dependencies {
     })
     compile 'com.android.support:design:25.3.1'
 	compile 'com.android.support:preference-v14:25.3.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 	compile project(':core')
 	compile project(':ui-base')
     testCompile 'junit:junit:4.12'
