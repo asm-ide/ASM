@@ -1,4 +1,5 @@
 # Contributing Guideline
+## Coding Guideline
 ### 1. Use annotations.
 You can use `@NonNull` or `@Nullable` at the every code.<br>
 
@@ -9,7 +10,10 @@ Other contributors and people can understand code easily, if javadoc exists.<br>
 ### 3. Write our short version of license, which is revealed at the end of [LICENSE](LICENSE).
 **Notification: currently license is not developed and not have to do this.**<br>
 
-### 4. Unify the code style.
+### 4. Throw more, catch more.
+The more throws prevents illegal behavior, and the more catches can make user to understand error more and make app more stable.
+
+### 5. Unify the code style.
 Our code style is defined as:<br>
 
 #### global:
