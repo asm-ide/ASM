@@ -110,12 +110,11 @@
     <orderEntry type="library" exported="" name="support-fragment-25.3.1" level="project" />
     <orderEntry type="module" module-name="apkBuilder" exported="" />
     <orderEntry type="library" exported="" name="android-android-26" level="project" />
-    <orderEntry type="library" exported="" name="dx_ta" level="project" />
     <orderEntry type="library" exported="" name="zt-zip-1.6" level="project" />
     <orderEntry type="library" exported="" name="commons-io-2.6" level="project" />
     <orderEntry type="library" exported="" name="ecj" level="project" />
     <orderEntry type="library" exported="" name="sdklib_ta" level="project" />
-    <orderEntry type="library" exported="" name="dx-1.7-sources" level="project" />
+    <orderEntry type="library" exported="" name="dx-1.7" level="project" />
     <orderEntry type="library" exported="" name="zipsigner-lib_all" level="project" />
     <orderEntry type="library" exported="" name="bsh" level="project" />
     <orderEntry type="library" exported="" name="commons-compress-1.15" level="project" />

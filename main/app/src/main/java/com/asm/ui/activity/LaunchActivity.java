@@ -4,14 +4,12 @@ import com.asm.R;
 
 import com.asm.ui.base.BaseActivity;
 
-import android.widget.ImageView;
 import android.os.Bundle;
 
 
 public class LaunchActivity extends BaseActivity
 {
-	@SuppressWarnings("UnusedDeclaration") // will removed later
-	private ImageView mAppIcon;
+	//private ImageView mAppIcon;
 	
 	
 	@Override
@@ -22,7 +20,7 @@ public class LaunchActivity extends BaseActivity
 		setContentView(R.layout.launch);
 		
 		
-		mAppIcon = (ImageView) findViewById(R.id.appicon);
+		//mAppIcon = (ImageView) findViewById(R.id.appicon);
 		//Glide.with(this).load(R.drawable.app_icon).into(mAppIcon);
 	}
 }
