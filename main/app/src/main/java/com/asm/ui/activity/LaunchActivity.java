@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 public class LaunchActivity extends BaseActivity
 {
+	@SuppressWarnings("UnusedDeclaration") // will removed later
 	private ImageView mAppIcon;
 	
 	
@@ -22,6 +23,6 @@ public class LaunchActivity extends BaseActivity
 		
 		
 		mAppIcon = (ImageView) findViewById(R.id.appicon);
-		
+		//Glide.with(this).load(R.drawable.app_icon).into(mAppIcon);
 	}
 }
