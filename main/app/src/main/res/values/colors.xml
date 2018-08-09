@@ -3,4 +3,6 @@
 	<color name="primary">#2979FF</color>
 	<color name="primaryDark">#3167FD</color>
 	<color name="accent">#315BD3</color>
+	<color name="foreground">#050505</color>
+	<color name="inversedForeground">#F7F7F7</color>
 </resources>

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="AppTheme" parent="AppThemeBase">
-		
-	</style>
 	<style name="AppThemeBase" parent="@style/Theme.AppCompat.Light.NoActionBar">
-		<!--<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-		-->
-	</style>
+    	<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
 </resources>

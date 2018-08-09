@@ -6,7 +6,7 @@
 	
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/app_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
 		android:resizeableActivity = "true">
@@ -19,8 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-		<activity android:name=".activity.DebugActivity" />
-		<service android:name=".activity.TestService" />
+		<activity
+			android:label="@string/asm_activity_settings_label"
+			android:name="com.asm.ui.activity.SettingsActivity" />
     </application>
 
 </manifest>
