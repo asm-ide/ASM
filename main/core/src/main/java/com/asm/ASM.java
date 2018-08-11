@@ -24,6 +24,8 @@ public class ASM
 		sContext = service;
 		sIsLocal = false;
 		init();
+		
+		// TODO: ASMExceptionHandler
 	}
 	
 	private static void init() {

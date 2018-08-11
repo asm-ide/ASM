@@ -1,6 +1,8 @@
 package com.asm.troubleshoot;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.app.AlarmManager;
 import android.content.Intent;
 import android.util.Log;
 import android.os.Process;
@@ -8,7 +10,6 @@ import android.os.Process;
 import java.io.Writer;
 import java.io.StringWriter;
 import java.io.PrintWriter;
-import android.app.*;
 
 
 public class ASMExceptionHandler implements Thread.UncaughtExceptionHandler
@@ -20,6 +21,10 @@ public class ASMExceptionHandler implements Thread.UncaughtExceptionHandler
 	public static void init(Activity act) {
 		sActivity = act;
 		Thread.setDefaultUncaughtExceptionHandler(THE_ONE);
+	}
+	
+	public static ASMExceptionHandler getInstance() {
+		return THE_ONE;
 	}
 	
 	
