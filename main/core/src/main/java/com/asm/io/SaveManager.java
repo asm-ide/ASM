@@ -1,7 +1,5 @@
 package com.asm.io;
 
-import com.asm.text.TextData;
-
 import java.io.IOException;
 import java.util.Set;
 

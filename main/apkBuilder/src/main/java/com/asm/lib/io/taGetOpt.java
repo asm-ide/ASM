@@ -106,7 +106,7 @@ public taGetOpt (String[] args,
 {
 	int i;
 	
-	vArgs = new Vector<String>();
+	vArgs = new Vector<>();
 	aArgs = args;
 	stMandatory = (mandatory==null) ? "" : mandatory;
 	stOptional = (optional==null) ? "": optional;

@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class Languages
 {
 	/** languages */
-	private static HashMap<String, Language> langs = new HashMap<String, Language>();
+	private static HashMap<String, Language> langs = new HashMap<>();
 	
 	
 	/**

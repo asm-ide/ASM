@@ -6,8 +6,8 @@ import android.view.*;
 import android.widget.*;
 import com.asm.gongbj.*;
 
-import com.asm.gongbj.gradle.*;
-public class MainActivity extends Activity 
+
+public class MainActivity extends Activity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)

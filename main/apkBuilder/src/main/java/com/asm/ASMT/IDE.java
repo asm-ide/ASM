@@ -1,36 +1,11 @@
 package com.asm.ASMT;
 
 import com.asm.lib.io.StringWriterOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import android.content.Intent;
+
 import android.os.Build;
-import android.os.Build.VERSION;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import android.content.pm.PackageManager;
-import android.content.*;
-import android.Manifest;
-import android.content.pm.PackageManager;
+
 import android.content.res.*;
 import java.io.*;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.*;
-import android.view.*;
-import android.view.View.*;
-import android.widget.*;
-import android.os.Environment;
 //##################################################################
 /** This class provides access to the Java development tools.
  * 
@@ -130,7 +105,7 @@ private void copyFile(InputStream in, OutputStream out) throws IOException { byt
     private void prepare(File file){
     //Toast.makeText(G.main,"event_prepare",Toast.LENGTH_SHORT).show();
    
-       String abi=Build.CPU_ABI;
+       String abi=Build.CPU_ABI; // TODO: deprecated
        String typeA = "";
        //Toast.makeText(G.main,abi,Toast.LENGTH_SHORT).show();
    

@@ -2,13 +2,8 @@ package com.lhw.util;
 
 import java.io.Serializable;
 import java.io.DataOutput;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UTFDataFormatException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.util.Random;
 
 
 public class TextUtils
@@ -273,12 +268,12 @@ public class TextUtils
 	public static boolean equals(char[] a, CharSequence b) {
 		if(a.length != b.length()) return false;
 		for(int i = 0; i < a.length; i++)
-			if(!(b.charAt(i) != a[i])) return false;
+			if(b.charAt(i) != a[i]) return false;
 		return true;
 	}
 	
 	public static boolean isAlphabet(char c) {
-		return ('a' <= c && c <= 'z') | ('A' <= c && c <= 'Z');
+		return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
 	}
 	
 	public static boolean isDigits(char c) {

@@ -1,5 +1,7 @@
 package com.asm.lib.io;
 
+import android.os.Environment;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,11 +36,11 @@ public class FileBrowser
   public FileBrowser ()
 //===================================================================
   {
-    alDirs = new ArrayList<String> ();
-    alFiles = new ArrayList<String> ();
+    alDirs = new ArrayList<>();
+    alFiles = new ArrayList<>();
     regexPattern = null;
-    stStartDir="/sdcard";
-    alExcludeDirs = new ArrayList<String> ();
+    stStartDir= Environment.getExternalStorageDirectory().getPath();
+    alExcludeDirs = new ArrayList<>();
     ffDirs = new FileFilter()
     {
       public boolean accept(File f)
@@ -64,7 +66,7 @@ public class FileBrowser
     {
       public int compare (String s1, String s2)
       {
-        if (bSortCaseSensitive==true)
+        if (bSortCaseSensitive)
           return s1.compareTo(s2);
         return s1.compareToIgnoreCase(s2);
       }
@@ -83,11 +85,10 @@ public class FileBrowser
     dirs = d.listFiles(ffDirs);
     if (dirs==null) return new String[0];
     alDirs.clear();
-    for (int i=0; i<dirs.length; i++)
-    {
-      stDir = dirs[i].getName();
-      if (!stDir.endsWith("/")) stDir+="/";
-      if (!alExcludeDirs.contains(stStartDir+stDir)) alDirs.add(stDir);
+    for (File dir : dirs) {
+      stDir = dir.getName();
+      if (!stDir.endsWith("/")) stDir += "/";
+      if (!alExcludeDirs.contains(stStartDir + stDir)) alDirs.add(stDir);
     }//for
     Collections.sort(alDirs,compByNameAsc);
     if (!stStartDir.equals("/")) alDirs.add(0,"..");
@@ -97,7 +98,7 @@ public class FileBrowser
   public String[] getDirectoryTree ()
 //===================================================================
   {
-    ArrayList<String> dirs = new ArrayList<String> ();
+    ArrayList<String> dirs = new ArrayList<>();
     String startdir=this.stStartDir;
     File d = new File(startdir);
     if (!d.isDirectory()) return new String[0];
@@ -129,9 +130,8 @@ public class FileBrowser
     files = f.listFiles(ffFiles);
     if (files==null) return new String[0];
     alFiles.clear();
-    for (int i=0; i<files.length; i++)
-    {
-      alFiles.add(files[i].getName());
+    for (File file : files) {
+      alFiles.add(file.getName());
     }//for
     Collections.sort(alFiles,compByNameAsc);
     return alFiles.toArray(new String[alFiles.size()]);
@@ -158,7 +158,7 @@ public class FileBrowser
 //===================================================================
   {
     if (excludelist!=null) this.alExcludeDirs = excludelist;
-    else this.alExcludeDirs = new ArrayList<String> ();
+    else this.alExcludeDirs = new ArrayList<>();
   } // setExcludeDirs
 //===================================================================
 /** Sets a regex pattern which will be used in getFiles

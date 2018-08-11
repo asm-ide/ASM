@@ -4,8 +4,6 @@ import android.text.TextWatcher;
 import android.text.Editable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ListIterator;
 
 
 /**

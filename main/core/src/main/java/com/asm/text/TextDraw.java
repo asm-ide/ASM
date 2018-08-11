@@ -3,7 +3,6 @@ package com.asm.text;
 import com.asm.widget.codeedit.TextViewInterface;
 import com.asm.widget.codeedit.TextsDrawingInterface;
 import com.asm.annotation.NonNull;
-import com.asm.annotation.Nullable;
 
 import android.view.View;
 import android.view.KeyEvent;

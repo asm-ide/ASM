@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Actions implements java.io.Serializable
 {
-	private ArrayList<Action> mActions = new ArrayList<Action>();
+	private ArrayList<Action> mActions = new ArrayList<>();
 	private boolean appendable = true;
 
 

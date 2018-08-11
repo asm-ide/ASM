@@ -10,17 +10,14 @@ import com.asm.widget.codeedit.CodeEditInterface;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.text.TextPaint;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.util.DisplayMetrics;
 import android.text.Editable;
 import android.text.TextWatcher;
 
 
 /**
  * CodeEdit for editing codes.
- * You can use {@link com.asm.widget.codeedit.FileManager} to manage files.
  */
 public class CodeEdit extends ScrollingEditText implements CodeEditInterface
 {

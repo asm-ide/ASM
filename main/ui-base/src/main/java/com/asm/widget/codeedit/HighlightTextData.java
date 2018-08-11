@@ -16,7 +16,7 @@ public class HighlightTextData extends TextData implements Serializable
 {
 	private NonReferenceArrayList mHighlightCache;
 	//int[] is just a pair
-	private ArrayList<int[]> list = new ArrayList<int[]>();
+	private ArrayList<int[]> list = new ArrayList<>();
 	
 	
 	protected HighlightTextData() {

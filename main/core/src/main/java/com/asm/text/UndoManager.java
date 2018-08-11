@@ -48,14 +48,14 @@ public class UndoManager implements Serializable, TextWatcher
 	 * in one action. So, if undo() or redo() called, all actions
 	 * with this mode will be edited.
 	 */
-	public static final int UNDO_MODE_OPENED = 0x00000001 << 31;
+	public static final int UNDO_MODE_OPENED = 0x00000001 << 30;
 	
 	
 	private static final String UNDO_CUT = " \n\t,.";
 	
 	
 	/** history lists */
-	private ArrayList<Actions> mHistory = new ArrayList<Actions>();
+	private ArrayList<Actions> mHistory = new ArrayList<>();
 	
 	/** history index */
 	private int mIndex = -2;
@@ -179,7 +179,7 @@ public class UndoManager implements Serializable, TextWatcher
 	
 	/**
 	 * Open the undo actions.
-	 * Used when undo mode is {@link UNDO_MODE_OPENED} and if there is any
+	 * Used when undo mode is {@link UndoManager#UNDO_MODE_OPENED} and if there is any
 	 * opened {@link Actions}, close it and open new {@link Actions}.
 	 */
 	public void openActions() {
@@ -194,7 +194,7 @@ public class UndoManager implements Serializable, TextWatcher
 	
 	/**
 	 * Open the undo actions if current undo mode marks actions.
-	 * @see openUndoActions()
+	 * @see this#openActions()
 	 */
 	public void openUndoActionsTemporary() {
 		switch(mUndoMode) {

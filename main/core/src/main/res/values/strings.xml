@@ -2,6 +2,6 @@
 <resources>
 	
 	<!-- Global -->
-	<string name="asm_activity_error_label">Unexcepted error was occured</string>
+	<string name="asm_activity_error_label">Error</string>
 	
 </resources>

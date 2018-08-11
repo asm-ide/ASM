@@ -15,7 +15,7 @@ public class TextSelections extends TextPointers<TextSelection>
 	
 	
 	public TextSelection[] getStart(int pos) {
-		ArrayList<TextSelection> found = new ArrayList<TextSelection>();
+		ArrayList<TextSelection> found = new ArrayList<>();
 		for(TextSelection item : this)
 			if(item.getPosition() == pos)
 				found.add(item);
@@ -24,7 +24,7 @@ public class TextSelections extends TextPointers<TextSelection>
 	}
 	
 	public TextSelection[] getEnd(int pos) {
-		ArrayList<TextSelection> found = new ArrayList<TextSelection>();
+		ArrayList<TextSelection> found = new ArrayList<>();
 		for(TextSelection item : this)
 			if(item.getPositionEnd() == pos)
 				found.add(item);
@@ -33,7 +33,7 @@ public class TextSelections extends TextPointers<TextSelection>
 	}
 	
 	public TextSelection[] getIntersects(int pos) {
-		ArrayList<TextSelection> found = new ArrayList<TextSelection>();
+		ArrayList<TextSelection> found = new ArrayList<>();
 		for(TextSelection item : this)
 			if(item.intersects(pos))
 				found.add(item);
@@ -42,7 +42,7 @@ public class TextSelections extends TextPointers<TextSelection>
 	}
 	
 	public TextSelection[] getIntersects(TextSelection other) {
-		ArrayList<TextSelection> found = new ArrayList<TextSelection>();
+		ArrayList<TextSelection> found = new ArrayList<>();
 		for(TextSelection item : this)
 			if(item.intersects(other))
 				found.add(item);

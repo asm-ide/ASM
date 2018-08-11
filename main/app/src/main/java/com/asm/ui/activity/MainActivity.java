@@ -1,7 +1,6 @@
 package com.asm.ui.activity;
 
 import com.asm.R;
-import com.asm.ASM;
 import com.asm.ui.base.BaseActivity;
 import com.asm.ui.base.PlaceHolderFragment;
 import com.asm.ui.base.SectionsPagerAdapter;

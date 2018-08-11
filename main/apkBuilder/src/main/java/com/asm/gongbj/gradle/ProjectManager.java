@@ -1,10 +1,10 @@
 package com.asm.gongbj.gradle;
 import java.io.*;
-import android.os.*;
+
 import android.content.res.*;
 import android.app.*;
 import java.util.*;
-import android.widget.*;
+
 import com.asm.gongbj.gradle.info.*;
 
 /**

@@ -1,5 +1,4 @@
 package com.asm.gongbj.gradle.sync;
-import com.asm.gongbj.gradle.*;
 import java.util.*;
 import com.asm.gongbj.gradle.info.*;
 public class SyncData
@@ -9,9 +8,9 @@ public class SyncData
 	private ArrayList<GradleInfo> gradleInfo;
 	private ArrayList<String> scaned;
 	public SyncData(){
-		projectName = new ArrayList<String>();
-		gradleInfo = new ArrayList<GradleInfo>();
-		scaned = new ArrayList<String>();
+		projectName = new ArrayList<>();
+		gradleInfo = new ArrayList<>();
+		scaned = new ArrayList<>();
 	}
 	public void addGradleInfo(String projectName,GradleInfo gradleInfo){
 		this.projectName.add(projectName);

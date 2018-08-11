@@ -1,15 +1,8 @@
 package com.asm.io;
 
-import com.asm.text.TextData;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Set;
 import java.util.HashMap;
-import java.util.ArrayList;
 
 
 // TODO : add support about RandomAcrossFile
@@ -21,7 +14,7 @@ public class FileManager implements SaveManager
 	
 	
 	public FileManager() {
-		files = new HashMap<SaveDest, FileStream>();
+		files = new HashMap<>();
 	}
 	
 	@Override

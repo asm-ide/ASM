@@ -1,12 +1,10 @@
 package com.asm.language.xml;
 
 import com.asm.language.LanguageInfo;
-import java.lang.reflect.Field;
+
 import java.util.HashMap;
-import java.util.regex.Pattern;
-import com.lhw.util.TypeUtils;
+
 import com.asm.analysis.CodeFinder;
-import com.asm.analysis.CodeIterator;
 
 
 public class LoadedLanguageInfo implements LanguageInfo

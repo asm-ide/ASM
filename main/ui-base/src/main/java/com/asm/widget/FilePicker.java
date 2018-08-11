@@ -1,6 +1,6 @@
 package com.asm.widget;
 
-import android.view.View;
+import android.annotation.TargetApi;
 import android.view.ViewGroup;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -24,6 +24,7 @@ public class FilePicker extends ViewGroup
 		this(context, attrs, defStyleAttr, 0);
 	}
 	
+	@TargetApi(21)
 	public FilePicker(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
 		

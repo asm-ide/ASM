@@ -5,15 +5,17 @@ import android.app.Service;
 import android.content.Context;
 import com.asm.troubleshoot.ASMExceptionHandler;
 
+import java.lang.ref.WeakReference;
+
 
 public class ASM
 {
-	private static Context sContext;
+	private static WeakReference<Context> sContext;
 	private static boolean sIsLocal; // true to activity
 	
 	
 	public static void initOnActivity(Activity activity) {
-		sContext = activity;
+		sContext = new WeakReference<Context>(activity);
 		sIsLocal = true;
 		init();
 		
@@ -21,7 +23,7 @@ public class ASM
 	}
 	
 	public static void initOnService(Service service) {
-		sContext = service;
+		sContext = new WeakReference<Context>(service);
 		sIsLocal = false;
 		init();
 		
@@ -29,7 +31,9 @@ public class ASM
 	}
 	
 	private static void init() {
-		Settings.loadSettingIfNotLoaded(sContext);
+		Context context = sContext.get();
+		
+		Settings.loadSettingIfNotLoaded(context);
 		
 	}
 	

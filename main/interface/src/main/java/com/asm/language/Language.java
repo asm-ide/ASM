@@ -2,14 +2,13 @@ package com.asm.language;
 
 import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
-import com.asm.widget.codeedit.Highlightable;
 import com.asm.annotation.Nullable;
 
 
 /**
  * general interface for apply in CodeEdit.
  * You can make language easier to extends BaseLanguage.
- * @see com.asm.widget.codeedit.language.BaseLanuguage
+ * @see BaseLanuguage
  */
 public interface Language
 {

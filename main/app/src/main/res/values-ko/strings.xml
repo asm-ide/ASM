@@ -15,4 +15,17 @@
 
     <string name="pref_asm_editor_summary">편집기를 구성합니다.</string>
     <string name="pref_asm_editor_title">편집기</string>
+
+    <string-array name="pref_asm_application_theme_entries">
+        <item>기본값</item>
+        <!--Add in by plugin (includes built-in plugins)-->
+    </string-array>
+    <string-array name="pref_asm_application_theme_entryvalues">
+        <item>$default</item>
+    </string-array>
+    <string-array name="pref_asm_application_language_entries">
+        <item>시스템 기본값</item>
+        <item>영어</item>
+        <!--<item>Korean</item>-->
+    </string-array>
 </resources>

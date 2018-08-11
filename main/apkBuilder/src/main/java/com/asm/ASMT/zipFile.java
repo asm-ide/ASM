@@ -111,13 +111,11 @@ public class zipFile {
             byte[] buffer = new byte[1024 * 4096];
             ZipInputStream zin = new ZipInputStream(new FileInputStream(tmpZip));
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(source));
-
-            for(int i = 0; i < files.length; i++)
-            {
-                InputStream in = new FileInputStream(files[i]);
-                out.putNextEntry(new ZipEntry(files[i].getName()));
-                for(int read = in.read(buffer); read > -1; read = in.read(buffer))
-                {
+    
+            for (File file : files) {
+                InputStream in = new FileInputStream(file);
+                out.putNextEntry(new ZipEntry(file.getName()));
+                for (int read = in.read(buffer); read > -1; read = in.read(buffer)) {
                     out.write(buffer, 0, read);
                 }
                 out.closeEntry();

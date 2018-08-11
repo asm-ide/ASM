@@ -3,8 +3,6 @@ package com.asm.text;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.lhw.util.TextUtils;
-
 
 /**
  * Position data when returns to {@code getPositionData}.

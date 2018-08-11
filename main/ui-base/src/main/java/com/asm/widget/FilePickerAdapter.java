@@ -2,7 +2,6 @@ package com.asm.widget;
 
 import com.asm.R;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -41,7 +40,7 @@ public class FilePickerAdapter extends RecyclerView.Adapter
 	}
 	
 	public void load(String parent, String[] child) {
-		files = new ArrayList<File>();
+		files = new ArrayList<>();
 		for(String path : child) {
 			files.add(new File(parent, path));
 		}

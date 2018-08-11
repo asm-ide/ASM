@@ -137,7 +137,7 @@ public class CodeFromClass
 		return str;
 	}
 	private static Class getClassFromFile(String path,String fullClassName) throws Exception {
-		URLClassLoader classLoader = new URLClassLoader( new URL[]{new File(path).toURL()});
+		URLClassLoader classLoader = new URLClassLoader( new URL[]{new File(path).toURL()}); // TODO: File#toURL() has been deprecated
 		return classLoader.loadClass(fullClassName);
 		
 	}

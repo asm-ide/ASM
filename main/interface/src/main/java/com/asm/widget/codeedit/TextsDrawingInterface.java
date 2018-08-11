@@ -3,7 +3,7 @@ package com.asm.widget.codeedit;
 import android.graphics.*;
 
 
-/** {@hide} */
+/** @hide */
 public interface TextsDrawingInterface
 {
 	public void onDrawLine(Canvas canvas, int index, int line, String text, float y);

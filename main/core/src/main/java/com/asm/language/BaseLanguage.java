@@ -4,16 +4,12 @@ import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
 import com.asm.language.Language;
 import com.asm.language.LanguageInfo;
-import com.asm.annotation.Nullable;
 import com.asm.analysis.CodeFinder;
-import com.asm.analysis.CodeIterator;
 import com.lhw.util.TypeUtils;
 
-import com.asm.widget.codeedit.Highlightable;
 import com.asm.widget.codeedit.CodeEditInterface;
 
 import java.util.HashMap;
-import java.lang.reflect.Constructor;
 
 
 /**
@@ -66,9 +62,9 @@ public class BaseLanguage implements Language
 	 * ex) <code>{"name":"java","textEscaper":"\\",...,"sentence":["a","b","c",..], "math":[...], ..}</code>
 	 */
 	
-	private HashMap<String, Object> args = new HashMap<String, Object>();
+	private HashMap<String, Object> args = new HashMap<>();
 	
-	private HashMap<String, Object> datas = new HashMap<String, Object>();
+	private HashMap<String, Object> datas = new HashMap<>();
 	
 	
 	public void setLanguageName(String langName) {

@@ -6,21 +6,19 @@ import com.asm.text.TextData;
 import com.asm.text.TextDraw;
 import com.asm.text.PositionData;
 import com.asm.annotation.NonNull;
-import com.asm.annotation.Nullable;
 
+import android.annotation.TargetApi;
 import android.support.v4.view.ViewCompat;
 
 import android.view.View;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Scroller;
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Canvas;
 import android.text.TextWatcher;
 import android.text.TextPaint;
-import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.util.Log;
@@ -98,6 +96,7 @@ public class ScrollingTextView extends View implements TextViewInterface, TextsD
 		this(context, attrs, defStyleAttr, 0);
 	}
 	
+	@TargetApi(21)
 	public ScrollingTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
 		
@@ -202,7 +201,7 @@ public class ScrollingTextView extends View implements TextViewInterface, TextsD
 	
 	/**
 	 * Set the current text value.
-	 * @params data new text value
+	 * @param data new text value
 	 */
 	public void setText(@NonNull TextData data) {
 		mData.setText(data);
@@ -290,7 +289,7 @@ public class ScrollingTextView extends View implements TextViewInterface, TextsD
 	
 	/**
 	 * Set the TextDraw of this CodeEdit.
-	 * @see com.asm.widget.codeedit.TextDraw
+	 * @see TextDraw
 	 */
 	public void setDraw(@NonNull TextDraw draw) {
 		mDraw = draw;
@@ -309,7 +308,7 @@ public class ScrollingTextView extends View implements TextViewInterface, TextsD
 		return mGestureDetector.onTouchEvent(event);
 	}
 	
-	/** {@hide} */
+	/** @hide */
 	@Override
 	public boolean onDown(MotionEvent e) {
 		mScroller.forceFinished(true);
@@ -321,19 +320,19 @@ public class ScrollingTextView extends View implements TextViewInterface, TextsD
 		return true;
 	}
 	
-	/** {@hide} */
+	/** @hide */
 	@Override
 	public void onShowPress(MotionEvent e) {
 		
 	}
 	
-	/** {@hide} */
+	/** @hide */
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
 		return true;
 	}
 	
-	/** {@hide} */
+	/** @hide */
 	@Override
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 		if(isScrollStarted) {
@@ -342,13 +341,13 @@ public class ScrollingTextView extends View implements TextViewInterface, TextsD
 		return true;
 	}
 	
-	/** {@hide} */
+	/** @hide */
 	@Override
 	public void onLongPress(MotionEvent e) {
 		
 	}
 	
-	/** {@hide} */
+	/** @hide */
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 		mScroller.forceFinished(true);
@@ -391,7 +390,7 @@ public class ScrollingTextView extends View implements TextViewInterface, TextsD
 	
 	/**
 	 * Return position data.
-	 * @see TextData.PositionData
+	 * @see PositionData
 	 */
 	public PositionData getPositionToX(int position, int startLine, int startPos) {
 		return mData.getPositionData(position, startLine, startPos);
@@ -424,7 +423,7 @@ public class ScrollingTextView extends View implements TextViewInterface, TextsD
 		setMeasuredDimension(width, height);
 	}
 	
-	/** {@hide} */
+	/** @hide */
 	@Override
 	public void computeScroll()
 	{
@@ -454,9 +453,20 @@ public class ScrollingTextView extends View implements TextViewInterface, TextsD
 			super(superState);
 		}
 		
+		@TargetApi(24)
 		public SavedState(Parcel p, ClassLoader loader) {
 			super(p, loader);
 			
+			load(p, loader);
+		}
+		
+		public SavedState(Parcel p) {
+			super(p);
+			
+			load(p, null);
+		}
+		
+		protected void load(Parcel p, ClassLoader loader) {
 			data = p.readParcelable(loader);
 			draw = p.readParcelable(loader);
 			scrollX = p.readInt();

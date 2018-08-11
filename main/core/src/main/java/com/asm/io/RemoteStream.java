@@ -237,7 +237,7 @@ public class RemoteStream extends Stream implements Parcelable
 }
 
 
-class IORemoteException extends RemoteException
+class IORemoteException extends Exception
 {
 	public IORemoteException() {}
 	

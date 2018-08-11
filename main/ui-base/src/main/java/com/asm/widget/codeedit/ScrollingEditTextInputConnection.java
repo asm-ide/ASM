@@ -1,6 +1,5 @@
 package com.asm.widget.codeedit;
 
-import android.view.View;
 import android.view.inputmethod.BaseInputConnection;
 import android.text.Editable;
 

@@ -23,7 +23,6 @@ import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
 
 import static com.asm.Settings.codestyle.*;
 
@@ -43,9 +42,9 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 		/**
 		 * the type of value.
 		 * null does means color is same as value.
-		 * @pref/{pref_name} does means get color from preferences.
+		 * '@pref/{pref_name}' does means get color from preferences.
 		 * in this case, method value will be ignored.
-		 * @color/{color_name} does means get color defined from
+		 * '@color/{color_name}' does means get color defined from
 		 * its parent.
 		 */
 		private @Nullable String type;
@@ -135,8 +134,8 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 		
 		/**
 		 * Set the color from resource.
-		 * @pref/{pref_name} does means get color from preferences.
-		 * @color/{color_name} does means get color defined from
+		 * '@pref/{pref_name}' does means get color from preferences.
+		 * '@color/{color_name}' does means get color defined from
 		 * its parent.
 		 */
 		public void setColorRes(String resName) {
@@ -206,7 +205,7 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 	private static final String DEFAULTCODESTYLEPATH = "code-style/default.xml";
 	
 	/** color values */
-	private ArrayList<ColorValue> colors = new ArrayList<ColorValue>();
+	private ArrayList<ColorValue> colors = new ArrayList<>();
 	
 	/** preferences to load color values. */
 	private transient SharedPreferences pref;
@@ -346,7 +345,7 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 	
 	public CodeStyle clone() {
 		CodeStyle style = new CodeStyle();
-		style.colors = new ArrayList<ColorValue>();
+		style.colors = new ArrayList<>();
 		for(ColorValue value : colors) {
 			style.colors.add(value.clone());
 		}
@@ -394,9 +393,9 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 	}
 	
 	/**
-	 * @see parse(CodeStyle, Context, String, InputStream)
+	 * @see CodeStyle#parse(CodeStyle, Context, String, InputStream)
 	 */
-	public static CodeStyle parse(Context context, String sf, InputStream is) throws ParserConfigurationException, IOException, SAXException, Exception {
+	public static CodeStyle parse(Context context, String sf, InputStream is) throws ParserConfigurationException, IOException, SAXException {
 		return parse(new CodeStyle(), context, sf, is);
 	}
 	
@@ -416,7 +415,7 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 	 *		</language>
 	 *	<code-style>
 	 */
-	public static CodeStyle parse(CodeStyle style, Context context, String sf, InputStream is) throws ParserConfigurationException, IOException, SAXException, Exception {
+	public static CodeStyle parse(CodeStyle style, Context context, String sf, InputStream is) throws ParserConfigurationException, IOException, SAXException {
 		style.isFromXml = true;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();

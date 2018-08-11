@@ -1,5 +1,4 @@
 package com.asm.gongbj.codeManage;
-import com.asm.gongbj.*;
 
 public class CleanJavaCode
 {

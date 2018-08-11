@@ -1,8 +1,8 @@
 package com.asm.gongbj;
 import android.app.*;
-import com.asm.ASMT.*;
+
 import java.io.*;
-import android.os.*;
+
 import android.widget.*;
 
 public class checkErr

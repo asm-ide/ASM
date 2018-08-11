@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class FinalizePool
 {
-	private static ArrayList<Object> locks = new ArrayList<Object>();
+	private static ArrayList<Object> locks = new ArrayList<>();
 	
 	
 	public static void add(Object obj) {

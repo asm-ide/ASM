@@ -86,7 +86,7 @@ public class GradleBuild
 		//Start Ecj
 		Ecj ecj = new Ecj(androidJar);
 		progL.onProgressChange("Starting compiler...");
-		ArrayList<String> projects = new ArrayList<String>();
+		ArrayList<String> projects = new ArrayList<>();
 		String ms = mainGradlePath+"/src/main/java";
 		for(String str : syncD.getSyncedProjectPath()){
 			String p1 = str + "/src/main/java";

@@ -9,7 +9,6 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.ArrayList;
 
 import com.lhw.util.Bits;
 import com.lhw.util.TextUtils;
@@ -17,9 +16,9 @@ import com.lhw.util.TextUtils;
 
 public abstract class Stream implements Closeable, DataInput, DataOutput
 {
-	public static final int MODE_READ = 0x0 << 31;
-	public static final int MODE_WRITE = MODE_READ << 1;
-	public static final int MODE_SYNC = MODE_WRITE << 1;
+	public static final int MODE_READ = 0x00000001 << 30;
+	public static final int MODE_WRITE = MODE_READ >> 1;
+	public static final int MODE_SYNC = MODE_WRITE >> 1;
 	
 	private String mName;
 	private int mMode;
@@ -27,6 +26,7 @@ public abstract class Stream implements Closeable, DataInput, DataOutput
 	private long mPosition = 0L;
 	
 	
+	@SuppressWarnings("RedundantThrows") // override by child
 	public Stream(String name, int mode) throws IOException {
 		mName = name;
 		mMode = mode;
@@ -124,7 +124,7 @@ public abstract class Stream implements Closeable, DataInput, DataOutput
 		return length() - mPosition;
 	}
 	
-	public void seek(long pos) throws IOException, EOFException {
+	public void seek(long pos) throws EOFException, IOException {
 		if(pos > length()) throw new EOFException();
 		mPosition = pos;
 	}
@@ -413,7 +413,9 @@ public abstract class Stream implements Closeable, DataInput, DataOutput
 	
 	
 	@Override
-	protected void finalize() {
+	protected void finalize() throws Throwable {
+		super.finalize();
+		
 		if(!mClosed) {
 			System.err.println("Stream not closed");
 			try {

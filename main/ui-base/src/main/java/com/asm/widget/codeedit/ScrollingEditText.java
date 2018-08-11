@@ -1,10 +1,7 @@
 package com.asm.widget.codeedit;
 
 import com.asm.R;
-import com.asm.text.TextData;
-import com.asm.text.PositionData;
 
-import android.view.View;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Scroller;
@@ -33,14 +30,14 @@ public class ScrollingEditText extends ScrollingTextView
 	/**
 	 * cursor is single count.
 	 * You can get it by getCursorPosition().
-	 * @see com.asm.widget.codeedit.ScrollingEditText#getCursorMode()
+	 * @see ScrollingEditText#getCursorMode()
 	 */
 	public static final int CURSOR_SINGLE = 1;
 	
 	/**
 	 * cursor is couple count and selecting some text.
 	 * You can get cursor position by getCursorPosition(int index).
-	 * @see com.asm.widget.codeedit.ScrollingEditText#getCursorPosition(int)
+	 * @see ScrollingEditText#getCursorPosition(int)
 	 */
 	public static final int CURSOR_SELECT = 2;
 	
@@ -67,7 +64,7 @@ public class ScrollingEditText extends ScrollingTextView
 	private InputMethodManager inputMethodManager;
 	
 	/** the cursor blank drawable. BLANKTHIN X textSize */
-	private Drawable blankDrawable;
+	private Drawable mBlankDrawable;
 	
 	/** the main cursor drawable. show when user touch text and hide when edit. */
 	private Drawable cursorDrawable;
@@ -79,16 +76,16 @@ public class ScrollingEditText extends ScrollingTextView
 	private Drawable rightCursorDrawable;
 	
 	/** used on cursor bounds. */
-	private int cursorWidth;
+	private int mCursorWidth;
 	
 	/** used on cursor bounds. */
-	private int cursorHeight;
+	private int mCursorHeight;
 	
 	/** cursor tint color. applied on all cursors. */
-	private int cursorTint;
+	private int mCursorTIntColor;
 	
 	/** cursor tint mode. applied on all cursors. */
-	private PorterDuff.Mode cursorTintMode;
+	private PorterDuff.Mode mCursorTintMode;
 	
 	/** tell whether text is editable and not disabled. */
 	private boolean editable = true;
@@ -137,37 +134,37 @@ public class ScrollingEditText extends ScrollingTextView
 		
 		//UPDATE JAVADOC WHEN UPDATE!
 		TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.ScrollingTextView, defStyleAttr, defStyleRes);
-		if(a.hasValue(R.styleable.ScrollingTextView_cursorTint)) setCursorTint(a.getColor(R.styleable.ScrollingTextView_cursorTint, 0));
+		if(a.hasValue(R.styleable.ScrollingTextView_cursorTint)) setCursorColor(a.getColor(R.styleable.ScrollingTextView_cursorTint, 0));
 		if(a.hasValue(R.styleable.ScrollingTextView_cursorTintMode)) setCursorTintMode(PorterDuff.Mode.valueOf(a.getString(R.styleable.ScrollingTextView_cursorTintMode).toUpperCase()));
 		a.recycle();
 	}
 	
 	/** set the cursor tint mode. applied to all shape cursor. */
 	public void setCursorTintMode(PorterDuff.Mode mode) {
-		this.cursorTintMode = mode;
-		blankDrawable.setTintMode(mode);
-		cursorDrawable.setTintMode(mode);
-		leftCursorDrawable.setTintMode(mode);
-		rightCursorDrawable.setTintMode(mode);
+		mCursorTintMode = mode;
+		mBlankDrawable.setColorFilter(mCursorTIntColor, mCursorTintMode);
+		cursorDrawable.setColorFilter(mCursorTIntColor, mCursorTintMode);
+		leftCursorDrawable.setColorFilter(mCursorTIntColor, mCursorTintMode);
+		rightCursorDrawable.setColorFilter(mCursorTIntColor, mCursorTintMode);
 	}
 	
 	/** return the cursor tint mode. */
-	public PorterDuff.Mode getCursorTintMode() { return cursorTintMode; }
+	public PorterDuff.Mode getCursorTintMode() { return mCursorTintMode; }
 	
 	/** set cursor tint color. */
-	public void setCursorTint(int color) {
-		this.cursorTint = color;
-		blankDrawable.setTint(color);
-		cursorDrawable.setTint(color);
-		leftCursorDrawable.setTint(color);
-		rightCursorDrawable.setTint(color);
+	public void setCursorColor(int color) {
+		mCursorTIntColor = color;
+		mBlankDrawable.setColorFilter(mCursorTIntColor, mCursorTintMode);
+		cursorDrawable.setColorFilter(mCursorTIntColor, mCursorTintMode);
+		leftCursorDrawable.setColorFilter(mCursorTIntColor, mCursorTintMode);
+		rightCursorDrawable.setColorFilter(mCursorTIntColor, mCursorTintMode);
 	}
 	
 	/** return cursor tint color. */
-	public int getCursorTint() { return cursorTint; }
+	public int getCursorColor() { return mCursorTIntColor; }
 	
-	/**return the cursor drawable. mode is one of: CURSOR_SINGLE, CURSOR_LEFT, CURSOR_RIGHT. */
-	public Drawable getCursorDrawable(int mode) {
+	/** return the cursor drawable. mode is one of: CURSOR_SINGLE, CURSOR_LEFT, CURSOR_RIGHT. */
+	public Drawable getCursorDrawable(int mode) { // TODO: why argument mode is ignored?
 		switch(touchingCursor) {
 			case CURSOR_LEFT: return leftCursorDrawable;
 			case CURSOR_RIGHT: return rightCursorDrawable;
@@ -185,6 +182,10 @@ public class ScrollingEditText extends ScrollingTextView
 			default: throw new IllegalArgumentException("unknown mode");
 		}
 	}
+	
+//	public int getCursorPosition() { // TODO
+//		return getText().get;
+//	}
 	
 	/** return the cursor drawable. mode is one of: CURSOR_SINGLE, CURSOR_LEFT, CURSOR_RIGHT. */
 	public int getCursorMode() { return cursorMode; }
@@ -217,14 +218,14 @@ public class ScrollingEditText extends ScrollingTextView
 	/** return whether it shows soft input on focus or not. */
 	public boolean isShowSoftInputOnFocus() { return showSoftInputOnFocus; }
 	
-	/** {@hide} */
+	/** @hide */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if(touchingCursor != CURSOR_INVISIBLE) {
 			Drawable cursor = getCursorDrawable(touchingCursor);
-			int x = (int) event.getX() - cursorWidth / 2;
+			int x = (int) event.getX() - mCursorWidth / 2;
 			int y = (int) event.getY() - cursorHeight;
-			cursor.setBounds(x, y, cursorWidth, cursorHeight);
+			cursor.setBounds(x, y, mCursorWidth, cursorHeight);
 			return true;
 		} else {
 			boolean handled = super.onTouchEvent(event);
@@ -255,7 +256,7 @@ public class ScrollingEditText extends ScrollingTextView
 		
 	}
 	
-	/** {@hide}*/
+	/** @hide */
 	@Override
 	public float onDrawCharacter(Canvas canvas, int index, int line, int col, float x, float y) {
 		return super.onDrawCharacter(canvas, index, line, col, x, y);

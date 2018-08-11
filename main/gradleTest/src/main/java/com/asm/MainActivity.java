@@ -4,8 +4,7 @@ import android.app.*;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
-import com.asm.gongbj.*;
-import com.asm.gongbj.gradle.ProjectManager;
+
 import com.asm.gongbj.gradle.*;
 import com.asm.gongbj.gradle.info.*;
 import com.asm.gongbj.codeManage.*;
@@ -89,11 +88,11 @@ public class MainActivity extends Activity
 			for(CompileInfo c : ci){
 				log = log+"\n\n";
 				log = log+"Type : " + String.valueOf(c.type);
-				log = log+"\nvalue1 : " + c.value1.toString();
+				log = log+"\nvalue1 : " + c.value1;
 				log = log+"\nvalue2 : " + c.value2;
 				
 			}
-			EditText l = (EditText)findViewById(R.id.log);
+			EditText l = (EditText)findViewById(R.id.log); // TODO: resolve duplicated usage
 			l.setText(log);
 			
 		
@@ -190,7 +189,7 @@ public class MainActivity extends Activity
 			protected Integer doInBackground(Integer... integers){
 				
 				try{
-					gb.run(i1.getText().toString(),i2.getText().toString());
+					gb.run(i1.getText().toString(),i2.getText().toString()); // TODO: @GonngBj, i1.getText() / i2.getText() requires UI Thread.
 				}catch(Exception e){
 					re += "\n\n" + e.toString();
 				}

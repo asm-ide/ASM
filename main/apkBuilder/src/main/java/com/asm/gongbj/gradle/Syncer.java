@@ -1,5 +1,4 @@
 package com.asm.gongbj.gradle;
-import com.asm.gongbj.*;
 import java.io.*;
 import com.asm.gongbj.gradle.sync.*;
 import com.asm.gongbj.gradle.info.*;
@@ -7,7 +6,8 @@ import android.app.*;
 import android.widget.*;
 import com.asm.gongbj.tools.*;
 import com.asm.ASMT.*;
-import android.content.*;
+
+
 /**
  @author GongBJ
  */
@@ -25,6 +25,8 @@ public class Syncer
 	public void setErrorListener(ErrorListener err){
 		errorListener = err;
 	}
+	
+	private String androidProjectPath, mainGradlePath;
 	/**
 	 *this method sync the hole android project.
 	 *It analyzes build.gradle, and prepare for some operations(like real-time error analyze)
@@ -34,7 +36,6 @@ public class Syncer
 	 *@param String androidProjectPath
 	 *@param String mainGradlePath : the folder path of gradle project that you are going to build
 	 */
-	private String androidProjectPath, mainGradlePath;
 	public SyncData sync(String androidProjectPath, String mainGradlePath){
 		G.fnInit(ac);
 		this.androidProjectPath = androidProjectPath;
@@ -82,7 +83,7 @@ public class Syncer
 				}
 				
 			}else if(ci.type == CompileInfo.TYPE_MAVEN){
-				Toast.makeText(ac,"Maven Project id not supported now.",Toast.LENGTH_SHORT);
+				Toast.makeText(ac,"Maven Project id not supported now.",Toast.LENGTH_SHORT).show();
 			}else if(ci.type == CompileInfo.TYPE_PROJECT){
 				String pathh = ci.value1;
 				String fullPath = androidProjectPath + "/" + pathh;

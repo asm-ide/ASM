@@ -1,5 +1,7 @@
 package com.asm.language;
 
+import android.os.Build;
+
 import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
 
@@ -19,6 +21,7 @@ import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 
 public final class LanguageLoader
 {
+	@SuppressWarnings("unchecked")
 	public static Language fromXml(InputStream is) {
 		BaseLanguage lang = new BaseLanguage();
 		
@@ -70,7 +73,7 @@ public final class LanguageLoader
 					}
 				} catch(ClassNotFoundException e) {
 					throw new RuntimeException("class " + value + " in suggestClass not exist");
-				} catch(IllegalAccessException | InstantiationException e) {
+				} catch(Exception e) {
 					throw new RuntimeException("couldn't instantiate class " + value);
 				}
 			}

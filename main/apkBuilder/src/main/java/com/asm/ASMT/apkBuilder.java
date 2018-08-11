@@ -3,8 +3,6 @@ import java.io.*;
 import android.os.*;
 import android.content.res.*;
 import android.content.*;
-import android.support.v4.content.*;
-import java.util.jar.*;
 import android.app.*;
 import com.asm.lib.io.StringWriterOutputStream;
 import org.apache.commons.io.*;
@@ -79,7 +77,7 @@ public class apkBuilder
 		}
 		}
 	private String logOut;
-	private String aapt1,aapt2,ecj,dx,aapt3,ZipSigner; 
+	private String aapt1,aapt2,ecj,dx,aapt3,ZipSigner;
 	private StringWriterOutputStream swos;
 	
 	private Result buildApk_1(){

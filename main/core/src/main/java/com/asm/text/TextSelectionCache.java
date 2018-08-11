@@ -1,7 +1,5 @@
 package com.asm.text;
 
-import com.lhw.util.TextUtils;
-
 
 public class TextSelectionCache extends TextSelection
 {

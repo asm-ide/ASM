@@ -6,9 +6,7 @@ import com.asm.annotation.NonNull;
 import com.lhw.util.TextUtils;
 
 import android.graphics.Rect;
-import android.graphics.Canvas;
 import android.text.Editable;
-import android.text.TextPaint;
 import android.text.TextWatcher;
 import android.text.InputFilter;
 import android.os.Parcel;
@@ -259,7 +257,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	private @Nullable UndoManager mUndoManager;
 	
 	/** the {@code TextWather} listeners */
-	transient @NonNull ArrayList<TextWatcher> mListeners = new ArrayList<TextWatcher>();
+	transient @NonNull ArrayList<TextWatcher> mListeners = new ArrayList<>();
 	
 	/** for more faster calculate. */
 	private @NonNull Cache mCache;
@@ -377,7 +375,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * {@hide}
+	 * @hide
 	 * Invaildate the view if TextData is used in any view.
 	 * This only marks whether needs invaildate or not.
 	 * Might require UI thread.
@@ -387,7 +385,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * {@hide}
+	 * @hide
 	 * Invaildate the view if TextData is used in any view.
 	 * This only marks whether needs invaildate or not.
 	 * Might require UI thread.
@@ -397,7 +395,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * {@hide}
+	 * @hide
 	 * Invaildate the view if TextData is used in any view.
 	 * This only marks whether needs invaildate or not.
 	 * Might require UI thread.
@@ -409,7 +407,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * {@hide}
+	 * @hide
 	 * Set the listener called on needs to invaildate.
 	 */
 	public void setOnInvaildateListener(OnInvaildateListener listener) {
@@ -417,7 +415,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * {@hide}
+	 * @hide
 	 * Returns whether needs invaildate.
 	 */
 	public boolean isNeedInvaildate() {
@@ -425,7 +423,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * {@hide}
+	 * @hide
 	 * Set whether dirty or not.
 	 */
 	public void setNeedInvaildate(boolean is) {
@@ -433,7 +431,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * {@hide}
+	 * @hide
 	 * Return the not invaildated rect.
 	 */
 	public Rect getDirtyRect() {
@@ -446,7 +444,7 @@ public class TextData implements Editable, Parcelable, Serializable
 		}
 	}
 	
-	/** {@hide} */
+	/** @hide */
 	public Cache getCache() {
 		return mCache;
 	}
@@ -523,7 +521,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * Open the undo actions.
-	 * Used when undo mode is {@link UNDO_MODE_OPENED} and if there is any
+	 * Used when undo mode is {@link UndoManager#UNDO_MODE_OPENED} and if there is any
 	 * opened {@link Actions}, close it and open new {@link Actions}.
 	 */
 	public void openUndoActions() {
@@ -537,7 +535,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * Open the undo actions if current undo mode marks actions.
-	 * @see openUndoActions()
+	 * @see this#openUndoActions()
 	 */
 	public void openUndoActionsTemporary() {
 		mUndoManager.openUndoActionsTemporary();
@@ -587,7 +585,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	/**
 	 * Set the encoding.
 	 * This does not convert the text encoding; just set the code encoding.
-	 * If you want to convert the text encoding, use {@link convertEncoding()}.
+	 * If you want to convert the text encoding, use {@link this#convertEncoding()}.
 	 */
 	public void setEncoding(String encoding) {
 		mEncoding = encoding;
@@ -596,7 +594,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	/**
 	 * Return the encoding.
 	 * This method doesn't ensure which thia text was written in that encoding.
-	 * It might set by {@link setEncoding}.
+	 * It might set by {@link this#setEncoding}.
 	 */
 	public String getEncoding() {
 		return mEncoding;
@@ -766,7 +764,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * <p>
 	 * You should call super if you not want to not changing texts
 	 * because all the event on the insert will be called.
-	 * @returns whether actually text was changed
+	 * @return whether actually text was changed
 	 */
 	protected boolean onInsert(int where, CharSequence text, int start, int end) {
 		char[] t = new char[text.length()];
@@ -890,7 +888,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * @see CharSequence.subString()
+	 * @see CharSequence#subString()
 	 */
 	@Override
 	public CharSequence subSequence(int start, int end) {
@@ -928,7 +926,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * @param end end index.
 	 */
 	public String[] split(CharSequence by, int start, int end) {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		int lastIndex = start;
 		int i = indexOf(by, start + 1, end);
 		
@@ -950,7 +948,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * Find things which matches to param {@code from} in plain text and replace.
-	 * @returns if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
+	 * @return if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
 	 */
 	public int[] replace(String from, CharSequence to) {
 		return replaceRegex(Pattern.quote(from), to);
@@ -958,7 +956,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * Find things which matches to param {@code regex} in regular expressions and replace.
-	 * @returns if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
+	 * @return if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
 	 */
 	public int[] replaceRegex(String regex, CharSequence to) {
 		return replaceRegex(Pattern.compile(regex), to, 0, mCount);
@@ -966,7 +964,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * Find things which matches to param {@code regex} in regular expressions and replace.
-	 * @returns if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
+	 * @return if replace anything, return int array, {last start index, last end index, replaced start index, replaced end index}, or return null
 	 */
 	public int[] replaceRegex(Pattern regex, CharSequence to, int start, int end) {
 		Matcher matcher = regex.matcher(this).region(start, end);
@@ -979,7 +977,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * Replace all texts equals with param {@code from} to param {@code to}.
-	 * @returns all replaced count. if replaced nothing, returns 0.
+	 * @return all replaced count. if replaced nothing, returns 0.
 	 */
 	public int replaceAll(String from, CharSequence to) {
 		return replaceAllRegex(Pattern.quote(from), to);
@@ -987,7 +985,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	/**
 	 * Replace all texts matches with param {@code regex} to param {@code to}.
-	 * @returns all replaced count. if replaced nothing, returns 0.
+	 * @return all replaced count. if replaced nothing, returns 0.
 	 */
 	public int replaceAllRegex(String regex, CharSequence to) {
 		return replaceAllRegex(Pattern.compile(regex), to, 0, mCount);
@@ -996,7 +994,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	/**
 	 * Replace all texts matches with param {@code regex} to param {@code to}, bounds
 	 * in {@code start} to {@code end}.
-	 * @returns all replaced count. if replaced nothing, returns 0.
+	 * @return all replaced count. if replaced nothing, returns 0.
 	 */
 	public int replaceAllRegex(Pattern regex, CharSequence to, int start, int end) {
 		if(start > end)
@@ -1161,7 +1159,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	}
 	
 	/**
-	 * @see GetChars
+	 * @see android.text.GetChars
 	 */
 	@Override
 	public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin) {
@@ -1188,7 +1186,7 @@ public class TextData implements Editable, Parcelable, Serializable
 		TextData data = new TextData();
 		data.ensureCapacity(mText.length);
 		System.arraycopy(mText, 0, data.mText, 0, mText.length);
-		data.mCache = mCache.newInstance(data);
+		data.mCache = Cache.newInstance(data);
 		data.mCount = mCount;
 		return data;
 	}
@@ -1335,7 +1333,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	
 	// Utilities for marshelling TextData and support aidl
 	
-	/** {@hide} */
+	/** @hide */
 	public static final Creator<TextData> CREATOR
 			= new Creator<TextData>() {
 		@Override
@@ -1355,7 +1353,7 @@ public class TextData implements Editable, Parcelable, Serializable
 	 * When you got the {@code TextData} object from
 	 * {@code ObjectInputStream} or other, you should
 	 * initialize that object by this object.
-	 * @params TextData what you want to convert
+	 * @param TextData what you want to convert
 	 */
 	public static TextData wrapFromDataStream(Object data, TextDraw parent) {
 		if(!(data instanceof TextData)) throw new IllegalArgumentException("argument is not a TextData");

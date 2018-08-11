@@ -5,7 +5,6 @@ import com.asm.language.LanguageInfo;
 import com.asm.language.HighlightArgs;
 import com.asm.analysis.CodeAnalysis;
 import com.asm.analysis.CodeSuggest;
-import com.asm.widget.codeedit.CodeEditInterface;
 
 
 public class LoadedLanguage implements Language
@@ -56,7 +55,7 @@ public class LoadedLanguage implements Language
 	}
 
 	@Override
-	public <T extends Object> T getData(String name, T defaultValue)
+	public <T> T getData(String name, T defaultValue)
 	{
 		// TODO: Implement this method
 		return null;

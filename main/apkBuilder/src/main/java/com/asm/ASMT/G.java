@@ -7,8 +7,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.text.format.Time;
-import android.util.Log;
+import android.os.Environment;
 import android.widget.Toast;
 
 import java.io.File;
@@ -28,7 +27,7 @@ import java.io.File;
   
   public static String stPw1, stPw2;
   public static int iScriptResultCode;
-  public static String stWorkDir = "/sdcard/.JavaIDEdroid/";
+  public static String stWorkDir = Environment.getExternalStorageDirectory().getPath() + "/.JavaIDEdroid/"; // TODO: other ide
   public static boolean bScriptAutoRun, bScriptAutoExit, bWantResultText;
   private static Activity currentActivity;
   protected static Resources res=null;
@@ -208,7 +207,7 @@ import java.io.File;
     
     try
     {
-      if (G.fnCheckWorkDir(false)==false) return false;
+      if (!G.fnCheckWorkDir(false)) return false;
       pm = main.getPackageManager();
       pkgName = main.getPackageName();
       pkgInfo = pm.getPackageInfo(pkgName,0);

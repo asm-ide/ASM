@@ -2,8 +2,6 @@ package com.asm.language;
 
 import com.asm.analysis.CodeFinder;
 
-import java.util.regex.Pattern;
-
 
 public interface LanguageInfo
 {

@@ -8,7 +8,7 @@
   <string name="err_mkdir">Could not create directory</string>
   <string name="msg_foreignSW">This app contains software from other authors:</string>
   <string name="msg_taskfinished">Task finished</string>
-  <string name="msg_taskrunning">Task running...</string>
+  <string name="msg_taskrunning">Task running…</string>
   <string name="msg_aapt_build">WARNING: Aapt was built for Android API level 9 or higher.</string>
   <string name="msg_aapt_your_api">Your API level is</string>
   <string name="msg_aapt_warning">Aapt might not work correctly on your device!</string>

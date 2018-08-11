@@ -1,5 +1,4 @@
 package com.asm.gongbj.tools;
-import android.app.*;
 import com.asm.gongbj.*;
 import java.io.*;
 

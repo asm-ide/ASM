@@ -1,6 +1,6 @@
 package com.asm.widget.codeedit;
 
-import android.text.Editable;
+import com.asm.annotation.API;
 import com.asm.language.Language;
 import com.asm.language.LanguageInfo;
 
@@ -8,6 +8,7 @@ import com.asm.language.LanguageInfo;
 /**
  * The codeedit interface for use.
  */
+@API
 public interface CodeEditInterface extends TextViewInterface
 {
 	public LanguageInfo getLanguageInfo();
