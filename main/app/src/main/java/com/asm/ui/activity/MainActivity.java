@@ -1,6 +1,7 @@
 package com.asm.ui.activity;
 
 import com.asm.R;
+import com.asm.ui.fragment.main.RecentProjectsFragment;
 import com.asm.ui.base.BaseActivity;
 import com.asm.ui.base.PlaceHolderFragment;
 import com.asm.ui.base.SectionsPagerAdapter;
@@ -33,7 +34,9 @@ public class MainActivity extends BaseActivity
 		
 		mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 		
-		mAdapter.putSection(mAdapter.newSection().setTitle("Apple").setFragment(PlaceHolderFragment.newFragment(R.layout.testlayout)));
+		mAdapter.putSection(mAdapter.newSection()
+			.setTitle("Recent Projects")
+			.setFragment(new RecentProjectsFragment()));
 		mAdapter.putSection(mAdapter.newSection().setTitle("Banana").setFragment(PlaceHolderFragment.newFragment(R.layout.testlayout)));
 		mAdapter.putSection(mAdapter.newSection().setTitle("Peach").setFragment(PlaceHolderFragment.newFragment(R.layout.testlayout)));
 		

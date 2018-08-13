@@ -2,13 +2,13 @@
 			 xmlns:tools="http://schemas.android.com/tools"
 			 android:layout_width="match_parent"
 			 android:layout_height="match_parent"
-			 android:background="@color/inversedForeground"
+			 android:background="?android:attr/textColorPrimaryInverse"
 			 tools:ignore="Overdraw">
 	<FrameLayout
 		android:id="@+id/masterlayout"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:background="@color/primary"
+		android:background="?attr/colorPrimary"
 		android:padding="35dp">
 		<ImageView
 			android:id="@+id/appicon"
@@ -23,7 +23,7 @@
 			android:layout_gravity="bottom|center_horizontal"
 			android:layout_marginBottom="64dp"
 			android:text="@string/app_name"
-			android:textColor="@color/inversedForeground"
+			android:textColor="?android:attr/textColorPrimaryInverse"
 			android:textSize="32sp"/>
 	</FrameLayout>
 </FrameLayout>

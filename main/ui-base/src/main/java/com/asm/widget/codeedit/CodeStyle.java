@@ -479,7 +479,7 @@ public class CodeStyle implements Serializable, CodeStyleInterface
 									break;
 								} //end case
 							} //end switch
-						} catch(Exception e) { throw new Exception("error on item on lang=" + lang + ", no=" + ii + ", tag=" + item.getNodeName()); }
+						} catch(Exception e) { throw new IllegalStateException("error on item on lang=" + lang + ", no=" + ii + ", tag=" + item.getNodeName()); }
 					}
 					break;
 				}

@@ -224,8 +224,8 @@ public class ScrollingEditText extends ScrollingTextView
 		if(touchingCursor != CURSOR_INVISIBLE) {
 			Drawable cursor = getCursorDrawable(touchingCursor);
 			int x = (int) event.getX() - mCursorWidth / 2;
-			int y = (int) event.getY() - cursorHeight;
-			cursor.setBounds(x, y, mCursorWidth, cursorHeight);
+			int y = (int) event.getY() - mCursorHeight;
+			cursor.setBounds(x, y, mCursorWidth, mCursorHeight);
 			return true;
 		} else {
 			boolean handled = super.onTouchEvent(event);

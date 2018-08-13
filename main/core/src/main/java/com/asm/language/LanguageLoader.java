@@ -98,11 +98,6 @@ public final class LanguageLoader
 					case END_TAG:
 						
 						break;
-						
-					case END_DOCUMENT:
-						
-						break;
-						
 				}
 				
 				event = parser.next();
