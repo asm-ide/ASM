@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textView = (ImageView) findViewById(R.id.textView); //find by id를 못하겠
 
-        textView.setOnLongClickListener(new View.OnTouchListener() {
+        textView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 // 태그 생성
@@ -105,10 +105,12 @@ public class MainActivity extends AppCompatActivity {
                             default:
                                 break;
                         }
-                return true;
-            }
-            }
-            }
-        }
-    });
+                		return true;
+					
+            		}
+         		}
+				return true;
+			}
+        });
+    }
 }
