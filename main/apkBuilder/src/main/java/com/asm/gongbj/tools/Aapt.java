@@ -47,25 +47,26 @@ public class Aapt
 			if(res!=null)cmd += "-S " + res + " ";
 		}
 		cmd = cmd + "-I " + androidJarPath + " ";
+		
 		if(jarPath!=null){
 			for(String jar : jarPath){
 				cmd += "-I " + jar + " ";
 			}
 		}
-
+		
 		return /*cmd + "\n" + */apkBuilder.runAapt(cmd);
 	}
 
 	public String generateApk(String apkPath, String androidManifestPath, String resPath[], String jarPath[]){
 		
-		String cmd = "package -f -M ";
+		String cmd = "package -v -f -M ";
 		cmd += androidManifestPath;
 		for(String tmp : resPath){
 			cmd = cmd + " -S " + tmp;
 		}
 		/*
 		for(String tmp : jarPath){
-			cmd = cmd + " -j " + tmp;
+			cmd = cmd + " -I " + tmp;
 		}*/
 		cmd += " -I " + androidJarPath;
 		cmd = cmd + " -F " + apkPath;
