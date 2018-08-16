@@ -213,6 +213,30 @@ public class GradleBuild
 		
 		if(resultValue==0)return;
 		
+		{
+			progL.onProgressChange("Fixing Dex..");
+			//Fix Dex Problem
+			String desPath = mainGradlePath + "/build/bin/classes.dex";
+			try
+			{
+				RandomAccessFile ra = new RandomAccessFile(new File(desPath), "rw");
+				ra.seek(6);
+				progL.onProgressChange(String.valueOf(ra.read()));
+				//if(ra.read()==54){
+					ra.seek(6);
+					ra.write(53);
+					ra.seek(6);
+				progL.onProgressChange(String.valueOf(ra.read()));
+				//}
+				ra.close();
+			}
+			catch (Throwable e)
+			{
+				ProgressFail pf = new ProgressFail("Dex Fixing Failed",desPath,"Gradle");
+				errorL.onError(pf);
+				return;
+			}
+		}
 		
 		//Start aapt
 		Aapt aapt = new Aapt(androidJar);

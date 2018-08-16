@@ -18,8 +18,9 @@ public class Ecj
 		for(String t : jar){
 			command += "-cp " + t + " ";
 		}
-		command += "-sourcepath ";
+		command += "-cp ";
 		String b = "";
+		
 		for(String t : sourcePath){
 			b += t + ":";
 		}
@@ -27,6 +28,9 @@ public class Ecj
 		command += b + " ";
 		command += mainSourcePath;
 		
+		for(String t : sourcePath){
+			command += " " + t;
+		}
 		return /*command + "\n" + */apkBuilder.runJavaCompiler(command);
 	}
 	private String splitPath(String path){
