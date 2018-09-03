@@ -25,12 +25,12 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.content.res.*;
 import java.io.*;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.*;
+
 import android.view.*;
 import android.view.View.*;
 import android.widget.*;
 import android.os.Environment;
+import android.util.*;
 //##################################################################
 /** This class provides access to the Java development tools.
  * 
@@ -206,7 +206,7 @@ public int fnCompile (String[] args)
   int i, rc=99;
   boolean ok;
   org.eclipse.jdt.internal.compiler.batch.Main ecjMain;
-  
+	org.eclipse.jdt.internal.compiler.apt.dispatch.BatchProcessingEnvImpl a;
   try
   {
     start = System.currentTimeMillis();
@@ -226,7 +226,8 @@ public int fnCompile (String[] args)
   {
     rc = 99;
     System.out.println("Error occurred!\n"+t.getMessage());
-    t.printStackTrace();
+   Log.e("ASM","ECJError",t);
+	t.printStackTrace();
   }
   System.out.println("\nDone in "+(System.currentTimeMillis()-start)/1000+" sec.\n");
   System.out.println("ExitValue: "+rc);

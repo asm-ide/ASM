@@ -298,6 +298,65 @@
 
 			</LinearLayout>
 
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:orientation="horizontal"
+				android:layout_margin="10dp"
+				android:background="#ECEAF1">
+
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="Gradle\nVisitor"
+					android:id="@+id/gradleVisiter"
+					android:onClick="gradleVisiterb"/>
+
+				<LinearLayout
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:orientation="vertical">
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path8_1"
+						android:hint="Gradle File Path"/>
+				</LinearLayout>
+
+			</LinearLayout>
+			
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:orientation="horizontal"
+				android:layout_margin="10dp"
+				android:background="#ECEAF1">
+
+				<Button
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="Get\nString\fromUrl"
+					android:id="@+id/getStringUrl"
+					android:onClick="getStringUrlb"/>
+
+				<LinearLayout
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:orientation="vertical">
+
+					<EditText
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:ems="10"
+						android:id="@+id/path9_1"
+						android:hint="URL"/>
+				</LinearLayout>
+
+			</LinearLayout>
+			
+			
 		</LinearLayout>
 
 	</ScrollView>

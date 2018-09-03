@@ -8,10 +8,17 @@ public class SyncData
 	private ArrayList<String> projectName;
 	private ArrayList<GradleInfo> gradleInfo;
 	private ArrayList<String> scaned;
+	private TopLevelGradleInfo topLevelGradleInfo;
 	public SyncData(){
 		projectName = new ArrayList<String>();
 		gradleInfo = new ArrayList<GradleInfo>();
 		scaned = new ArrayList<String>();
+	}
+	public void setTopLevelGradleInfo(TopLevelGradleInfo tlgi){
+		topLevelGradleInfo = tlgi;
+	}
+	public TopLevelGradleInfo getTopLevelGradleInfo(){
+		return topLevelGradleInfo;
 	}
 	public void addGradleInfo(String projectName,GradleInfo gradleInfo){
 		this.projectName.add(projectName);
@@ -36,6 +43,9 @@ public class SyncData
 			data[i] = projectName.get(i);
 		}
 		return data;
+	}
+	public GradleInfo[] getGradleInfo(){
+		return gradleInfo.toArray(new GradleInfo[gradleInfo.size()]);
 	}
 	public GradleInfo getGradleInfo(String projectName){
 		if(!this.projectName.contains(projectName))return null;

@@ -9,6 +9,7 @@ import com.asm.gongbj.gradle.ProjectManager;
 import com.asm.gongbj.gradle.*;
 import com.asm.gongbj.gradle.info.*;
 import com.asm.gongbj.codeManage.*;
+import com.asm.gongbj.utils.*;
 
 public class MainActivity extends Activity 
 {
@@ -246,5 +247,39 @@ public class MainActivity extends Activity
 			o.setText(e.toString());
 		}
 	}
+	public static String out= "";
+	public void gradleVisiterb(View v){
+		EditText i1 = (EditText)findViewById(R.id.path8_1);
+		try{
+			String str = ProjectManager.ReadFile(i1.getText().toString());
+			EditText o = (EditText)findViewById(R.id.log);
+			out= "";
+			new GradleVisiter(){
+				@Override
+				public void onVisit( String tree,  String line){
+					
+									MainActivity.out = MainActivity.out +  "\n\n onVisit : \ntree : "  + tree.toString() + "\nline : " + line.toString();
+					
+				}
+			}.visit(str);
+			o.setText(out);
+		}catch(Exception e){
+			EditText o = (EditText)findViewById(R.id.log);
+			Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
+			o.setText(e.toString());
+		}
+	}
 	
+	public void getStringUrlb(View v){
+		EditText i1 = (EditText)findViewById(R.id.path9_1);
+		
+		EditText o = (EditText)findViewById(R.id.log);
+		NetWorkUtil.enableNetWorkAtMainThread();
+		try{
+			o.setText(NetWorkUtil.getStringFromUrl(i1.getText().toString()));
+		}catch(Exception e){
+			Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
+			o.setText(e.toString());
+		}
+	}
 }
