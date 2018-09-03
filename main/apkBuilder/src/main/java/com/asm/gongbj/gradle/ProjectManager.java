@@ -8,26 +8,26 @@ import android.widget.*;
 import com.asm.gongbj.gradle.info.*;
 
 /**
-*Class ProjectManager : 
-* -> You can do these things with this class : 
-* -> 1. Can create android project and library project
-* -> 2. Can get GardleInfo of gradle project in android project.
-* -> 3. Can get list of gradle projects in android project. it reads top-level settings.gradle
-*
-*@author GongBJ
-*/
+ *Class ProjectManager : 
+ * -> You can do these things with this class : 
+ * -> 1. Can create android project and library project
+ * -> 2. Can get GardleInfo of gradle project in android project.
+ * -> 3. Can get list of gradle projects in android project. it reads top-level settings.gradle
+ *
+ *@author GongBJ
+ */
 public class ProjectManager{
 	Activity activity;
 	public ProjectManager(Activity ac){
 		activity = ac;
-		
+
 	}
 	/**
-	*Create Android project.
-	*@param appName : Android Project's app name
-	*@param packageName : Android Project's pakageName
-	*@param Path : folder path that Android Project will be generated in.
-	*/
+	 *Create Android project.
+	 *@param appName : Android Project's app name
+	 *@param packageName : Android Project's pakageName
+	 *@param Path : folder path that Android Project will be generated in.
+	 */
 	public void createAndroidProject(String appName, String packageName,String Path)throws Exception{
 		//Create Project Folder
 		File p = new File(Path+"/"+appName);
@@ -113,12 +113,12 @@ public class ProjectManager{
 
 	}
 	/**
-	*It creates Library Project.
-	*When you call this method, top-level settins.gradle file will be outomatically modified.
-	*@param name : Library Project's name
-	*@param packageName : Library Project's pakageName
-	*@param androidProjectPath : folder path of android project that you want to create in.
-	*/
+	 *It creates Library Project.
+	 *When you call this method, top-level settins.gradle file will be outomatically modified.
+	 *@param name : Library Project's name
+	 *@param packageName : Library Project's pakageName
+	 *@param androidProjectPath : folder path of android project that you want to create in.
+	 */
 	public void createLibraryProject(String name, String packageName, String androidProjectPath)throws Exception{
 		//Create Library Project Folder
 		File p = new File(androidProjectPath + "/" + name);
@@ -155,7 +155,7 @@ public class ProjectManager{
 		str = str + "\ninclude ':"+name+"'";
 		write(str, new File(androidProjectPath+"/settings.gradle"));
 	}
-	private String ReadFile(String path)throws Exception{
+	public static String ReadFile(String path)throws Exception{
 		String line;
 		File file = new File(path);
 		FileInputStream fileInputStream = new FileInputStream (file);
@@ -168,10 +168,10 @@ public class ProjectManager{
 		fileInputStream.close();
 		line = stringBuilder.toString();
 		bufferedReader.close();
-		
+
 		return line;
 	}
-	
+
 	public GradleProjectInfo[] getGradleProjectsList(String androidProjectPath)throws ProgressFail{
 		File f = new File(androidProjectPath+"/settings.gradle");
 		if(!f.exists()){
@@ -185,15 +185,15 @@ public class ProjectManager{
 			sss = sss.trim().replace(" ","");
 			if(sss.contains("include")){
 				if(sss.contains(",")){
-						String ss[] = sss.replace("include","").split(",");
-						for(String s : ss){
-							s = s.replace("'","").replace(":","").trim();
-							File fi = new File(androidProjectPath+"/"+s);
-							if(!fi.exists()){
-								throw new ProgressFail("project "+s+" not found",fi.getAbsolutePath(),"Gradle");
-							}
-							list.add(new GradleProjectInfo(f.getAbsolutePath(),s));
+					String ss[] = sss.replace("include","").split(",");
+					for(String s : ss){
+						s = s.replace("'","").replace(":","").trim();
+						File fi = new File(androidProjectPath+"/"+s);
+						if(!fi.exists()){
+							throw new ProgressFail("project "+s+" not found",fi.getAbsolutePath(),"Gradle");
 						}
+						list.add(new GradleProjectInfo(f.getAbsolutePath(),s));
+					}
 				}else{
 					sss=sss.replace("include","").replace("'","").replace(":","");
 					File fi = new File(androidProjectPath+"/"+sss);
@@ -201,7 +201,7 @@ public class ProjectManager{
 						throw new ProgressFail("project "+sss+" not found",fi.getAbsolutePath(),"Gradle");
 					}
 					list.add(new GradleProjectInfo(f.getAbsolutePath(),sss));
-					
+
 				}
 			}
 		}
@@ -214,24 +214,75 @@ public class ProjectManager{
 		return gr;
 	}
 	/*
-	public gradleProjectInfo createGradleProjectInfo(String projectName,String androidProjectPath){
-		File f=new File(androidProjectPath+"/"+projectName);
-		if(!f.exists()){
-			return null;
-		}
-		return new gradleProjectInfo(f.getAbsolutePath(),projectName);
-		
-	}
-	*/
+	 public gradleProjectInfo createGradleProjectInfo(String projectName,String androidProjectPath){
+	 File f=new File(androidProjectPath+"/"+projectName);
+	 if(!f.exists()){
+	 return null;
+	 }
+	 return new gradleProjectInfo(f.getAbsolutePath(),projectName);
+
+	 }
+	 */
 	private int count = 0;
 	private String gpp;
 	/**
 	 *It analyzes build.gradle file in gradle project
 	 *@return It returns GradleInfo with full infomations
 	 */
+	public TopLevelGradleInfo getToplevelGradleInfo(String androidProjectPath)throws ProgressFail{
+		String gradlePath = androidProjectPath + "/build.gradle";
+		if(!new File(gradlePath).exists()){
+			throw new ProgressFail("'build.gradle'is not found in \n"+gradlePath,gradlePath,"Gradle"); 
+		}
+		
+		final TopLevelGradleInfo gi = new TopLevelGradleInfo();
+		String str = "";
+		try
+		{
+			str = ReadFile(gradlePath);
+
+		}
+		catch (Exception e)
+		{throw new ProgressFail("Cannot read 'build.gradle' file at : \n"+gradlePath,gradlePath,"Gradle");}
+		
+		(new GradleVisiter(){
+			@Override
+			public void onVisit(String tree, String line){
+				
+				if(tree.equals(".allprojects.repositories")){
+					line = line.trim();
+					if(line.startsWith("jcenter")&&line.replace(" ","").endsWith("()")){
+						//case jcenter()
+						gi.allprojects.repositories.mavenUrls.add("http://jcenter.bintray.com");
+					}else if(line.startsWith("mavenCentral")&&line.replace(" ","").endsWith("()")){
+						//case mavenCentral()
+						gi.allprojects.repositories.mavenUrls.add("http://central.maven.org/maven2/");
+					}else if(line.startsWith("google")&&line.replace(" ","").endsWith("()")){
+						//case google()
+						gi.allprojects.repositories.mavenUrls.add("https://maven.google.com");
+					}
+				}
+				
+				if(tree.equals(".allprojects.repositories.maven")){
+					if(line.startsWith("url ")){
+						line = line.substring("url".length()+2);
+						if(line.startsWith("\"")&&line.endsWith("\"")){
+							line = line.substring(1,line.length()-1);
+							gi.allprojects.repositories.mavenUrls.add(line);
+						}else if(line.startsWith("'")&&line.endsWith("'")){
+							line = line.substring(1,line.length()-1);
+							gi.allprojects.repositories.mavenUrls.add(line);
+						}
+					}
+				}
+			}
+		}).visit(str);
+		
+		return gi;
+	}
 	public GradleInfo getGradleProjectInfo(String gradleProjectPath)throws ProgressFail{
 		gpp=gradleProjectPath;
-		GradleInfo g = new GradleInfo();
+		final GradleInfo g = new GradleInfo();
 		g.fullPath = gradleProjectPath;
 		File f=new File(gradleProjectPath+"/build.gradle");
 		if(!f.exists())throw new ProgressFail("'build.gradle'is not found in \n"+f.getAbsolutePath(),f.getAbsolutePath(),"Gradle");
@@ -239,116 +290,92 @@ public class ProjectManager{
 		try
 		{
 			str = ReadFile(f.getAbsolutePath());
-			
+
 		}
 		catch (Exception e)
 		{throw new ProgressFail("Cannot read 'build.gradle' file at : \n"+e.toString(),f.getAbsolutePath(),"Gradle");}
-		String lines[] = str.trim().split("\n");
-		String in = null;
-		count=0;
-		ci=new ArrayList<>();
-		g = readBuildGradle(g,lines,"");
-		CompileInfo infos[] = new CompileInfo[ci.size()];
-		for(int co =0;co<ci.size();co++){
-			infos[co]=ci.get(co);
-		}
-		g.dependencies.compile=infos;
-		
-		return g;
-	}
-	
-	
-	
-	
-	private ArrayList<CompileInfo> ci;
-	private GradleInfo readBuildGradle(GradleInfo g, String[] str,String tree){
-		GradleInfo G = g;
-		String sr = tree;
-		
-		w : while(count<str.length){
-			
-			////////
-			if("".equals(tree)){
-				if(str[count].contains("apply plugin")){
-					g.plugin=str[count].replace("apply plugin","").replace(":","").replace("'","").trim();
-				}
-			}else if(".android".equals(tree)){
-				
-				if(str[count].contains("compileSdkVersion")){
-					g.android.compileSdkVersion=str[count].replace("compileSdkVersion","").replace("\"","").replace("'","").trim();
-				}else if(str[count].contains("buildToolsVersion")){
-					g.android.buildToolsVersion=str[count].replace("buildToolsVersion","").replace("\"","").replace("'","").trim();
-				}
-			}else if(".android.defaultConfig".equals(tree)){
-				if(str[count].contains("applicationId")){
-					g.android.defaultConfig.applicationId=str[count].replace("applicationId","").replace("\"","").replace("'","").trim();
-				}else if(str[count].contains("minSdkVersion")){
-					g.android.defaultConfig.minSdkVersion=str[count].replace("minSdkVersion","").replace("\"","").replace("'","").trim();
-				}else if(str[count].contains("targetSdkVersion")){
-					g.android.defaultConfig.targetSdkVersion=str[count].replace("targetSdkVersion","").replace("\"","").replace("'","").trim();
-				}else if(str[count].contains("versionCode")){
-					g.android.defaultConfig.versionCode=str[count].replace("versionCode","").replace("\"","").replace("'","").trim();
-				}else if(str[count].contains("versionName")){
-					g.android.defaultConfig.versionName=str[count].replace("versionName","").replace("\"","").replace("'","").trim();
-				}
-			}else if(".dependencies".equals(tree)){
-				CompileInfo c = new CompileInfo();
-				String line = str[count];
-				//Toast.makeText(activity,line,Toast.LENGTH_SHORT).show();
-				
-				if(line.contains("compile")){
-					line = line.replace("compile","").trim();
-					if(line.startsWith("'")&&line.endsWith("'")){
-						//Maven
-						c.type=CompileInfo.TYPE_MAVEN;
-						c.value1=line.replace("'","").trim();
-						ci.add(c);
-					}else if(line.startsWith("files(")&&line.endsWith(")")){
-						//File
-						c.type=CompileInfo.TYPE_LIB;
-						c.value1=line.replace("files(","").replace(")","").replace("'","").replace("\"","").trim();
-						c.value2=c.value1.substring(c.value1.lastIndexOf("/")+1);
-						ci.add(c);
-					}else if(line.startsWith("project(")&&line.endsWith(")")){
-						//Project
-						c.type=CompileInfo.TYPE_PROJECT;
-						c.value1=line.replace("project(","").replace(")","").replace("'","").replace(":","").trim();
-						ci.add(c);
-					}else if(line.startsWith("fileTree(")&&line.endsWith(")")){
-						//FileTreee
-						String tmp[] = line.replace("fileTree(","").replace(")","").trim().split(",");
-						String dir,include;
-						dir="";include="";
-						for(String sss:tmp){
-							if(sss.trim().startsWith("dir")){
-								dir=sss.replace("dir","").replace(":","").replace("'","").replace("\"","").trim();
-							}else if(sss.trim().startsWith("include")){
-								include=sss.replace("include","").replace(":","").replace("'","").replace("\"","").replace("[","").replace("]","").trim();
+
+
+		final ArrayList<CompileInfo> ci =new ArrayList<>();
+
+		(new GradleVisiter(){
+			@Override
+			public void onVisit(String tree,String line){
+				if("".equals(tree)){
+					if(line.contains("apply plugin")){
+						g.plugin=line.replace("apply plugin","").replace(":","").replace("'","").trim();
+					}
+				}else if(".android".equals(tree)){
+
+					if(line.contains("compileSdkVersion")){
+						g.android.compileSdkVersion=line.replace("compileSdkVersion","").replace("\"","").replace("'","").trim();
+					}else if(line.contains("buildToolsVersion")){
+						g.android.buildToolsVersion=line.replace("buildToolsVersion","").replace("\"","").replace("'","").trim();
+					}
+				}else if(".android.defaultConfig".equals(tree)){
+					if(line.contains("applicationId")){
+						g.android.defaultConfig.applicationId=line.replace("applicationId","").replace("\"","").replace("'","").trim();
+					}else if(line.contains("minSdkVersion")){
+						g.android.defaultConfig.minSdkVersion=line.replace("minSdkVersion","").replace("\"","").replace("'","").trim();
+					}else if(line.contains("targetSdkVersion")){
+						g.android.defaultConfig.targetSdkVersion=line.replace("targetSdkVersion","").replace("\"","").replace("'","").trim();
+					}else if(line.contains("versionCode")){
+						g.android.defaultConfig.versionCode=line.replace("versionCode","").replace("\"","").replace("'","").trim();
+					}else if(line.contains("versionName")){
+						g.android.defaultConfig.versionName=line.replace("versionName","").replace("\"","").replace("'","").trim();
+					}
+				}else if(".dependencies".equals(tree)){
+					CompileInfo c = new CompileInfo();
+
+					//Toast.makeText(activity,line,Toast.LENGTH_SHORT).show();
+
+					if(line.contains("compile")){
+						line = line.replace("compile","").trim();
+						if(line.startsWith("'")&&line.endsWith("'")){
+							//Maven
+							//value 1 : hole text in '...'
+							c.type=CompileInfo.TYPE_MAVEN;
+							c.value1=line.replace("'","").trim();
+							ci.add(c);
+						}else if(line.startsWith("files(")&&line.endsWith(")")){
+							//File
+							
+							c.type=CompileInfo.TYPE_LIB;
+							c.value1=line.replace("files(","").replace(")","").replace("'","").replace("\"","").trim();
+							c.value2=c.value1.substring(c.value1.lastIndexOf("/")+1);
+							ci.add(c);
+						}else if(line.startsWith("project(")&&line.endsWith(")")){
+							//Project
+							c.type=CompileInfo.TYPE_PROJECT;
+							c.value1=line.replace("project(","").replace(")","").replace("'","").replace(":","").trim();
+							ci.add(c);
+						}else if(line.startsWith("fileTree(")&&line.endsWith(")")){
+							//FileTreee
+							String tmp[] = line.replace("fileTree(","").replace(")","").trim().split(",");
+							String dir,include;
+							dir="";include="";
+							for(String sss:tmp){
+								if(sss.trim().startsWith("dir")){
+									dir=sss.replace("dir","").replace(":","").replace("'","").replace("\"","").trim();
+								}else if(sss.trim().startsWith("include")){
+									include=sss.replace("include","").replace(":","").replace("'","").replace("\"","").replace("[","").replace("]","").trim();
+								}
 							}
+							c.type = CompileInfo.TYPE_FILETREE;
+							c.value1 = dir;
+							c.value2 = include;
+							ci.add(c);
 						}
-						c.type = CompileInfo.TYPE_FILETREE;
-						c.value1 = dir;
-						c.value2 = include;
-						ci.add(c);
+
 					}
 				}
-				
 			}
-			//////////////
-			if("}".equals(str[count].trim())){
-				count++;
-				//Toast.makeText(activity,"exist : "+tree,Toast.LENGTH_SHORT).show();
-				return G;
-			}else if(str[count].contains("{")){
-				count++;
-				G = readBuildGradle(G,str,sr+"."+str[count-1].replace("{","").trim());
-			}else{
-				count++;
-			}
-			
-		}
-		
-		return G;
+		}).visit(str.trim());
+
+
+		g.dependencies.compile=ci.toArray(new CompileInfo[ci.size()]);
+
+		return g;
 	}
 	private void write(String str,File file)throws Exception{
 		FileWriter fw = new FileWriter(file.getAbsoluteFile()); 

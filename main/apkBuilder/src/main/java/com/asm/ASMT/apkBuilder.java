@@ -3,7 +3,7 @@ import java.io.*;
 import android.os.*;
 import android.content.res.*;
 import android.content.*;
-import android.support.v4.content.*;
+
 import java.util.jar.*;
 import android.app.*;
 import com.asm.lib.io.StringWriterOutputStream;

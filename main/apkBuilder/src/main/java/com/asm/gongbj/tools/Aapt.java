@@ -75,6 +75,39 @@ public class Aapt
 		return cmd + "\n" + apkBuilder.runAapt(cmd);
 	}
 
+	public String generateApk(String apkPath, String androidManifestPath, String resPath[], String jarPath[],AaptOption option){
+
+		String cmd = "package -v -f -M ";
+		cmd += androidManifestPath;
+		for(String tmp : resPath){
+			cmd = cmd + " -S " + tmp;
+		}
+		/*
+		 for(String tmp : jarPath){
+		 cmd = cmd + " -I " + tmp;
+		 }*/
+		cmd += " -I " + androidJarPath;
+		cmd = cmd + " -F " + apkPath;
+		
+		//option control
+		if(option.debugable==true){
+			cmd += " --debug-mode";
+		}
+		if(option.minSdkVersion!=null){
+			cmd += " --min-sdk-version " + option.minSdkVersion;
+		}
+		if(option.targetSdkVersion!=null){
+			cmd += " --target-sdk-version " + option.targetSdkVersion;
+		}
+		if(option.versionCode!=null){
+			cmd += " --version-code" + option.versionCode;
+		}
+		if(option.versionName!=null){
+			cmd += " --version-name " + option.versionName;
+		}
+		return cmd + "\n" + apkBuilder.runAapt(cmd);
+	}
+	
 	public String addFileInApk(String apkPath, String targetFilePath){
 		String cmd = "add -f -k ";
 		cmd += apkPath;

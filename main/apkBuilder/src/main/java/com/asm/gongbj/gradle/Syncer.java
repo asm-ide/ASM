@@ -8,6 +8,7 @@ import android.widget.*;
 import com.asm.gongbj.tools.*;
 import com.asm.ASMT.*;
 import android.content.*;
+import com.asm.gongbj.gradle.repository.*;
 /**
  @author GongBJ
  */
@@ -49,14 +50,20 @@ public class Syncer
 		}
 		syncData = new SyncData();
 		progressListener.onProgressStart();
-		try
-		{
-			scanGradleProject(mainGradlePath);
+		try{
+			syncData.setTopLevelGradleInfo(new ProjectManager(ac).getToplevelGradleInfo(androidProjectPath));
+			try
+			{
+				scanGradleProject(mainGradlePath);
+			}
+			catch (ProgressFail e)
+			{
+				errorListener.onError(e);
+			}
+		}catch(ProgressFail pf){
+			errorListener.onError(pf);
 		}
-		catch (ProgressFail e)
-		{
-			errorListener.onError(e);
-		}
+		
 		progressListener.onprogressFinish();
 		return syncData;
 	}
@@ -68,6 +75,7 @@ public class Syncer
 		GradleInfo gi = (new ProjectManager(ac)).getGradleProjectInfo(path);
 		syncData.addGradleInfo(name,gi);
 		//Sync jar info
+		MavenScaner mavenScaner = new MavenScaner();
 		for(CompileInfo ci : gi.dependencies.compile){
 			if(ci.type == CompileInfo.TYPE_FILETREE){
 				syncFileTree(ci,path);
@@ -82,7 +90,8 @@ public class Syncer
 				}
 				
 			}else if(ci.type == CompileInfo.TYPE_MAVEN){
-				Toast.makeText(ac,"Maven Project id not supported now.",Toast.LENGTH_SHORT);
+				//Toast.makeText(ac,"Maven Project id not supported now.",Toast.LENGTH_SHORT);
+				mavenScaner.downloadMaven(syncData,ci.value1);
 			}else if(ci.type == CompileInfo.TYPE_PROJECT){
 				String pathh = ci.value1;
 				String fullPath = androidProjectPath + "/" + pathh;

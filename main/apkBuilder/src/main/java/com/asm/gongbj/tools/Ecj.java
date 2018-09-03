@@ -12,7 +12,7 @@ public class Ecj
 	}
 	public String compile(String mainSourcePath, String sourcePath[], String destPath,String jar[]){
 		String command = "";
-		command += "-nowarn -1.5 ";
+		command += "-nowarn -7 ";
 		command += "-cp " + androidJarPath + " ";
 		command += "-d " + destPath + " ";
 		for(String t : jar){

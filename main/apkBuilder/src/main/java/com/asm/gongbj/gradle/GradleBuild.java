@@ -6,14 +6,21 @@ import com.asm.gongbj.tools.*;
 import com.asm.lib.io.*;
 import java.io.*;
 import java.util.*;
+import com.asm.gongbj.gradle.info.*;
+import com.android.sdklib.build.*;
 
 
 public class GradleBuild
 {
 	private Activity ac;
 	private int resultValue;
+	
 	private ProgressListener progL;
 	private ErrorListener errorL;
+	
+	
+	private String androidGradlePath, mainGradlePath;
+	
 	public GradleBuild(Activity con){
 		ac = con;
 	}
@@ -24,6 +31,9 @@ public class GradleBuild
 		errorL = error;
 	}
 	public void run(String androidGradlePath, String mainGradlePath){
+		this.androidGradlePath = androidGradlePath;
+		this.mainGradlePath = mainGradlePath;
+		
 		//Ready
 		if(progL==null){
 			throw new RuntimeException("Cannot start building because ProgressListener is null");
@@ -241,7 +251,7 @@ public class GradleBuild
 		//Start aapt
 		Aapt aapt = new Aapt(androidJar);
 		
-		String apkPath = mainGradlePath + "/build/bin/app.apk";
+		String apkPath = mainGradlePath + "/build/bin/app.res";
 		String manifestPath = mainGradlePath+"/src/main/AndroidManifest.xml";
 		String resPath[] =  new String[syncD.getSyncedProjectPath().length];
 		for(int i = 0; i < syncD.getSyncedProjectPath().length; i++){
@@ -269,11 +279,42 @@ public class GradleBuild
 			}
 			if(resultValue==0)return;
 		}
+		/*
+		{
+			List<String> cmd = new ArrayList<>();
+			String des = mainGradlePath + "/build/bin/app.res.apk";
+			String apk = mainGradlePath + "/build/bin/app.temp";
+			cmd.add(des);
+			cmd.add("-v");
+			cmd.add("-u");
+			cmd.add("-z");
+			cmd.add(apk);
+			for(String jp : syncD.getScanedJar()){
+				cmd.add("-rj");
+				cmd.add(jp);
+			}
+			StringWriterOutputStream swos = new StringWriterOutputStream();
+			G.ide.fnRedirectOutput(swos);
+			int rc = G.ide.fnApkBuilder(cmd.toArray(new String[cmd.size()]));
+			resultValue = rc== 0 ? 1 : 0;
+			if(resultValue==0){
+				resultValue = 0;
+				ProgressFail pf = new ProgressFail("Apk building failed",des,"Gradle");
+				AnalysisData ad2 = new AnalysisData();
+				ad2.exitValue=1;
+				ad2.fullLog=swos.toString();
+				ad2.time=0;
+				pf.analysisData = ad2;
+				errorL.onError(pf);
+				return;
+			}
+		}
+		*/
 		
 		//sign apk
 		{
 			progL.onProgressChange("Apk sign...");
-			String cmd = "-M auto-testkey -I " + mainGradlePath + "/build/bin/app.apk -O " + mainGradlePath + "/build/bin/appSigned.apk";
+			String cmd = "-M auto-testkey -I " + mainGradlePath + "/build/bin/app.res -O " + mainGradlePath + "/build/bin/appSigned.apk";
 			long start=0;
 			int i, rc = 99;
 			AnalysisData ad2 = new AnalysisData();
@@ -312,6 +353,25 @@ public class GradleBuild
 		progL.onprogressFinish();
 		
 	}
+	
+	private AaptOption mergeOptions(SyncData syncData){
+		AaptOption aaptOption = new AaptOption();
+		
+		//get max min-sdk-version
+		int value = 0;
+		for(GradleInfo gi : syncData.getGradleInfo()){
+			if(!(gi.fullPath.equals(mainGradlePath))){
+				if(value==-1){
+					value = Integer.parseInt(gi.android.defaultConfig.minSdkVersion);
+				}else{
+					value = Math.max(Integer.parseInt(gi.android.defaultConfig.minSdkVersion),value);
+				}
+			}
+		}
+		
+		return aaptOption;
+	}
+	
 	public static interface ProgressListener{
 
 		public void onProgressStart();
