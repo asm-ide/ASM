@@ -7,206 +7,129 @@ import java.util.Collection;
 import java.util.ArrayList;
 
 
-@ProtectedValuePolicy(requiresAnnotation = false)
-public class ProtectedList<T> implements Value<T>, List<T>
+public class ProtectedList<T> extends ProtectedValue<List<T>> implements List<T>
 {
-	private final ProtectedValue<List<T>> mValue;
-	
-	
 	public ProtectedList() {
-		mValue = new ProtectedValue<>(new ArrayList<T>());
+		super(new ArrayList<T>());
 	}
 	
-	
-	class PrA<T> extends ProtectedValue<T>
-	{
-		public PrA(T in) {
-			super(in);
-		}
-		
-		@Override
-		protected int getDepth() {
-			return 3;
-		}
+	public ProtectedList(List<T> list) {
+		super(list);
 	}
 	
 	
 	@Override
 	public int size() {
-		return 0;
-	}
-
-	@Override
-	public boolean isEmpty()
-	{
-		// TODO: Implement this method
-		return false;
-	}
-
-	@Override
-	public boolean contains(Object p1)
-	{
-		// TODO: Implement this method
-		return false;
-	}
-
-	@Override
-	public Iterator<T> iterator()
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public Object[] toArray()
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public <T extends Object> T[] toArray(T[] p1)
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public boolean add(T p1)
-	{
-		// TODO: Implement this method
-		return false;
-	}
-
-	@Override
-	public boolean remove(Object p1)
-	{
-		// TODO: Implement this method
-		return false;
-	}
-
-	@Override
-	public boolean containsAll(Collection<?> p1)
-	{
-		// TODO: Implement this method
-		return false;
-	}
-
-	@Override
-	public boolean addAll(Collection<? extends T> p1)
-	{
-		// TODO: Implement this method
-		return false;
-	}
-
-	@Override
-	public boolean addAll(int p1, Collection<? extends T> p2)
-	{
-		// TODO: Implement this method
-		return false;
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> p1)
-	{
-		// TODO: Implement this method
-		return false;
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> p1)
-	{
-		// TODO: Implement this method
-		return false;
-	}
-
-	@Override
-	public void clear()
-	{
-		// TODO: Implement this method
-	}
-
-	@Override
-	public T get(int p1)
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public T set(int p1, T p2)
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public void add(int p1, T p2)
-	{
-		// TODO: Implement this method
-	}
-
-	@Override
-	public T remove(int p1)
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public int indexOf(Object p1)
-	{
-		// TODO: Implement this method
-		return 0;
-	}
-
-	@Override
-	public int lastIndexOf(Object p1)
-	{
-		// TODO: Implement this method
-		return 0;
-	}
-
-	@Override
-	public ListIterator<T> listIterator()
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public ListIterator<T> listIterator(int p1)
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public List<T> subList(int p1, int p2)
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public void set(T value)
-	{
-		// TODO: Implement this method
-	}
-
-	@Override
-	public T get()
-	{
-		// TODO: Implement this method
-		return null;
-	}
-
-	@Override
-	public T getOrDefault(T defaultValue)
-	{
-		// TODO: Implement this method
-		return null;
+		return get().size();
 	}
 	
+	@Override
+	public boolean isEmpty() {
+		return get().isEmpty();
+	}
 	
+	@Override
+	public boolean contains(Object data) {
+		return get().contains(data);
+	}
+	
+	@Override
+	public Iterator<T> iterator() {
+		return get().iterator();
+	}
+	
+	@Override
+	public Object[] toArray() {
+		return get().toArray();
+	}
+	
+	@Override
+	public <T extends Object> T[] toArray(T[] type) {
+		return get().toArray(type);
+	}
+	
+	@Override
+	public boolean add(T data) {
+		return get().add(data);
+	}
+	
+	@Override
+	public boolean remove(Object data) {
+		return get().remove(data);
+	}
+	
+	@Override
+	public boolean containsAll(Collection<?> list) {
+		return get().containsAll(list);
+	}
+	
+	@Override
+	public boolean addAll(Collection<? extends T> c) {
+		return get().addAll(c);
+	}
+	
+	@Override
+	public boolean addAll(int index, Collection<? extends T> c) {
+		return get().addAll(index, c);
+	}
+	
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		return get().removeAll(c);
+	}
+	
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return get().retainAll(c);
+	}
+	
+	@Override
+	public void clear() {
+		get().clear();
+	}
+	
+	@Override
+	public T get(int index) {
+		return get().get(index);
+	}
+	
+	@Override
+	public T set(int index, T value) {
+		return get().set(index, value);
+	}
+	
+	@Override
+	public void add(int index, T value) {
+		get().add(index, value);
+	}
+	
+	@Override
+	public T remove(int index) {
+		return get().remove(index);
+	}
+	
+	@Override
+	public int indexOf(Object o) {
+		return get().indexOf(o);
+	}
+	
+	@Override
+	public int lastIndexOf(Object o) {
+		return get().lastIndexOf(o);
+	}
+	
+	@Override
+	public ListIterator<T> listIterator() {
+		return get().listIterator();
+	}
+	
+	@Override
+	public ListIterator<T> listIterator(int index) {
+		return get().listIterator(index);
+	}
+	
+	@Override
+	public List<T> subList(int start, int end) {
+		return get().subList(start, end);
+	}
 }

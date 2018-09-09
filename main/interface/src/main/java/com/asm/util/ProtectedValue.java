@@ -39,7 +39,7 @@ public class ProtectedValue<T> implements Value<T>
 	@SuppressWarnings("unsafe")
 	public ProtectedValue(T value) {
 		this.mValue = value;
-		this.mClassName = Reflection.getCallingStackTrace(2).getClassName();
+		this.mClassName = Reflection.getCallingStackTrace(getDepth()).getClassName();
 		
 		try {
 			Class clazz = Class.forName(mClassName);
@@ -88,6 +88,12 @@ public class ProtectedValue<T> implements Value<T>
 	
 	protected int getDepth() {
 		return 2;
+	}
+	
+	// called by native
+	@SuppressWarnings("UnusedDeclaration")
+	private void doCheckAccess() {
+		checkAccess(getDepth() + 1); // TODO: if native applied, change +1
 	}
 	
 	protected void checkAccess(int depth) {
