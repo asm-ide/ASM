@@ -1,6 +1,5 @@
 package com.asm.util;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -20,7 +19,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * instantiated this class can get. (but still other class can
  * access by using reflection)
  */
-@Documented
 @Retention(RUNTIME)
 @Target(TYPE, CONSTRUCTOR, METHOD)
 public @interface ProtectedValuePolicy
