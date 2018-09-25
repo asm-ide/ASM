@@ -30,6 +30,7 @@ public class GradleBuild
 	public void setErrorListener(ErrorListener error){
 		errorL = error;
 	}
+	
 	public void run(String androidGradlePath, String mainGradlePath){
 		this.androidGradlePath = androidGradlePath;
 		this.mainGradlePath = mainGradlePath;
@@ -92,6 +93,7 @@ public class GradleBuild
 			resultValue=0;
 		}
 		
+		if(resultValue==0)return;
 		
 		//Start Ecj
 		Ecj ecj = new Ecj(androidJar);
@@ -107,9 +109,7 @@ public class GradleBuild
 		progL.onProgressChange("Java compiling...");
 		String log = ecj.compile(ms,projects.toArray(new String[projects.size()]),mainGradlePath+"/build/bin/class",syncD.getScanedJar());
 		AnalysisData ad = EcjResultAnalyze.analysis(log);
-		if(ad.exitValue==0){
-			
-		}else{
+		if(!(ad.exitValue==0)){
 			resultValue = 0;
 			ProgressFail pf = new ProgressFail("Java compile failed",mainGradlePath,"Gradle");
 			pf.analysisData = ad;
@@ -231,12 +231,12 @@ public class GradleBuild
 			{
 				RandomAccessFile ra = new RandomAccessFile(new File(desPath), "rw");
 				ra.seek(6);
-				progL.onProgressChange(String.valueOf(ra.read()));
-				//if(ra.read()==54){
+				//progL.onProgressChange(String.valueOf(ra.read()));
+				//i7f(ra.read()==54){
 					ra.seek(6);
 					ra.write(53);
 					ra.seek(6);
-				progL.onProgressChange(String.valueOf(ra.read()));
+				//progL.onProgressChange(String.valueOf(ra.read()));
 				//}
 				ra.close();
 			}
@@ -251,13 +251,12 @@ public class GradleBuild
 		//Start aapt
 		Aapt aapt = new Aapt(androidJar);
 		
-		String apkPath = mainGradlePath + "/build/bin/app.res";
-		String manifestPath = mainGradlePath+"/src/main/AndroidManifest.xml";
+		String apkPath = mainGradlePath + "/build/bin/app.temp";
+		String manifestPath = syncD.getOutManifestPath();
 		String resPath[] =  new String[syncD.getSyncedProjectPath().length];
 		for(int i = 0; i < syncD.getSyncedProjectPath().length; i++){
 			resPath[i] = syncD.getSyncedProjectPath()[i] + "/src/main/res";
 		}
-		//resPath[resPath.length-1] = mainGradlePath+"/src/main/res";
 		progL.onProgressChange("APK building...");
 		{
 			AnalysisData ad2 = AaptResultAnalyze.analysis(aapt.generateApk(apkPath,manifestPath,resPath,syncD.getScanedJar()));
@@ -279,10 +278,10 @@ public class GradleBuild
 			}
 			if(resultValue==0)return;
 		}
-		/*
+		//APKBUILDER run
 		{
 			List<String> cmd = new ArrayList<>();
-			String des = mainGradlePath + "/build/bin/app.res.apk";
+			String des = mainGradlePath + "/build/bin/app.res";
 			String apk = mainGradlePath + "/build/bin/app.temp";
 			cmd.add(des);
 			cmd.add("-v");
@@ -309,12 +308,12 @@ public class GradleBuild
 				return;
 			}
 		}
-		*/
+		
 		
 		//sign apk
 		{
 			progL.onProgressChange("Apk sign...");
-			String cmd = "-M auto-testkey -I " + mainGradlePath + "/build/bin/app.res -O " + mainGradlePath + "/build/bin/appSigned.apk";
+			String cmd = "-M auto-testkey -I " + mainGradlePath + "/build/bin/app.res -O " + mainGradlePath + "/build/bin/app.apk";
 			long start=0;
 			int i, rc = 99;
 			AnalysisData ad2 = new AnalysisData();
@@ -345,7 +344,7 @@ public class GradleBuild
 				pf.analysisData = ad2;
 				errorL.onError(pf);
 			}
-			if(resultValue != 0){
+			if(resultValue == 0){
 				return;
 			}
 		}
@@ -354,23 +353,6 @@ public class GradleBuild
 		
 	}
 	
-	private AaptOption mergeOptions(SyncData syncData){
-		AaptOption aaptOption = new AaptOption();
-		
-		//get max min-sdk-version
-		int value = 0;
-		for(GradleInfo gi : syncData.getGradleInfo()){
-			if(!(gi.fullPath.equals(mainGradlePath))){
-				if(value==-1){
-					value = Integer.parseInt(gi.android.defaultConfig.minSdkVersion);
-				}else{
-					value = Math.max(Integer.parseInt(gi.android.defaultConfig.minSdkVersion),value);
-				}
-			}
-		}
-		
-		return aaptOption;
-	}
 	
 	public static interface ProgressListener{
 

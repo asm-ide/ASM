@@ -23,20 +23,20 @@ public class AaptResultAnalyze
 			}else if(line.toLowerCase().contains("error")){
 				line = line.trim();
 				if(line.startsWith("ERROR:")){
-					AnalysisData.errData ed = new AnalysisData.errData();
+					AnalysisData.ErrData ed = new AnalysisData.ErrData();
 					ed.filePath = null;
 					ed.lineNumber = -1;
 					ed.comment = line.substring("ERROR:".length(),line.length());
 					data.errData.add(ed);
 					
 				}else if(line.contains("error: Error:")){
-					AnalysisData.errData ed = new AnalysisData.errData();
+					AnalysisData.ErrData ed = new AnalysisData.ErrData();
 					ed.filePath = line.substring(0,line.indexOf(":")).trim();
 					ed.lineNumber = Integer.parseInt(line.substring(line.indexOf(":")+1,line.indexOf(":",line.indexOf(":")+1)).trim()+0);
 					ed.comment = line.substring(line.indexOf("Error:")+"Error:".length());
 					data.errData.add(ed);
 				}else if(line.contains("error:")){
-					AnalysisData.errData ed = new AnalysisData.errData();
+					AnalysisData.ErrData ed = new AnalysisData.ErrData();
 					ed.filePath = line.substring(0,line.indexOf(":")).trim();
 					ed.lineNumber = -1;
 					ed.comment = line.substring(line.indexOf("error:")+"error:".length());

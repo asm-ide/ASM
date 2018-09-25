@@ -1,7 +1,7 @@
 package com.asm.gongbj.gradle.sync;
-import com.asm.gongbj.gradle.*;
-import java.util.*;
 import com.asm.gongbj.gradle.info.*;
+import java.io.*;
+import java.util.*;
 public class SyncData
 {
 	
@@ -9,6 +9,8 @@ public class SyncData
 	private ArrayList<GradleInfo> gradleInfo;
 	private ArrayList<String> scaned;
 	private TopLevelGradleInfo topLevelGradleInfo;
+	private String main;
+	
 	public SyncData(){
 		projectName = new ArrayList<String>();
 		gradleInfo = new ArrayList<GradleInfo>();
@@ -65,4 +67,49 @@ public class SyncData
 		}
 		return data;
 	}
+	
+	public String getMainProjectName(){
+		return main;
+	}
+	public void setMainProjectName(String name){
+		main = name;
+	}
+	
+	public String getMainMaifestPath(){
+		return getGradleInfo(main).fullPath + "/build/bin/injected/AndroidManifest.xml";
+	}
+	
+	public String[] getLibManifestPath(){
+		List<String> list = new ArrayList<>();
+		
+		for(String name : getSyncedProjectName()){
+			if(!(name.equals(main))){
+				list.add(getGradleInfo(name).fullPath + "/build/bin/injected/AndroidManifest.xml");
+			}
+		}
+		return list.toArray(new String[list.size()]);
+	}
+	
+	public File[] getLibManifestFile(){
+		List<File> list = new ArrayList<>();
+
+		for(String name : getSyncedProjectName()){
+			if(!(name.equals(main))){
+				list.add(new File(getGradleInfo(name).fullPath + "/build/bin/injected/AndroidManifest.xml"));
+			}
+		}
+		return list.toArray(new File[list.size()]);
+	}
+	
+	public String getOutManifestPath(){
+		return getGradleInfo(main).fullPath + "/build/bin/merged/AndroidManifest.xml";
+	}
+	private boolean equals(String path1, String path2){
+		String str1 = new File(path1).getAbsolutePath();
+		String str2 = new File(path2).getAbsolutePath();
+		
+		return str1.equals(str2);
+	}
+	
+	
 }

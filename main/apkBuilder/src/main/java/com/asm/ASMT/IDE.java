@@ -1,36 +1,13 @@
 package com.asm.ASMT;
 
-import com.asm.lib.io.StringWriterOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Build.VERSION;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import android.content.pm.PackageManager;
-import android.content.*;
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.content.res.*;
-import java.io.*;
-
-import android.view.*;
-import android.view.View.*;
-import android.widget.*;
-import android.os.Environment;
+import android.os.*;
 import android.util.*;
+import com.asm.lib.io.*;
+import java.io.*;
+import java.security.*;
+
+import java.lang.Process;
 //##################################################################
 /** This class provides access to the Java development tools.
  * 
@@ -167,11 +144,13 @@ public int fnApkBuilder (String commandLine)
   return fnApkBuilder (fnTokenize(commandLine));
 }
 //===================================================================
+public int rc;
 public int fnApkBuilder (String[] args) 
 //===================================================================
 {
   long start=0;
-  int i, rc = 99;
+  int i = 99;
+  
   try
   {
     // show arguments
@@ -180,7 +159,9 @@ public int fnApkBuilder (String[] args)
     for (i=0;i<args.length;i++) System.out.println(args[i]);
     System.out.println("");
     // call ApkBuilder
-    rc = com.android.sdklib.build.ApkBuilderMain.main(args);
+	rc = com.android.sdklib.build.ApkBuilderMain.main(args);
+	
+	//System.setSecurityManager(null);
   }
   catch (Throwable t)
   {

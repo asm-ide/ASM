@@ -1,14 +1,13 @@
 package com.asm.gongbj.gradle;
-import com.asm.gongbj.*;
-import java.io.*;
-import com.asm.gongbj.gradle.sync.*;
-import com.asm.gongbj.gradle.info.*;
 import android.app.*;
-import android.widget.*;
-import com.asm.gongbj.tools.*;
 import com.asm.ASMT.*;
-import android.content.*;
+import com.asm.gongbj.gradle.info.*;
 import com.asm.gongbj.gradle.repository.*;
+import com.asm.gongbj.gradle.sync.*;
+import com.asm.gongbj.tools.*;
+import java.io.*;
+import java.nio.charset.*;
+import java.nio.file.*;
 /**
  @author GongBJ
  */
@@ -50,22 +49,37 @@ public class Syncer
 		}
 		syncData = new SyncData();
 		progressListener.onProgressStart();
+		
 		try{
 			syncData.setTopLevelGradleInfo(new ProjectManager(ac).getToplevelGradleInfo(androidProjectPath));
-			try
-			{
-				scanGradleProject(mainGradlePath);
-			}
-			catch (ProgressFail e)
-			{
-				errorListener.onError(e);
-			}
 		}catch(ProgressFail pf){
 			errorListener.onError(pf);
+			return null;
+		}
+		try{
+			syncData.setMainProjectName(mainGradlePath.substring(mainGradlePath.lastIndexOf("/")+1,mainGradlePath.length()));
+			scanGradleProject(mainGradlePath);
+		}catch (ProgressFail e){
+			errorListener.onError(e);
+			return null;
+		}
+		//Merge Manifest
+		ManifestManager mm = new ManifestManager();
+		AnalysisData an = mm.merge(
+								new File(syncData.getMainMaifestPath()),
+								new File(syncData.getOutManifestPath()),
+								syncData.getLibManifestFile()
+								);
+		
+		if(an.exitValue != 0){
+			ProgressFail e = new ProgressFail("Fail to Merge Manifest",syncData.getOutManifestPath(),"Gradle");
+			e.setAnalysisData(an);
 		}
 		
 		progressListener.onprogressFinish();
 		return syncData;
+		
+		
 	}
 
 	private void scanGradleProject(String path)throws ProgressFail{
@@ -75,7 +89,7 @@ public class Syncer
 		GradleInfo gi = (new ProjectManager(ac)).getGradleProjectInfo(path);
 		syncData.addGradleInfo(name,gi);
 		//Sync jar info
-		MavenScaner mavenScaner = new MavenScaner();
+		
 		for(CompileInfo ci : gi.dependencies.compile){
 			if(ci.type == CompileInfo.TYPE_FILETREE){
 				syncFileTree(ci,path);
@@ -91,6 +105,8 @@ public class Syncer
 				
 			}else if(ci.type == CompileInfo.TYPE_MAVEN){
 				//Toast.makeText(ac,"Maven Project id not supported now.",Toast.LENGTH_SHORT);
+				//Temp disable Maven
+				MavenScaner mavenScaner = new MavenScaner();
 				mavenScaner.downloadMaven(syncData,ci.value1);
 			}else if(ci.type == CompileInfo.TYPE_PROJECT){
 				String pathh = ci.value1;
@@ -106,6 +122,8 @@ public class Syncer
 			}
 		}
 		
+		//inject manifest
+		inject(path,gi);
 		
 		//############
 		//Sync R
@@ -116,16 +134,7 @@ public class Syncer
 		if(!gen.exists())gen.mkdirs();
 		if(gen.isFile())gen.delete(); gen.mkdirs();
 		Aapt aapt = new Aapt(Aapt.getAndroidJarPath());
-		/*
-		try
-		{
-			aapt = new Aapt(Aapt.requestAndroidJar(ac));
-			
-		}
-		catch (Exception e)
-		{
-			errorListener.onError(new ProgressFail("cannot run Aapt\n" + e.toString(),null,"sync"));
-		}*/
+		
 		String manifest = path + "/src/main/AndroidManifest.xml";
 		String res = path + "/src/main/res";
 		
@@ -135,11 +144,33 @@ public class Syncer
 			ProgressFail f = new ProgressFail("cannot generate R.java",null,"sync");
 			f.setAnalysisData(ad);
 			errorListener.onError(f);
+			//return;
 			//Toast.makeText(ac,ad.toString(),Toast.LENGTH_LONG).show();
 		}
 		
+
 		
 	}
+	
+	private void inject(String path, GradleInfo gi){
+		String targetXml = path + "/src/main/AndroidManifest.xml";
+		String desXml = path + "/build/bin/injected/AndroidManifest.xml";
+		File des = new File(desXml);
+		if(!(des.getParentFile().exists())){
+			des.getParentFile().mkdirs();
+		}
+		try{
+			new ManifestManager().inject(gi,targetXml,desXml);
+		}catch(Exception e){
+			e.toString();
+		}
+	}
+	
+	private String readFile(String path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		return new String(encoded, encoding);
+	}
+	
 	private void syncFileTree(CompileInfo ci,String mpath){
 		String path = ci.value1;
 		String name = ci.value2;

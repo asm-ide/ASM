@@ -9,16 +9,25 @@ public class AnalysisData
 	public int exitValue;
 	public String[] cmd;
 	public int time;
-	public List<errData> errData = new ArrayList<errData>();
-	public static class errData{
-		public errData(){
+	public List<ErrData> errData = new ArrayList<ErrData>();
+	public static class ErrData{
+		public ErrData(){
 			
 		}
+		public static final int ERROR = 1;
+		public static final int WARNING = 2;
+		public static final int INFO = 3;
+		
+		
 		public String filePath;
+		//for ManifestMerger
+		public String filePath2;
+		//
 		public int lineNumber;
 		public String comment;
+		
 		//for Ecj
-		public int type;
+		public int type; // Also for ManifestMerger
 		public String line;
 		public String errorCode;
 		//
@@ -31,7 +40,7 @@ public class AnalysisData
 			str += "\n time : ";
 			str += String.valueOf(time);
 			str += " \nfullLog : " + fullLog + "\n\n";
-			for(errData e : this.errData){
+			for(ErrData e : this.errData){
 				if(e!=null)str = str + "\n\ncomment : " + e.comment.toString() + "\nfilePath : " + e.filePath.toString() + "\nlineNumber : "+ String.valueOf(e.lineNumber);
 			}
 			

@@ -56,14 +56,16 @@ public class MavenScaner
 		//download all links
 		for(String str : urls){
 			String p = Environment.getExternalStorageDirectory().toString() + "/.ASM/Maven/" +  str.substring(str.indexOf("/"),str.lastIndexOf("/")+1);
+			File save = new File(p + "/" + str.substring(str.lastIndexOf("/") + 1));
 			
-			File f = new File(p);
-			if(!f.exists())f.mkdirs();
 			
-			File save = new File(f.getAbsolutePath() + "/" + str.substring(str.lastIndexOf("/") + 1));
+			if(!save.getParentFile().exists())save.getParentFile().mkdirs();
+			
+			
 			
 			if(!save.exists()){
-				boolean suc = downloadFile(str,save.getAbsolutePath());
+				cleanFile(save);
+				boolean suc = downloadFile(str,save);
 				if(suc){
 					syncData.addScanedJar(save.getAbsolutePath());
 				}
@@ -114,7 +116,7 @@ public class MavenScaner
 						}
 					}
 				}
-
+				
 				//
 
 				return;
@@ -170,6 +172,7 @@ public class MavenScaner
 			URL u = new URL(pomUrl);
 			input = u.openStream();
 			model = new MavenXpp3Reader().read(new InputStreamReader(input));
+			
 			return model;
 		}catch(Throwable e){
 			return null;
@@ -265,54 +268,66 @@ public class MavenScaner
 
 
 
-	public boolean downloadFile(String urlPath, String savePath) {
+	public boolean downloadFile(String urlPath, File savePath) {
 		int count;
 		try {
-			
 			progL.onDownloadStart(urlPath);
-			URL url = new URL(urlPath);
-			URLConnection conection = url.openConnection();
-			conection.connect();
-
-			// this will be useful so that you can show a tipical 0-100%
-			// progress bar
-			int lenghtOfFile = conection.getContentLength();
-
-			// download the file
-			InputStream input = new BufferedInputStream(url.openStream(),
-														8192);
-
-			// Output stream
-			OutputStream output = new FileOutputStream(savePath);
-
-			byte data[] = new byte[1024];
-
-			long total = 0;
-
-			while ((count = input.read(data)) != -1) {
-				total += count;
-				// publishing the progress....
-				// After this onProgressUpdate will be called
-				progL.onDownloadProgressChanged(urlPath,(int) ((total * 100) / lenghtOfFile));
+			
+			//while(savePath.length()==0){
+				savePath.delete();
+				URL url = new URL(urlPath);
 				
-				// writing data to file
-				output.write(data, 0, count);
-			}
+				URLConnection conection = url.openConnection();
+				conection.connect();
 
-			// flushing output
-			output.flush();
+				// this will be useful so that you can show a tipical 0-100%
+				// progress bar
+				int lenghtOfFile = conection.getContentLength();
 
-			// closing streams
-			output.close();
-			input.close();
+				// download the file
+				InputStream input = new BufferedInputStream(url.openStream(),
+															8192);
+
+				// Output stream
+				OutputStream output = new FileOutputStream(savePath);
+
+				byte data[] = new byte[1024];
+
+				long total = 0;
+
+				while ((count = input.read(data)) != -1) {
+					total += count;
+					// publishing the progress....
+					// After this onProgressUpdate will be called
+					progL.onDownloadProgressChanged(urlPath,(int) ((total * 100) / lenghtOfFile));
+
+					// writing data to file
+					output.write(data, 0, count);
+				}
+
+				// flushing output
+				output.flush();
+
+				// closing streams
+				output.close();
+				input.close();
+			//}
+			
+			
 			progL.onDownloadEnd();
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			Log.e("Error: ", e.getMessage());
 			return false;
 		}
 	}
 
-
+	
+	public void cleanFile(File file){
+		final File to = new File(file.getAbsolutePath() + System.currentTimeMillis());
+		file.renameTo(to);
+		to.delete();
+	}
 
 }

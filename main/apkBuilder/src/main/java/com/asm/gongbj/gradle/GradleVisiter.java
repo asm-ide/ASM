@@ -29,6 +29,7 @@ public abstract class GradleVisiter
 			}
 		}
 		count = 0;
+		code = code.replaceAll("(\\n+)\\{","{");
 		code = code.replace("{","{\n");
 		code = code.replace("}","}\n");
 		String[] str = code.split("\n");

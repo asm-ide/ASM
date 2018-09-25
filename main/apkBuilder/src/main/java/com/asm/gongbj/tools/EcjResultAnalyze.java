@@ -34,7 +34,7 @@ public class EcjResultAnalyze
 					data.exitValue = Integer.parseInt(t);
 				}
 			}else{
-				AnalysisData.errData ed = get(line);
+				AnalysisData.ErrData ed = get(line);
 				if(ed!=null){
 					data.errData.add(ed);
 				}
@@ -43,7 +43,7 @@ public class EcjResultAnalyze
 		return data;
 	}
 	
-	private static AnalysisData.errData get(String data){
+	private static AnalysisData.ErrData get(String data){
 		String filePath="";
 		String ErrLineCode="";
 		String ErrCode="";
@@ -65,7 +65,7 @@ public class EcjResultAnalyze
 			}else{
 				//ErrCode="";
 			}
-			AnalysisData.errData ed = new AnalysisData.errData();
+			AnalysisData.ErrData ed = new AnalysisData.ErrData();
 			ed.comment = explane;
 			ed.errorCode = ErrCode;
 			ed.line = ErrLineCode;
@@ -87,7 +87,7 @@ public class EcjResultAnalyze
 				//ErrCode="";
 			}
 
-			AnalysisData.errData ed = new AnalysisData.errData();
+			AnalysisData.ErrData ed = new AnalysisData.ErrData();
 			ed.comment = explane;
 			ed.errorCode = ErrCode;
 			ed.line = ErrLineCode;

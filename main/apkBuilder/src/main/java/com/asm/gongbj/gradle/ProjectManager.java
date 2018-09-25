@@ -330,7 +330,7 @@ public class ProjectManager{
 					//Toast.makeText(activity,line,Toast.LENGTH_SHORT).show();
 
 					if(line.contains("compile")){
-						line = line.replace("compile","").trim();
+						line = line.substring("compile".length()+1).trim();
 						if(line.startsWith("'")&&line.endsWith("'")){
 							//Maven
 							//value 1 : hole text in '...'
