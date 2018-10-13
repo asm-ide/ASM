@@ -89,6 +89,7 @@ public class GradleBuild
 		try{
 			syncD = s.sync(androidGradlePath,mainGradlePath);
 		}catch(Exception e){
+			e.printStackTrace();
 			errorL.onError(new ProgressFail("Error while syncing...",androidGradlePath,"sync"));
 			resultValue=0;
 		}
@@ -102,10 +103,14 @@ public class GradleBuild
 		String ms = mainGradlePath+"/src/main/java";
 		for(String str : syncD.getSyncedProjectPath()){
 			String p1 = str + "/src/main/java";
-			String p2 = str + "/build/gen";
+//			String p2 = str + "/build/gen";
 			if(new File(p1).exists()&&!p1.equals(ms))projects.add(p1);
-			if(new File(p2).exists())projects.add(p2);
+//			if(new File(p2).exists())projects.add(p2);
 		}
+		//######################################
+		addToList(projects, syncD.getRPaths());
+		//######################################
+		
 		progL.onProgressChange("Java compiling...");
 		String log = ecj.compile(ms,projects.toArray(new String[projects.size()]),mainGradlePath+"/build/bin/class",syncD.getScanedJar());
 		AnalysisData ad = EcjResultAnalyze.analysis(log);
@@ -171,7 +176,7 @@ public class GradleBuild
 			return;
 		}
 		
-		//Start Merge
+		//Start Dex Merge
 		{
 			progL.onProgressChange("dx merge...");
 			DexMerge dxm = new DexMerge();
@@ -253,10 +258,14 @@ public class GradleBuild
 		
 		String apkPath = mainGradlePath + "/build/bin/app.temp";
 		String manifestPath = syncD.getOutManifestPath();
-		String resPath[] =  new String[syncD.getSyncedProjectPath().length];
-		for(int i = 0; i < syncD.getSyncedProjectPath().length; i++){
-			resPath[i] = syncD.getSyncedProjectPath()[i] + "/src/main/res";
-		}
+//		String resPath[] =  new String[syncD.getSyncedProjectPath().length];
+//		for(int i = 0; i < syncD.getSyncedProjectPath().length; i++){
+//			resPath[i] = syncD.getSyncedProjectPath()[i] + "/src/main/res";
+//		}
+		//#############################
+		String resPath[] = syncD.getResources().toArray(new String[syncD.getResources().size()]);
+		//############################
+		
 		progL.onProgressChange("APK building...");
 		{
 			AnalysisData ad2 = AaptResultAnalyze.analysis(aapt.generateApk(apkPath,manifestPath,resPath,syncD.getScanedJar()));
@@ -353,6 +362,11 @@ public class GradleBuild
 		
 	}
 	
+	private void addToList(List<String> target, List<String> toAdd){
+		for(String str : toAdd){
+			target.add(str);
+		}
+	}
 	
 	public static interface ProgressListener{
 

@@ -8,6 +8,7 @@ import com.asm.gongbj.tools.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.nio.file.*;
+import java.util.*;
 /**
  @author GongBJ
  */
@@ -28,7 +29,7 @@ public class Syncer
 	/**
 	 *this method sync the hole android project.
 	 *It analyzes build.gradle, and prepare for some operations(like real-time error analyze)
-	 *It generates R file from res.
+	 *It generates R file from res and Inject Manifest, and Merge Manifests
 	 *When there are error while reading res and gradle files, it calls 'onError' in ErrorListener Interface.
 	 *@author GongBJ
 	 *@param String androidProjectPath
@@ -107,13 +108,16 @@ public class Syncer
 				//Toast.makeText(ac,"Maven Project id not supported now.",Toast.LENGTH_SHORT);
 				//Temp disable Maven
 				MavenScaner mavenScaner = new MavenScaner();
-				mavenScaner.downloadMaven(syncData,ci.value1);
+				mavenScaner.setErrorListener(errorListener);
+				mavenScaner.downloadMaven(syncData,ci.value1,ac);
 			}else if(ci.type == CompileInfo.TYPE_PROJECT){
 				String pathh = ci.value1;
 				String fullPath = androidProjectPath + "/" + pathh;
 				try
 				{
-					scanGradleProject(fullPath);
+					if(!syncData.isProjectPathScaned(fullPath)){
+						scanGradleProject(fullPath);
+					}
 				}
 				catch (ProgressFail e)
 				{
@@ -126,6 +130,20 @@ public class Syncer
 		inject(path,gi);
 		
 		//############
+		//sync assets
+		{
+			File list[] = new File(path + "/src/main/").listFiles();
+			for(File f : list){
+				String fName = f.getName();
+				if(f.isFile())continue;
+				if(fName.equals("res")||fName.equals("aidl")||fName.equals("jni")){
+					syncData.addAsset(f.getAbsolutePath());					
+				}
+			}
+		}
+		//############
+		
+		
 		//Sync R
 		File build = new File(path+"/build");
 		if(!build.exists())build.mkdirs();
@@ -138,7 +156,8 @@ public class Syncer
 		String manifest = path + "/src/main/AndroidManifest.xml";
 		String res = path + "/src/main/res";
 		
-		String result = aapt.generateR(gen.getAbsolutePath(),manifest,new String[]{res},null);
+		String libResources[] = syncData.getLibResourcePaths();
+		String result = aapt.generateR(gen.getAbsolutePath(),manifest,new String[]{res},libResources,null);
 		AnalysisData ad = AaptResultAnalyze.analysis(result);
 		if(!(ad.exitValue==0)){
 			ProgressFail f = new ProgressFail("cannot generate R.java",null,"sync");
@@ -148,7 +167,12 @@ public class Syncer
 			//Toast.makeText(ac,ad.toString(),Toast.LENGTH_LONG).show();
 		}
 		
-
+		//##########################
+		syncData.addResource(res);
+		syncData.addRPath(gen.getAbsolutePath());
+		syncData.addManifestPath(manifest);
+		//###########################
+		
 		
 	}
 	
@@ -190,6 +214,32 @@ public class Syncer
 			}
 		}
 	}
+	
+	
+	//util######
+	private String[] without(List<String> list, String str){
+		int size = list.size();
+		if(list.contains(str)){
+			size --;
+		}else{
+			return list.toArray(new String[size]);
+		}
+		
+		String result[] = new String[size];
+		int i = 0;
+		for(String text : list){
+			if(!text.equals(str)){
+				result[i] = text;
+				i++;
+			}
+		}
+		
+		return result;
+	}
+	
+	//##########
+	
+	
 	private SyncData syncData;
 	public static interface ProgressListener{
 

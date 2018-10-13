@@ -36,10 +36,10 @@ public class Aapt
 		}
 		return destFile.getAbsolutePath();
 	}
-	public String generateR(String rPath,String androidManifetPath, String resPath[], String jarPath[]){
+	public String generateR(String rPath,String androidManifetPath, String resPath[], String libResPath[],String jarPath[]){
 		String cmd = "";
 		cmd += "package ";
-		cmd += "-m ";
+		cmd += "-m --auto-add-overlay ";
 		cmd += "-J " + rPath + " ";
 		cmd += "-M " + androidManifetPath + " ";
 		for(String res : resPath){
@@ -51,6 +51,11 @@ public class Aapt
 		if(jarPath!=null){
 			for(String jar : jarPath){
 				cmd += "-I " + jar + " ";
+			}
+		}
+		if(libResPath!=null){
+			for(String res : libResPath){
+				cmd += "-I " + res + " ";
 			}
 		}
 		

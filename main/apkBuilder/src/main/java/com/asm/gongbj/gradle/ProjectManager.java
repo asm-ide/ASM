@@ -256,10 +256,10 @@ public class ProjectManager{
 						gi.allprojects.repositories.mavenUrls.add("http://jcenter.bintray.com");
 					}else if(line.startsWith("mavenCentral")&&line.replace(" ","").endsWith("()")){
 						//case mavenCentral()
-						gi.allprojects.repositories.mavenUrls.add("http://central.maven.org/maven2/");
+						gi.allprojects.repositories.mavenUrls.add("http://central.maven.org/maven2");
 					}else if(line.startsWith("google")&&line.replace(" ","").endsWith("()")){
 						//case google()
-						gi.allprojects.repositories.mavenUrls.add("https://maven.google.com");
+						gi.allprojects.repositories.mavenUrls.add("https://dl.google.com/dl/android/maven2");
 					}
 				}
 				

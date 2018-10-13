@@ -33,7 +33,7 @@ dependencies {
 	compile 'com.squareup.okhttp3:okhttp:3.11.0'
 	compile 'org.apache.maven:maven-model:3.5.4'
 	compile 'org.apache.maven:maven-repository-metadata:3.5.+'
-	
+	compile 'net.lingala.zip4j:zip4j:+'
 	//compile group: 'com.android.tools:sdklib:23.0.0'
 	
 	compile 'com.google.android.tools:dx:+'
