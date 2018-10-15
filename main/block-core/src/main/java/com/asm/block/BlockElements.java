@@ -36,6 +36,6 @@ public abstract class BlockElements
 			y += temp.y;
 		}
 		
-		out.set((int) (x - margin), (int) y);
+		out.set((int) (x - margin), (int) (y));
 	}
 }

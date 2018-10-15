@@ -2,12 +2,14 @@ package com.asm.block;
 
 import android.content.Context;
 import android.util.TypedValue;
+import android.graphics.*;
 
 
 public class Theme
 {
 	public boolean isDark = false;
-	public int foreground = 0xff070707;
+	public int foreground = Color.WHITE;
+	public int secondForeground = Color.BLACK;
 	public int foregroundInvert = 0xfff5f5f5;
 	public float textSize;
 	

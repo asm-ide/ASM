@@ -20,7 +20,7 @@ public abstract class BlockElement
 	}
 	
 	
-	public abstract void draw(Canvas canvas, int x, int y);
+	public abstract void draw(Canvas canvas, int x, int y1, int y2);
 	
 	public abstract void measure(PointF out);
 	

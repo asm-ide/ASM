@@ -34,8 +34,11 @@ public class TextElement extends BlockElement
 	
 	
 	@Override
-	public void draw(Canvas canvas, int x, int y) {
-		canvas.drawText(mText, x, y, mPaint);
+	public void draw(Canvas canvas, int x, int y1, int y2) {
+		int yPos = (int) ((y1+y2)/2 - ((mPaint.descent() + mPaint.ascent()) / 2)) ;
+		
+		
+		canvas.drawText(mText, x, yPos, mPaint);
 	}
 	
 	@Override
