@@ -4,20 +4,34 @@
 **CURRENTLY HAVE BUG AND DEVELOPING**
 
 The ASM Team makes the android studio in the mobile device.
-
+To contribute, see [contributing guides](CONTRIBUTING.md).
 
 ## Features
-### Project code
-[tree main/code](main/code)<br>
-Real-time code highlighter - `CodeEdit (com.asm.widget.codeedit)`<br>
-Code analysis - `CodeAnalysis (com.asm.analysis)`
+For more details, see each README.me files in each folder(like main/app)
+### App UI
+* material design
 
+### Project code
+* code API
+* real-time code highlighter
+* java code analysis plugin(local)
+
+### Project apkBuilder
+* compiler API
+* android APK builder
+* gradle support
+
+### project block
+in block-editor branch
+* making java/android app in block coding
+* block drag&drop
+* javs -> blocks, blocks -> java code converter
 
 ## ASM Team
 We have 7 collaborators.
 Here are our collaborators:
 
-__Sketchware__, __PentiumG__, [__GongBj__(@GonngBj)](https://github.com/gonngbj), [__LHW__(@lhwdev)](https://github.com/lhwdev/)(website for [here](https://lhwdev.github.io)), [__Mg 마그네슘__(@AppMagnesium)](https://github.com/AppMagnesium), [__Ingan121__](https://github.com/Ingan121), [__ImportLicherd__](https://github.com/ImportLicherd)
+__Sketchware__, __PentiumG__, [__GongBj__(@GonngBj)](https://github.com/gonngbj), [__LHW__(@lhwdev)](https://github.com/lhwdev/)(website for [here](https://lhwdev.github.io)), [__Mg 마그네슘__(@AppMagnesium)](https://github.com/AppMagnesium), [__Ingan121__(@Ingan121)](https://github.com/Ingan121), [__ImportLicherd__(@ImportLicherd)](https://github.com/ImportLicherd)
 
 ## Wiki
 >[wiki link](https://github.com/asm-ide/ASM/wiki)
