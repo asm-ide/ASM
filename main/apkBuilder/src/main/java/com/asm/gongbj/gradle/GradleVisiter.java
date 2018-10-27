@@ -34,7 +34,7 @@ public abstract class GradleVisiter
 		String[] str = code.split("\n");
 		readBuildGradle(str,"");
 	}
-	public abstract void onVisit(String tree, String line)
+	public abstract void onVisit(String tree, String line);
 	
 	private int count;
 	private void readBuildGradle(String[] str,String tree){

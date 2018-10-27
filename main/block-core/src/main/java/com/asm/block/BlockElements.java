@@ -7,7 +7,7 @@ import android.graphics.PointF;
 public abstract class BlockElements
 {
 	private Theme mTheme;
-	
+	public BlockView superView;
 	
 	public BlockElements(Theme theme) {
 		mTheme = theme;
@@ -33,7 +33,10 @@ public abstract class BlockElements
 			get(i).measure(temp);
 			x += temp.x;
 			x += margin;
-			y += temp.y;
+			if(temp.y > y){
+				y = temp.y;
+			}
+
 		}
 		
 		out.set((int) (x - margin), (int) (y));

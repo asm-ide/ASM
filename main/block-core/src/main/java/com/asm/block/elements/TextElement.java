@@ -1,11 +1,11 @@
 package com.asm.block.elements;
 
-import com.asm.block.BlockElement;
-import com.asm.block.Theme;
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
+
+import com.asm.block.BlockElement;
+import com.asm.block.Theme;
 
 
 public class TextElement extends BlockElement
@@ -34,15 +34,15 @@ public class TextElement extends BlockElement
 	
 	
 	@Override
-	public void draw(Canvas canvas, int x, int y1, int y2) {
+	public void onDraw(Canvas canvas, int x, int y1, int y2) {
 		int yPos = (int) ((y1+y2)/2 - ((mPaint.descent() + mPaint.ascent()) / 2)) ;
-		
-		
+
+
 		canvas.drawText(mText, x, yPos, mPaint);
 	}
 	
 	@Override
-	public void measure(PointF out) {
+	public void onMeasure(PointF out) {
 		out.set(mPaint.measureText(mText), mPaint.getTextSize());
 	}
 }

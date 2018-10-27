@@ -1,10 +1,25 @@
 package com.asm.block;
 
-import android.content.*;
-import android.graphics.*;
-import android.util.*;
-import android.view.*;
-import com.asm.block.elements.*;
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.DragEvent;
+import android.view.MotionEvent;
+import android.view.View;
+
+import com.asm.block.elements.TextElement;
 
 
 public class BlockView extends View
@@ -12,12 +27,13 @@ public class BlockView extends View
 
 	public static final float SCALE = 1f;
 
-	public float ELEMENTS_MARGIN = 15 * SCALE/*dp*/;
-	public float START_MARGIN = 15 * SCALE;
-	public float END_MERGIN = 10 * SCALE;
-	public float TOPBOTTOM_MARGIN = 10 * SCALE;
-	public float CONNECT_H_MARGIN = 14 * SCALE;
-	public float CONNECT_W_MARGIN = 15 * SCALE;
+	public static float ELEMENTS_MARGIN = 5 * SCALE/*dp*/;
+	public static float START_MARGIN = 15 * SCALE;
+	public static float END_MERGIN = 10 * SCALE;
+	public static float TOPBOTTOM_MARGIN = 8 * SCALE;
+	public static float CONNECT_H_MARGIN = 14 * SCALE;
+	public static float CONNECT_W_MARGIN = 15 * SCALE;
+
 
 
 	private Paint paint;
@@ -27,7 +43,7 @@ public class BlockView extends View
 	//속성
 	private int mBlockType = Type.TYPE_BOOL;
 	private int mBlockColor = Color.parseColor("#4c97ff");
-
+	private int id;
 
 	public static class Type
 	{
@@ -53,7 +69,26 @@ public class BlockView extends View
 
 	public BlockView(final Context context, AttributeSet attrs, int defStyleAttr)
 	{
-		super(context, attrs, defStyleAttr); 
+		super(context, attrs, defStyleAttr);
+		id = BlocksData.getNewId();
+		getRootView().setOnDragListener(new myDragEventListener());
+		setOnLongClickListener(new View.OnLongClickListener() {
+
+								   // Defines the one method for the interface, which is called when the View is long-clicked
+								   public boolean onLongClick(View v) {
+
+									   // Create a new ClipData.
+									   // This is done in two steps to provide clarity. The convenience method
+									   // ClipData.newPlainText() can create a plain text ClipData in one step.
+
+									   // Create a new ClipData.Item from the ImageView object's tag
+
+									   return true;
+								   }
+							   });
+
+
+
 		initPaint();
 		setElements(new BlockElements(new Theme(context)){
 				public int count()
@@ -68,32 +103,36 @@ public class BlockView extends View
 						return new TextElement("Next Element", new Theme(context));
 				}
 			});
-		ELEMENTS_MARGIN = TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_DIP,
-			ELEMENTS_MARGIN, 
-			getResources().getDisplayMetrics());
-		START_MARGIN = TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_DIP,
-			START_MARGIN, 
-			getResources().getDisplayMetrics());
-		END_MERGIN = TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_DIP,
-			END_MERGIN, 
-			getResources().getDisplayMetrics());
-		TOPBOTTOM_MARGIN = TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_DIP,
-			TOPBOTTOM_MARGIN, 
-			getResources().getDisplayMetrics());
-		CONNECT_H_MARGIN = TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_DIP,
-			CONNECT_H_MARGIN, 
-			getResources().getDisplayMetrics());
-		CONNECT_W_MARGIN = TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_DIP,
-			CONNECT_W_MARGIN, 
-			getResources().getDisplayMetrics());
+
 	}
 
+
+	public static void initMargin(Context context){
+		ELEMENTS_MARGIN = TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP,
+				ELEMENTS_MARGIN,
+				context.getResources().getDisplayMetrics());
+		START_MARGIN = TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP,
+				START_MARGIN,
+				context.getResources().getDisplayMetrics());
+		END_MERGIN = TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP,
+				END_MERGIN,
+				context.getResources().getDisplayMetrics());
+		TOPBOTTOM_MARGIN = TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP,
+				TOPBOTTOM_MARGIN,
+				context.getResources().getDisplayMetrics());
+		CONNECT_H_MARGIN = TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP,
+				CONNECT_H_MARGIN,
+				context.getResources().getDisplayMetrics());
+		CONNECT_W_MARGIN = TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP,
+				CONNECT_W_MARGIN,
+				context.getResources().getDisplayMetrics());
+	}
 	private void initPaint()
 	{
 		paint = new Paint();
@@ -114,7 +153,9 @@ public class BlockView extends View
 
 	public void setElements(BlockElements el)
 	{
+		el.superView = BlockView.this;
 		mElements = el;
+
 	}
 
 	public void setColor(int color)
@@ -203,10 +244,7 @@ public class BlockView extends View
 		int height;
 
 		Point point = new Point();
-		mElements.measure(point,
-						  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-													ELEMENTS_MARGIN,
-													getResources().getDisplayMetrics()));
+		mElements.measure(point, ELEMENTS_MARGIN);
 
 		width = point.x;
 		height = point.y;
@@ -221,6 +259,49 @@ public class BlockView extends View
 			setMeasuredDimension((int)(width + START_MARGIN * 2 + ELEMENTS_MARGIN * 2), 
 								 (int)(height + TOPBOTTOM_MARGIN * 2));
 		}
+	}
+
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		int count = mElements.count();
+		for(int i = 0; i < count; i ++){
+			BlockElement e = mElements.get(i);
+			if(e.isTouched(event.getX(), event.getY())){
+				if(e.onTouchEvent(event)){
+					return true;
+				}
+
+			}
+		}
+
+		if(event.getAction() == MotionEvent.ACTION_DOWN){
+			View v = this;
+
+					// 태그 생성
+					ClipData.Item item = new ClipData.Item(String.valueOf(id));
+
+					String[] mimeTypes = { ClipDescription.MIMETYPE_TEXT_PLAIN };
+					ClipData data = new ClipData(String.valueOf(id), mimeTypes, item);
+
+
+
+			// Instantiates the drag shadow builder.
+			View.DragShadowBuilder myShadow = new MyDragShadowBuilder(v);
+
+			// Starts the drag
+
+			v.startDrag(data,  // the data to be dragged
+					new View.DragShadowBuilder(this),  // the drag shadow builder
+					BlockView.this,      // no need to use local data
+					0          // flags (not currently used, set to 0)
+			);
+			//return false;
+			//v.setVisibility(View.INVISIBLE);
+		}
+
+
+		return false;
 	}
 
 	@Override
@@ -331,8 +412,8 @@ public class BlockView extends View
 	{
 		final int count = mElements.count();
 
-		float x = START_MARGIN + CONNECT_W_MARGIN + ELEMENTS_MARGIN;
-		float y = CONNECT_H_MARGIN + TOPBOTTOM_MARGIN;
+		float x;// = START_MARGIN + CONNECT_W_MARGIN + ELEMENTS_MARGIN;
+		float y;// = CONNECT_H_MARGIN + TOPBOTTOM_MARGIN;
 		
 		if (mBlockType == Type.TYPE_DEFUALT || mBlockType == Type.TYPE_END)
 		{
@@ -375,4 +456,113 @@ public class BlockView extends View
 						  Math.max((int)(g * factor), 0),
 						  Math.max((int)(b * factor), 0));
 	}
+
+
+
+
+	protected class myDragEventListener implements View.OnDragListener {
+
+		// This is the method that the system calls when it dispatches a drag event to the
+		// listener.
+		public boolean onDrag(View v, DragEvent event) {
+
+			// Defines a variable to store the action type for the incoming event
+			final int action = event.getAction();
+
+			// Handles each of the expected events
+			switch(action) {
+
+				case DragEvent.ACTION_DRAG_STARTED:
+					/*
+					if((event.getLocalState()) != null){
+						return true;
+					}else{
+						return false;
+					}*/
+					/*
+					if(event.getClipData().getItemAt(0).getText().equals(String.valueOf(id))){
+						return true;
+					}else{
+						return false;
+					}*/
+				case DragEvent.ACTION_DROP:
+
+                    View view = (View) event.getLocalState();
+                    Point p = getTouchPositionFromDragevent(v, event);
+
+                    Log.d("DropEvent", "Action Drop : X = " + event.getX() + " Y = " + event.getY());
+                    view.setX(p.x);
+                    view.setY(p.y);
+                    view.setVisibility(View.VISIBLE);
+			}
+
+			return true;
+		}
+
+		public Point getTouchPositionFromDragevent(View item, DragEvent event){
+			int pos[] = new int[2];
+			item.getLocationOnScreen(pos);
+
+			Rect rItem = new Rect();
+			item.getGlobalVisibleRect(rItem);
+
+			return new Point(rItem.left+ Math.round(event.getX()) - pos[0],
+					rItem.top + Math.round(event.getY()) - pos[1]);
+		}
+
+	};
+
+
+
+	private static class MyDragShadowBuilder extends View.DragShadowBuilder {
+
+		// The drag shadow image, defined as a drawable thing
+		private static Drawable shadow;
+		private int width, height;
+		// Defines the constructor for myDragShadowBuilder
+		public MyDragShadowBuilder(View v) {
+
+			// Stores the View parameter passed to myDragShadowBuilder.
+			super(v);
+
+			// Creates a draggable image that will fill the Canvas provided by the system.
+			shadow = new ColorDrawable(Color.LTGRAY);
+		}
+
+		// Defines a callback that sends the drag shadow dimensions and touch point back to the
+		// system.
+		@Override
+		public void onProvideShadowMetrics (Point size, Point touch) {
+			// Defines local variables
+
+
+			// Sets the width of the shadow to half the width of the original View
+			width = getView().getWidth() / 2;
+
+			// Sets the height of the shadow to half the height of the original View
+			height = getView().getHeight() / 2;
+
+			// The drag shadow is a ColorDrawable. This sets its dimensions to be the same as the
+			// Canvas that the system will provide. As a result, the drag shadow will fill the
+			// Canvas.
+			shadow.setBounds(0, 0, width, height);
+
+			// Sets the size parameter's width and height values. These get back to the system
+			// through the size parameter.
+			size.set(width, height);
+
+			// Sets the touch point's position to be in the middle of the drag shadow
+			touch.set(width / 2, height / 2);
+		}
+
+		// Defines a callback that draws the drag shadow in a Canvas that the system constructs
+		// from the dimensions passed in onProvideShadowMetrics().
+		@Override
+		public void onDrawShadow(Canvas canvas) {
+
+			// Draws the ColorDrawable in the Canvas passed in from the system.
+			shadow.draw(canvas);
+		}
+	}
+
 }

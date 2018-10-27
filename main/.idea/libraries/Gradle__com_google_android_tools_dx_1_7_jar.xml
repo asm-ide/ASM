@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.google.android.tools:dx:1.7@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.android.tools/dx/1.7/70eab4a00d9f7ca8849e960a87f5b6736aa4ec11/dx-1.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.android.tools/dx/1.7/522cfb6582b6a53a9b8960f68f83242eaab2366e/dx-1.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

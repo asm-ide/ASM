@@ -12,10 +12,16 @@ public class Theme
 	public int secondForeground = Color.BLACK;
 	public int foregroundInvert = 0xfff5f5f5;
 	public float textSize;
-	
-	
+	public Context context;
+
+
+	public Context getContext(){
+		return context;
+	}
+
 	public Theme(Context context) {
 		// TODO: textSize setting available
+		this.context = context;
 		textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16f, context.getResources().getDisplayMetrics());
 	}
 }
