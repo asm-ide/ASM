@@ -5,11 +5,13 @@ android {
     buildToolsVersion "26.0.0"
 
     defaultConfig {
-        applicationId "com.asm.block"
+        applicationId "com.asm.blocktest"
         minSdkVersion 14
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+
+        multiDexEnabled true
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -26,6 +28,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.android.support:multidex:1.0.0'
 	compile project(':block-core')
     testCompile 'junit:junit:4.12'
 }

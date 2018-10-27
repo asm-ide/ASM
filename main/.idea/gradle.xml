@@ -11,6 +11,8 @@
             <option value="$PROJECT_DIR$/apkBuilder" />
             <option value="$PROJECT_DIR$/apkBuildingTest" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/block-core" />
+            <option value="$PROJECT_DIR$/block-test" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/gradleTest" />
             <option value="$PROJECT_DIR$/interface" />

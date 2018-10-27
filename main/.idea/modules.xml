@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/apkBuilder/apkBuilder.iml" filepath="$PROJECT_DIR$/apkBuilder/apkBuilder.iml" />
       <module fileurl="file://$PROJECT_DIR$/apkBuildingTest/apkBuildingTest.iml" filepath="$PROJECT_DIR$/apkBuildingTest/apkBuildingTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/block-core/block-core.iml" filepath="$PROJECT_DIR$/block-core/block-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/block-test/block-test.iml" filepath="$PROJECT_DIR$/block-test/block-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/gradleTest/gradleTest.iml" filepath="$PROJECT_DIR$/gradleTest/gradleTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/interface/interface.iml" filepath="$PROJECT_DIR$/interface/interface.iml" />

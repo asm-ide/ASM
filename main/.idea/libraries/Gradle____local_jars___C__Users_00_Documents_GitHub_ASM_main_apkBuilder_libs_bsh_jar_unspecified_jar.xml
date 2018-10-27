@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_jars__:C.\Users\00\Documents\GitHub\ASM\main\apkBuilder\libs\bsh.jar:unspecified@jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/apkBuilder/libs/bsh.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

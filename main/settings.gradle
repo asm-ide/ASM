@@ -1,1 +1,1 @@
-include ':app', ':core', ':interface', ':apkBuilder', ':apkBuildingTest', ':gradleTest', ':ui-base'
+include ':app', ':core', ':interface', ':apkBuilder', ':apkBuildingTest', ':gradleTest', ':ui-base', 'block-core', 'block-test'
