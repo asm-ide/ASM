@@ -287,12 +287,12 @@ public class BlockView extends View
 
 
 			// Instantiates the drag shadow builder.
-			View.DragShadowBuilder myShadow = new MyDragShadowBuilder(v);
+			View.DragShadowBuilder myShadow = ((EditorView)getParent()).getDragShadowBuulder(v);
 
 			// Starts the drag
 			v.setVisibility(View.INVISIBLE);
 			v.startDrag(data,  // the data to be dragged
-					new View.DragShadowBuilder(this),  // the drag shadow builder
+					myShadow,  // the drag shadow builder
 					BlockView.this,      // no need to use local data
 					0          // flags (not currently used, set to 0)
 			);
@@ -461,57 +461,7 @@ public class BlockView extends View
 
 
 
-	public static class myDragEventListener implements View.OnDragListener {
-
-		// This is the method that the system calls when it dispatches a drag event to the
-		// listener.
-		public boolean onDrag(View v, DragEvent event) {
-
-			// Defines a variable to store the action type for the incoming event
-			final int action = event.getAction();
-
-			// Handles each of the expected events
-			switch(action) {
-
-				case DragEvent.ACTION_DRAG_STARTED:
-					
-					if((event.getLocalState()) instanceof BlockView){
-						return true;
-					}else{
-						return false;
-					}
-				case DragEvent.ACTION_DROP:
-
-                    View view = (View) event.getLocalState();
-                    Point p = getTouchPositionFromDragevent(v, event);
-
-                    Log.d("DropEvent", "Action Drop : X = " + event.getX() + " Y = " + event.getY());
-					
-					//String data[] = ((String)event.getClipData().getItemAt(0).getText()).split(" ");
-					
-					float mx = view.getWidth() / 2;
-					float my = view.getHeight() / 2;
-                    view.setX(p.x - mx);
-                    view.setY(p.y - my);
-                    view.setVisibility(View.VISIBLE);
-			}
-
-			return true;
-		}
-
-		public Point getTouchPositionFromDragevent(View item, DragEvent event){
-			int pos[] = new int[2];
-			item.getLocationOnScreen(pos);
-
-			Rect rItem = new Rect();
-			item.getGlobalVisibleRect(rItem);
-
-			return new Point(rItem.left+ Math.round(event.getX()) - pos[0],
-					rItem.top + Math.round(event.getY()) - pos[1]);
-		}
-
-	};
-
+	
 
 
 	private static class MyDragShadowBuilder extends View.DragShadowBuilder {
