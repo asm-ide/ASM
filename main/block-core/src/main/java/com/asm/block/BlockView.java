@@ -82,7 +82,26 @@ public class BlockView extends View
 									   // ClipData.newPlainText() can create a plain text ClipData in one step.
 
 									   // Create a new ClipData.Item from the ImageView object's tag
+									   
 
+									   // 태그 생성
+									   //ClipData.Item item = new ClipData.Item(event.getX() + " " + event.getY());
+
+									  // String[] mimeTypes = { ClipDescription.MIMETYPE_TEXT_PLAIN };
+									   //ClipData data = new ClipData(String.valueOf(id), mimeTypes, item);
+
+
+
+									   // Instantiates the drag shadow builder.
+									   View.DragShadowBuilder myShadow = ((EditorView)getParent()).getDragShadowBuulder(v);
+
+									   // Starts the drag
+									   v.setVisibility(View.INVISIBLE);
+									   v.startDrag(null,  // the data to be dragged
+												   myShadow,  // the drag shadow builder
+												   BlockView.this,      // no need to use local data
+												   0          // flags (not currently used, set to 0)
+												   );
 									   return true;
 								   }
 							   });
@@ -239,6 +258,7 @@ public class BlockView extends View
 		}
 	}
 	
+	/*
 	public void resize(){
 		int width;
 		int height;
@@ -259,51 +279,29 @@ public class BlockView extends View
 			setMeasuredDimension((int)(width + START_MARGIN * 2 + ELEMENTS_MARGIN * 2), 
 								 (int)(height + TOPBOTTOM_MARGIN * 2));
 		}
-	}
+	}*/
 
-
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int count = mElements.count();
-		for(int i = 0; i < count; i ++){
-			BlockElement e = mElements.get(i);
-			if(e.isTouched(event.getX(), event.getY())){
-				if(e.onTouchEvent(event)){
-					return true;
+		//if(event.getAction() == MotionEvent.ACTION_UP){
+			for(int i = 0; i < count; i ++){
+				BlockElement e = mElements.get(i);
+				if(e.isTouched(event.getX(), event.getY())){
+					if(e.onTouchEvent(event)){
+						super.onTouchEvent(event);
+						return true;
+					}
+
 				}
-
 			}
-		}
-
-		if(event.getAction() == MotionEvent.ACTION_DOWN){
-			View v = this;
-
-					// 태그 생성
-					ClipData.Item item = new ClipData.Item(event.getX() + " " + event.getY());
-
-					String[] mimeTypes = { ClipDescription.MIMETYPE_TEXT_PLAIN };
-					ClipData data = new ClipData(String.valueOf(id), mimeTypes, item);
-
-
-
-			// Instantiates the drag shadow builder.
-			View.DragShadowBuilder myShadow = ((EditorView)getParent()).getDragShadowBuulder(v);
-
-			// Starts the drag
-			v.setVisibility(View.INVISIBLE);
-			v.startDrag(data,  // the data to be dragged
-					myShadow,  // the drag shadow builder
-					BlockView.this,      // no need to use local data
-					0          // flags (not currently used, set to 0)
-			);
-			
-			return true;
-			
-		}
-
-
+		//}
+		
+		super.onTouchEvent(event);
 		return true;
 	}
+
 
 	@Override
 	protected void onDraw(Canvas canvas)

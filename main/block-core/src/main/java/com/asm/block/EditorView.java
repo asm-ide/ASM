@@ -245,8 +245,8 @@ public class EditorView extends ViewGroup
 					float[] values = new float[9];
 					matrix.getValues(values);
 					
-					float mx = view.getWidth() * values[Matrix.MSCALE_X] / 2;
-					float my = view.getHeight() * values[Matrix.MSCALE_Y] / 2;
+					float mx = view.getWidth() / 2;
+					float my = view.getHeight() / 2;
 					
 					float[] location = screenPointsToScaledPoints(new float[]{p.x, p.y});
                     view.setX(location[0] -mx);
@@ -259,10 +259,10 @@ public class EditorView extends ViewGroup
 
 		public Point getTouchPositionFromDragevent(View item, DragEvent event){
 			int pos[] = new int[2];
-			//item.getLocationOnScreen(pos);
+			item.getLocationOnScreen(pos);
 
 			Rect rItem = new Rect();
-			//item.getGlobalVisibleRect(rItem);
+			item.getGlobalVisibleRect(rItem);
 
 			return new Point(rItem.left+ Math.round(event.getX()) - pos[0],
 							 rItem.top + Math.round(event.getY()) - pos[1]);

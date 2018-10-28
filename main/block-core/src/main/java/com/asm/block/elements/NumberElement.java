@@ -95,7 +95,7 @@ public class NumberElement extends BlockElement
 	public boolean onTouchEvent(MotionEvent event) {
 		Log.d("BlockElement", "Clicked");
 
-		if(event.getAction() == MotionEvent.ACTION_DOWN){
+		if(event.getAction() == MotionEvent.ACTION_UP){
 			//Toast.makeText(theme.getContext(), "touched", Toast.LENGTH_SHORT).show();
 			showDialog();
 		}
