@@ -11,6 +11,7 @@ import com.asm.block.BlockView;
 import com.asm.block.Theme;
 import com.asm.block.elements.NumberElement;
 import com.asm.block.elements.TextElement;
+import android.widget.*;
 
 public class MainActivity extends Activity 
 {
@@ -26,6 +27,9 @@ public class MainActivity extends Activity
 		BlockView b4 = (BlockView)findViewById(R.id.block4);
 		BlockView b5 = (BlockView)findViewById(R.id.block5);
 
+		RelativeLayout rootView = (RelativeLayout)findViewById(R.id.rootview);
+		rootView.setOnDragListener(new BlockView.myDragEventListener());
+		
         BlockElementsFactory blf;
 
         BlockView.initMargin(this);

@@ -71,7 +71,7 @@ public class BlockView extends View
 	{
 		super(context, attrs, defStyleAttr);
 		id = BlocksData.getNewId();
-		getRootView().setOnDragListener(new myDragEventListener());
+		
 		setOnLongClickListener(new View.OnLongClickListener() {
 
 								   // Defines the one method for the interface, which is called when the View is long-clicked
@@ -279,7 +279,7 @@ public class BlockView extends View
 			View v = this;
 
 					// 태그 생성
-					ClipData.Item item = new ClipData.Item(String.valueOf(id));
+					ClipData.Item item = new ClipData.Item(event.getX() + " " + event.getY());
 
 					String[] mimeTypes = { ClipDescription.MIMETYPE_TEXT_PLAIN };
 					ClipData data = new ClipData(String.valueOf(id), mimeTypes, item);
@@ -290,18 +290,19 @@ public class BlockView extends View
 			View.DragShadowBuilder myShadow = new MyDragShadowBuilder(v);
 
 			// Starts the drag
-
+			v.setVisibility(View.INVISIBLE);
 			v.startDrag(data,  // the data to be dragged
 					new View.DragShadowBuilder(this),  // the drag shadow builder
 					BlockView.this,      // no need to use local data
 					0          // flags (not currently used, set to 0)
 			);
-			//return false;
-			//v.setVisibility(View.INVISIBLE);
+			
+			return true;
+			
 		}
 
 
-		return false;
+		return true;
 	}
 
 	@Override
@@ -460,7 +461,7 @@ public class BlockView extends View
 
 
 
-	protected class myDragEventListener implements View.OnDragListener {
+	public static class myDragEventListener implements View.OnDragListener {
 
 		// This is the method that the system calls when it dispatches a drag event to the
 		// listener.
@@ -473,26 +474,25 @@ public class BlockView extends View
 			switch(action) {
 
 				case DragEvent.ACTION_DRAG_STARTED:
-					/*
-					if((event.getLocalState()) != null){
+					
+					if((event.getLocalState()) instanceof BlockView){
 						return true;
 					}else{
 						return false;
-					}*/
-					/*
-					if(event.getClipData().getItemAt(0).getText().equals(String.valueOf(id))){
-						return true;
-					}else{
-						return false;
-					}*/
+					}
 				case DragEvent.ACTION_DROP:
 
                     View view = (View) event.getLocalState();
                     Point p = getTouchPositionFromDragevent(v, event);
 
                     Log.d("DropEvent", "Action Drop : X = " + event.getX() + " Y = " + event.getY());
-                    view.setX(p.x);
-                    view.setY(p.y);
+					
+					//String data[] = ((String)event.getClipData().getItemAt(0).getText()).split(" ");
+					
+					float mx = view.getWidth() / 2;
+					float my = view.getHeight() / 2;
+                    view.setX(p.x - mx);
+                    view.setY(p.y - my);
                     view.setVisibility(View.VISIBLE);
 			}
 
