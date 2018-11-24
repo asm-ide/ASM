@@ -5,7 +5,6 @@ android:
     - build-tools-26.0.0
     - android-26 
     
-    # Additional components 
     - extra-android-m2repository
     
     - sys-img-x86-android-26
