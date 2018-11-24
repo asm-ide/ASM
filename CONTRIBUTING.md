@@ -1,60 +1,18 @@
-# Contributing Guideline
-## Coding Guideline
-### 1. Use annotations.
-You can use `@NonNull` or `@Nullable` at the every code.<br>
+# Contributing to ASM
+Thanks for your interest in ASM! Here are some ways you can get involved and help us improve ASM. For background on the ASM project and our goals, check out the [Overview](https://github.com/asm-ide/ASM/blob/master/README.md/) page.
 
-### 2. Make javadocs in all files.
-Other contributors and people can understand code easily, if javadoc exists.<br>
-**Making javadoc might be annoying, but it will help your code to improve.**
+# Contributing License
+**All of the contributing can be under some open source license, which allows modification, and commercial use, or if you want your contributing to under the any license that you want, you can request ASM Team to do.**
 
-### 3. Write our short version of license, which is revealed at the end of [LICENSE](LICENSE).
-**Notification: currently license is not developed and not have to do this.**<br>
+# Report Bugs
+One of the easiest and most effective ways you can help improve ASM is to file bugs.
+Please note that we can't guarantee that any particular bug will be fixed in any particular release.
+To report bugs, visit the [Github Issue Page](https://github.com/asm-ide/ASM/issues/new/choose).
 
-### 4. Throw more, catch more.
-The more throws prevents illegal behavior, and the more catches can make user to understand error more and make app more stable.
+# Contribute to Code
+## 0. Terms
+* **Pull Request("PR")** means requesting your code to be submitted to our repository.
 
-### 5. Unify the code style.
-Our code style is defined as:<br>
-
-#### global:
-Indent style: Tab(width : 4 space<br>
-Space between brackets: none `(...)`<br>
-Space between operators: 1 `abc = 123;`<br>
-
-#### java, c, c++:
-U = upper case, l = lower case<br>
-class name: UllUlll... (upper case at first)<br>
-function name: llUllll... (lower case at first)<br>
-constant name: UUU_UUUU... (all upper)
-
-function: 
-```
-... myfunc() {
-    ...
-}
-```
-class, namespace(c++): 
-```
-... MyClass
-{
-    ...
-}
-```
-for: `for(int i = 0; i < max; i++) { ... }`
-
-#### xml
-attributes: 
-```
-<tag value="abc"
-    value2="123">
-```
-or 
-```
-<a_very_long_taggy_tag
-   value1="123">
-```
-space before `/>`: 1 `<mytag hello="hi" />`
-
-<p>
+## 1. 
 
 > **We :heart: our all contributors.**
