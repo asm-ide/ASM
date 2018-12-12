@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<!-- Global -->
+	<string name="asm_activity_error_label">Unexcepted error was occured</string>
+	
+</resources>

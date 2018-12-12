@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language name="java"
+	analysisClass="com.asm.analysis.java.JavaAnalysis"
+	suggestClass="com.asm.analysis.java.JavaSuggest">
+	<data name="keywords" type="strings">
+		"abstract", "break", "case", "catch", "class", "continue", "default", "do", "else", "extends", "final", "finally", "for", "if", "import", "implements", "instanceof", 
+		"interface", "native", "new", "package", "public", "protected", "private", "return", "static", "super", "switch", "this", "throw", "throws", "try", "volatile", "while"
+	</data>
+	<data name="otherDatas" type="strings">
+		"true", "false", "null"
+	</data>
+	<data name="types" type="strings">
+		"boolean", "byte", "char", "double", "float", "int", "long", "short"
+	</data>
+	<data name="operators" type="string">;.,{}()[]:</data>
+	<data name="maths" type="string">"+-/*?&lt;&gt;&amp;|!="</data>
+	<data name="textSeperators" type="string"> ;.,{}()[]:+-/*?&lt;&gt;&amp;|!=</data>
+	<data name="textQuotes" type="string">"'</data>
+	<data name="textEscaper" type="char">\</data>
+	<data name="comments" type="strings">
+		"/*", "*/",
+		"//", "\n"
+	</data>
+	<arg name="info.textQuotes" value="@data/textQuotes" />
+	<arg name="info.textSeperators" value="@data/textSeperators" />
+	<arg name="info.textEscaper" value="@data/textEscaper" />
+	<arg name="info.comments" value="@data/comments" />
+	<arg name="info.isNewlineBreakText" type="boolean" value="true" />
+	<!--
+		more:
+			string
+				varNamesMore		default a-z, A-Z, 0-9, _ are available in varname.
+				
+	-->
+</language>
