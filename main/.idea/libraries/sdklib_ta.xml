@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="sdklib_ta">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/apkBuilder/libs/sdklib_ta.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

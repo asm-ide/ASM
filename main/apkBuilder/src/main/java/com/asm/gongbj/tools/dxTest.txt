@@ -1,1 +1,0 @@
---dex --no-strict --output=/storage/emulated/0/AppProjects/ASM/main/code/compiler-unit/gradleTest/build/bin/classes.dex /storage/emulated/0/AppProjects/ASM/main/code/compiler-unit/gradleTest/build/bin/classesrelease/com /storage/emulated/0/AppProjects/ASM/main/code/compiler-unit/gradleTest/build/bin/classesrelease/adrt

@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="commons-compress-1.15">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/apkBuilder/libs/commons-compress-1.15.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

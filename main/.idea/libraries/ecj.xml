@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="ecj">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/apkBuilder/libs/ecj.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
