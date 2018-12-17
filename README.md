@@ -1,13 +1,16 @@
 # ASM
 **Android Studio Mobile - A mobile IDE**
 
-**CURRENTLY HAVE BUG AND DEVELOPING**
+**THIS REPOSITORY IS NO LONGER MAINTAINED.**
+* We will only maintain the Plugin API. (interface/, util/)
+
 
 The ASM Team makes the android studio in the mobile device.
 To contribute, see [contributing guides](CONTRIBUTING.md).
 
 ## Features
-For more details, see each README.me files in each folder(like main/app)
+For more details, see each README.md files in each folder(like main/app)
+
 ### App UI
 * material design
 
