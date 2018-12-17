@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<code-style>
-	<language lang="java">
-		<preference name="text" type="color">#000000</preference>
-		<color name="class">@pref/class</color>
-		<color name="background">#f7f7f7</color>
-	</language>
-</code-style>
