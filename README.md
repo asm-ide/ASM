@@ -3,6 +3,7 @@
 
 **THIS REPOSITORY IS NO LONGER MAINTAINED.**
 * We will only maintain the Plugin API. (interface/, util/)
+* ASM Team is **still active**.
 
 
 The ASM Team makes the android studio in the mobile device.
