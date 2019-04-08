@@ -1,7 +1,7 @@
 # ASM
 **Android Studio Mobile - A mobile IDE**
 
-**THIS REPOSITORY IS NO LONGER MAINTAINED.**
+**THIS REPOSITORY IS OUTDATED.**
 * We will only maintain the Plugin API. (interface/, util/)
 * ASM Team is **still active**.
 
